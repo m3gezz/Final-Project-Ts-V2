@@ -4,9 +4,10 @@ import ProjectCard from "@/components/cards/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Plus, FolderKanban, Briefcase, Inbox } from "lucide-react";
 import WorkspaceCard from "@/components/cards/WorkspaceCard";
+import { useSelector } from "react-redux";
 
 export default function Home() {
-  const user = { full_name: "likan" };
+  const { user } = useSelector((state) => state?.auth);
   return (
     <div className="space-y-10">
       <div
@@ -20,7 +21,7 @@ export default function Home() {
           <div>
             <p className="text-sm text-muted-foreground">Welcome back,</p>
             <h1 className="text-3xl font-semibold tracking-tight">
-              {user?.full_name?.split(" ")[0]} 👋
+              {user?.full_name?.split(" ")[0]}
             </h1>
             <p className="mt-1 text-muted-foreground">
               Here's what's happening across your projects today.
@@ -28,7 +29,7 @@ export default function Home() {
           </div>
           <div className="flex gap-2">
             <Button asChild>
-              <Link to="/projects/new">
+              <Link to="/create-project">
                 <Plus className="mr-2 h-4 w-4" />
                 New project
               </Link>

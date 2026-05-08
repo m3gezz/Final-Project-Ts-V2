@@ -40,7 +40,7 @@ export default function Projects() {
         description="Discover ideas from the community and find your next collaboration."
         action={
           <Button asChild>
-            <Link to="/projects/new">
+            <Link to="/create-project">
               <Plus className="mr-2 h-4 w-4" />
               New project
             </Link>

@@ -19,8 +19,9 @@ import Protected from "./layouts/Protected";
 import Member from "./layouts/Member";
 import Admin from "./layouts/Admin";
 import Guest from "./layouts/Guest";
-import { User } from "lucide-react";
 import Home from "./pages/protected/Home";
+import User from "./pages/protected/User";
+import Landing from "./pages/Landing";
 
 const routes = [
   {
@@ -30,6 +31,10 @@ const routes = [
   {
     element: <Guest />,
     children: [
+      {
+        path: "/welcome",
+        element: <Landing />,
+      },
       {
         path: "/sign-up",
         element: <SignUp />,
