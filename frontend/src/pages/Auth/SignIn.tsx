@@ -1,0 +1,75 @@
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import AuthLayout from "@/components/layout/AuthLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/app/AuthContext";
+
+export default function SignIn() {
+  const { signIn } = useAuth();
+  const nav = useNavigate();
+  const loc = useLocation() as { state?: { from?: string } };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    await signIn(email || "alex@collab.app", password);
+    setLoading(false);
+    nav(loc.state?.from || "/app", { replace: true });
+  };
+
+  return (
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Sign in to continue collaborating."
+      footer={
+        <>
+          New here?{" "}
+          <Link to="/signup" className="text-primary hover:underline">
+            Create an account
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Link
+              to="/forgot-password"
+              className="text-xs text-muted-foreground hover:text-primary"
+            >
+              Forgot?
+            </Link>
+          </div>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Signing in…" : "Sign in"}
+        </Button>
+      </form>
+    </AuthLayout>
+  );
+}
