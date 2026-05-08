@@ -1,49 +1,50 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import InputController from "@/components/controllers/InputController";
+
+const fields = [
+  {
+    name: "password",
+    type: "password",
+    label: "New Password",
+    placeholder: "••••••••",
+  },
+  {
+    name: "password_confirmation",
+    type: "password",
+    label: "Confirm New Password",
+    placeholder: "••••••••",
+  },
+];
 
 export default function ResetPassword() {
-  const nav = useNavigate();
-  const [pw, setPw] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const form = useForm({
+    defaultValues: {
+      password: "",
+      password_confirmation: "",
+    },
+  });
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <AuthCard
       title="Set a new password"
       subtitle="Make it strong and memorable."
+      footer={
+        <Link to="/sign-in" className="text-primary hover:underline">
+          Back to sign in
+        </Link>
+      }
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (pw !== confirm) return toast.error("Passwords do not match");
-          toast.success("Password reset");
-          nav("/sign-in");
-        }}
-        className="space-y-4"
-      >
-        <div className="space-y-2">
-          <Label htmlFor="pw">New password</Label>
-          <Input
-            id="pw"
-            type="password"
-            value={pw}
-            onChange={(e) => setPw(e.target.value)}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirm">Confirm password</Label>
-          <Input
-            id="confirm"
-            type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
-            required
-          />
-        </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {fields.map((f, i) => (
+          <InputController key={i} control={form.control} f={f} />
+        ))}
         <Button type="submit" className="w-full">
           Reset password
         </Button>

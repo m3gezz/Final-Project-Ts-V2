@@ -1,13 +1,20 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import AuthCard from "@/components/cards/AuthCard";
+import { useForm } from "react-hook-form";
+import InputController from "@/components/controllers/InputController";
 
 export default function ForgotPassword() {
-  const nav = useNavigate();
-  const [email, setEmail] = useState("");
+  const form = useForm({
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <AuthCard
       title="Forgot your password?"
@@ -18,23 +25,16 @@ export default function ForgotPassword() {
         </Link>
       }
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          nav("/verify-reset-code", { state: { email } });
-        }}
-        className="space-y-4"
-      >
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <InputController
+          control={form.control}
+          f={{
+            name: "email",
+            type: "text",
+            label: "Email",
+            placeholder: "you@company.com",
+          }}
+        />
         <Button type="submit" className="w-full">
           Send reset code
         </Button>

@@ -1,44 +1,43 @@
-import { useNavigate } from "react-router-dom";
 import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { useState } from "react";
 import { Mail } from "lucide-react";
+import { useForm } from "react-hook-form";
+import InputOTPController from "@/components/controllers/InputOTPController";
 
 export default function VerifyEmail() {
-  const nav = useNavigate();
-  const [code, setCode] = useState("");
+  const form = useForm({
+    defaultValues: {
+      code: "",
+    },
+  });
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <AuthCard
       title="Verify your email"
       subtitle="We sent a 6-digit code to your inbox."
+      footer={
+        <button className="text-primary hover:underline">
+          Back to sign in
+        </button>
+      }
     >
       <div className="mb-6 flex justify-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground">
           <Mail className="h-6 w-6" />
         </div>
       </div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          nav("/app");
-        }}
-        className="space-y-6"
-      >
-        <div className="flex justify-center">
-          <InputOTP maxLength={6} value={code} onChange={setCode}>
-            <InputOTPGroup>
-              {[0, 1, 2, 3, 4, 5].map((i) => (
-                <InputOTPSlot key={i} index={i} />
-              ))}
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
-        <Button type="submit" className="w-full" disabled={code.length < 6}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <InputOTPController
+          control={form.control}
+          f={{
+            name: "code",
+          }}
+        />
+        <Button type="submit" className="w-full">
           Verify and continue
         </Button>
         <p className="text-center text-xs text-muted-foreground">

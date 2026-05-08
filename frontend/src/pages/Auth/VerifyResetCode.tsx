@@ -1,38 +1,38 @@
-import { useNavigate } from "react-router-dom";
 import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import InputOTPController from "@/components/controllers/InputOTPController";
+import { useForm } from "react-hook-form";
 
 export default function VerifyResetCode() {
-  const nav = useNavigate();
-  const [code, setCode] = useState("");
+  const form = useForm({
+    defaultValues: {
+      code: "",
+    },
+  });
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <AuthCard
       title="Enter reset code"
       subtitle="Check your email for the 6-digit code."
+      footer={
+        <Link to="/sign-in" className="text-primary hover:underline">
+          Back to sign in
+        </Link>
+      }
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          nav("/reset-password");
-        }}
-        className="space-y-6"
-      >
-        <div className="flex justify-center">
-          <InputOTP maxLength={6} value={code} onChange={setCode}>
-            <InputOTPGroup>
-              {[0, 1, 2, 3, 4, 5].map((i) => (
-                <InputOTPSlot key={i} index={i} />
-              ))}
-            </InputOTPGroup>
-          </InputOTP>
-        </div>
-        <Button type="submit" className="w-full" disabled={code.length < 6}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <InputOTPController
+          control={form.control}
+          f={{
+            name: "code",
+          }}
+        />
+        <Button type="submit" className="w-full">
           Continue
         </Button>
       </form>
