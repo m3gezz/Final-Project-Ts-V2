@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import InputOTPController from "@/components/controllers/InputOTPController";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { verificationCodeSchema } from "@/zod/Schemas";
 
 export default function VerifyEmail() {
   const form = useForm({
     defaultValues: {
       code: "",
     },
+    resolver: zodResolver(verificationCodeSchema),
   });
 
   const onSubmit = (data) => {

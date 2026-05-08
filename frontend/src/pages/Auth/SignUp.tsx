@@ -4,6 +4,11 @@ import { Button } from "@/components/ui/button";
 import InputController from "@/components/controllers/InputController";
 import { useForm } from "react-hook-form";
 import CheckBoxController from "@/components/controllers/CheckBoxController";
+import { useDispatch } from "react-redux";
+import { signUp } from "@/api/apiFunctions";
+import { useMutation } from "@tanstack/react-query";
+import { signUpSchema } from "@/zod/Schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const infoFields = [
   {
@@ -36,6 +41,7 @@ const passwordFields = [
 ];
 
 export default function SignUp() {
+  const disp = useDispatch();
   const form = useForm({
     defaultValues: {
       full_name: "",
@@ -44,11 +50,21 @@ export default function SignUp() {
       password_confirmation: "",
       terms: false,
     },
+    resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data) => signUp(data, disp),
+    onError: (err) => {
+      const res = err.response;
+      if (res.status !== 422) return alert("error");
+
+      const errors = res.data.errors;
+      for (const key in errors) {
+        form.setError(key, { message: errors[key] });
+      }
+    },
+  });
 
   return (
     <AuthCard
@@ -63,7 +79,10 @@ export default function SignUp() {
         </>
       }
     >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit((data) => mutate(data))}
+        className="space-y-4"
+      >
         {infoFields.map((f, i) => (
           <InputController key={i} control={form.control} f={f} />
         ))}
@@ -79,12 +98,8 @@ export default function SignUp() {
             name: "terms",
           }}
         />
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? "Creating account…" : "Create account"}
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? "Creating account…" : "Create account"}
         </Button>
       </form>
     </AuthCard>

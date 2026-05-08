@@ -4,6 +4,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { FieldError } from "../ui/field";
 
 export default function InputOTPController({ control, f }) {
   return (
@@ -11,7 +12,7 @@ export default function InputOTPController({ control, f }) {
       control={control}
       name={f?.name}
       render={({ field, fieldState }) => (
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-2">
           <InputOTP maxLength={6} {...field}>
             <InputOTPGroup>
               {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -23,6 +24,9 @@ export default function InputOTPController({ control, f }) {
               ))}
             </InputOTPGroup>
           </InputOTP>
+          {fieldState.error && (
+            <FieldError>{fieldState.error.message}</FieldError>
+          )}
         </div>
       )}
     />

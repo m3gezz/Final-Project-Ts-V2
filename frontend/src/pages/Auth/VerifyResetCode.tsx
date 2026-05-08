@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import InputOTPController from "@/components/controllers/InputOTPController";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { verificationCodeSchema } from "@/zod/Schemas";
 
 export default function VerifyResetCode() {
   const form = useForm({
     defaultValues: {
       code: "",
     },
+    resolver: zodResolver(verificationCodeSchema),
   });
 
   const onSubmit = (data) => {

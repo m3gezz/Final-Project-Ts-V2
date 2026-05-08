@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { resetPasswordSchema } from "@/zod/Schemas";
 
 const fields = [
   {
@@ -25,6 +27,7 @@ export default function ResetPassword() {
       password: "",
       password_confirmation: "",
     },
+    resolver: zodResolver(resetPasswordSchema),
   });
 
   const onSubmit = (data) => {

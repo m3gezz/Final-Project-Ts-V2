@@ -1,5 +1,6 @@
 import { Controller } from "react-hook-form";
 import { Checkbox } from "../ui/checkbox";
+import { Field, FieldError } from "../ui/field";
 
 export default function CheckBoxController({ control, f }) {
   return (
@@ -7,8 +8,8 @@ export default function CheckBoxController({ control, f }) {
       name={f?.name}
       control={control}
       render={({ field, fieldState }) => (
-        <>
-          <label className="flex items-start gap-2 text-sm text-muted-foreground">
+        <Field>
+          <label className="flex items-start gap-2 font-normal text-sm text-muted-foreground">
             <Checkbox
               onCheckedChange={field.onChange}
               checked={field.value}
@@ -27,7 +28,10 @@ export default function CheckBoxController({ control, f }) {
               .
             </span>
           </label>
-        </>
+          {fieldState.error && (
+            <FieldError>{fieldState.error.message}</FieldError>
+          )}
+        </Field>
       )}
     />
   );

@@ -3,6 +3,11 @@ import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
+import { useMutation } from "@tanstack/react-query";
+import { signIn } from "@/api/apiFunctions";
+import { useDispatch } from "react-redux";
+import { signInSchema } from "@/zod/Schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const fields = [
   {
@@ -24,16 +29,27 @@ const fields = [
 ];
 
 export default function SignIn() {
+  const disp = useDispatch();
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
+    resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data) => signIn(data, disp),
+    onError: (err) => {
+      const res = err.response;
+      if (res.status !== 422) return alert("error");
+
+      const errors = res.data.errors;
+      for (const key in errors) {
+        form.setError(key, { message: errors[key] });
+      }
+    },
+  });
 
   return (
     <AuthCard
@@ -48,16 +64,15 @@ export default function SignIn() {
         </>
       }
     >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit((data) => mutate(data))}
+        className="space-y-4"
+      >
         {fields.map((f, i) => (
           <InputController key={i} control={form.control} f={f} />
         ))}
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={form.formState.isSubmitting}
-        >
-          {form.formState.isSubmitting ? "Signing in…" : "Sign in"}
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? "Signing in…" : "Sign in"}
         </Button>
       </form>
     </AuthCard>
