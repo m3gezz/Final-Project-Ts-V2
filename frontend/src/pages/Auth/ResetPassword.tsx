@@ -20,7 +20,7 @@ export default function ResetPassword() {
           e.preventDefault();
           if (pw !== confirm) return toast.error("Passwords do not match");
           toast.success("Password reset");
-          nav("/signin");
+          nav("/sign-in");
         }}
         className="space-y-4"
       >
