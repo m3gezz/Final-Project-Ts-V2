@@ -1,16 +1,13 @@
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import SectionHeader from "@/components/common/SectionHeader";
-import { users } from "@/app/mock-data";
+import Header from "@/components/slices/Header";
+import { users } from "@/data/exp";
 
 export default function Users() {
   return (
     <div>
-      <SectionHeader
-        title="Users"
-        description="Find people to collaborate with."
-      />
+      <Header title="Users" description="Find people to collaborate with." />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {users.map((u) => (
           <Link

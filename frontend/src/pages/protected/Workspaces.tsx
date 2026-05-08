@@ -1,11 +1,11 @@
-import SectionHeader from "@/components/common/SectionHeader";
 import WorkspaceCard from "@/components/cards/WorkspaceCard";
-import { workspaces } from "@/app/mock-data";
+import Header from "@/components/slices/Header";
+import { workspaces } from "@/data/exp";
 
 export default function Workspaces() {
   return (
     <div>
-      <SectionHeader
+      <Header
         title="Workspaces"
         description="Private spaces where your teams collaborate."
       />

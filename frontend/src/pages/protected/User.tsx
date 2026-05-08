@@ -5,16 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProjectCard from "@/components/cards/ProjectCard";
-import { findUser, projects, users } from "@/app/mock-data";
-import { useAuth } from "@/app/AuthContext";
+import { findUser, projects, users } from "@/data/exp";
 
 export default function Profile() {
   const { id } = useParams();
-  const { user: me } = useAuth();
   const u = id
     ? users.find((x) => x.id === id) || findUser("u1")
     : findUser("u1");
-  const isMe = !id || id === me?.id || u.id === "u1";
+  const isMe = false;
 
   const owned = projects.filter((p) => p.ownerId === u.id);
   const joined = projects.filter(

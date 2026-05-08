@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "@/components/layout/AuthLayout";
+import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -13,7 +13,7 @@ export default function VerifyEmail() {
   const nav = useNavigate();
   const [code, setCode] = useState("");
   return (
-    <AuthLayout
+    <AuthCard
       title="Verify your email"
       subtitle="We sent a 6-digit code to your inbox."
     >
@@ -48,6 +48,6 @@ export default function VerifyEmail() {
           </button>
         </p>
       </form>
-    </AuthLayout>
+    </AuthCard>
   );
 }

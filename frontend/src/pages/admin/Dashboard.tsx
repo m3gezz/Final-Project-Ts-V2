@@ -1,5 +1,5 @@
-import SectionHeader from "@/components/common/SectionHeader";
-import { users, projects, workspaces } from "@/app/mock-data";
+import Header from "@/components/slices/Header";
+import { users, projects, workspaces } from "@/data/exp";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -28,7 +28,7 @@ export default function Dashboard() {
   ];
   return (
     <div className="space-y-8">
-      <SectionHeader
+      <Header
         title="Admin dashboard"
         description="Platform health at a glance."
       />

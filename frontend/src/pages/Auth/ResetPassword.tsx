@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "@/components/layout/AuthLayout";
+import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,7 @@ export default function ResetPassword() {
   const [pw, setPw] = useState("");
   const [confirm, setConfirm] = useState("");
   return (
-    <AuthLayout
+    <AuthCard
       title="Set a new password"
       subtitle="Make it strong and memorable."
     >
@@ -48,6 +48,6 @@ export default function ResetPassword() {
           Reset password
         </Button>
       </form>
-    </AuthLayout>
+    </AuthCard>
   );
 }

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "@/components/layout/AuthLayout";
+import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -12,7 +12,7 @@ export default function VerifyResetCode() {
   const nav = useNavigate();
   const [code, setCode] = useState("");
   return (
-    <AuthLayout
+    <AuthCard
       title="Enter reset code"
       subtitle="Check your email for the 6-digit code."
     >
@@ -36,6 +36,6 @@ export default function VerifyResetCode() {
           Continue
         </Button>
       </form>
-    </AuthLayout>
+    </AuthCard>
   );
 }

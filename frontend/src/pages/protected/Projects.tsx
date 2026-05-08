@@ -4,9 +4,9 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import SectionHeader from "@/components/common/SectionHeader";
+import Header from "@/components/slices/Header";
 import ProjectCard from "@/components/cards/ProjectCard";
-import { projects } from "@/app/mock-data";
+import { projects } from "@/data/exp";
 
 const categories = [
   "All",
@@ -35,7 +35,7 @@ export default function Projects() {
 
   return (
     <div>
-      <SectionHeader
+      <Header
         title="Projects"
         description="Discover ideas from the community and find your next collaboration."
         action={

@@ -3,11 +3,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import SectionHeader from "@/components/common/SectionHeader";
-import { invitations, findUser, findWorkspace } from "@/app/mock-data";
+import Header from "@/components/slices/Header";
+import { invitations, findUser, findWorkspace } from "@/data/exp";
 import { Inbox as InboxIcon, Check, X } from "lucide-react";
-import EmptyState from "@/components/common/EmptyState";
 import { toast } from "sonner";
+import EmptyCard from "@/components/cards/EmptyCard";
 
 export default function Inbox() {
   const me = "u1";
@@ -41,7 +41,7 @@ export default function Inbox() {
 
   return (
     <div>
-      <SectionHeader
+      <Header
         title="Inbox"
         description="Review invitations and join requests in one place."
       />
@@ -55,7 +55,7 @@ export default function Inbox() {
 
         <TabsContent value="received" className="mt-6 space-y-3">
           {received.length === 0 && (
-            <EmptyState
+            <EmptyCard
               icon={InboxIcon}
               title="Nothing here"
               description="You're all caught up."
@@ -106,7 +106,7 @@ export default function Inbox() {
 
         <TabsContent value="sent" className="mt-6 space-y-3">
           {sent.length === 0 && (
-            <EmptyState icon={InboxIcon} title="No sent requests" />
+            <EmptyCard icon={InboxIcon} title="No sent requests" />
           )}
           {sent.map((i) => {
             const to = findUser(i.toUserId);

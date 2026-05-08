@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Heart, Send, UserPlus, MessageCircle, Pencil } from "lucide-react";
-import { findProject, findUser } from "@/app/mock-data";
+import { findProject, findUser } from "@/data/exp";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";

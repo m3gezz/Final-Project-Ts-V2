@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "@/app/AuthContext";
-import { projects, workspaces } from "@/app/mock-data";
+import { projects, workspaces } from "@/data/exp";
 import ProjectCard from "@/components/cards/ProjectCard";
-import WorkspaceCard from "@/components/cards/WorkspaceCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Plus, FolderKanban, Briefcase, Inbox } from "lucide-react";
+import WorkspaceCard from "@/components/cards/WorkspaceCard";
 
 export default function Home() {
-  const { user } = useAuth();
+  const user = { full_name: "likan" };
   return (
     <div className="space-y-10">
       <div

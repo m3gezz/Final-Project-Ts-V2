@@ -8,8 +8,8 @@ import {
   messages as allMsgs,
   invitations as allInv,
   users,
-  Task,
-} from "@/app/mock-data";
+  type Task,
+} from "@/data/exp";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

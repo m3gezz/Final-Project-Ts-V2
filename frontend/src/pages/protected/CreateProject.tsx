@@ -6,8 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { X, Upload } from "lucide-react";
-import SectionHeader from "@/components/common/SectionHeader";
-import { findProject } from "@/app/mock-data";
+import Header from "@/components/slices/Header";
+import { findProject } from "@/data/exp";
 import { toast } from "sonner";
 
 export default function CreateProject({ mode }: { mode: "create" | "edit" }) {
@@ -42,7 +42,7 @@ export default function CreateProject({ mode }: { mode: "create" | "edit" }) {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <SectionHeader
+      <Header
         title={mode === "create" ? "Create a project" : "Edit project"}
         description="Tell the community what you're building and the team you need."
       />

@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import AuthLayout from "@/components/layout/AuthLayout";
+import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/app/AuthContext";
 
 export default function SignIn() {
-  const { signIn } = useAuth();
   const nav = useNavigate();
   const loc = useLocation() as { state?: { from?: string } };
   const [email, setEmail] = useState("");
@@ -17,13 +15,12 @@ export default function SignIn() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await signIn(email || "alex@collab.app", password);
     setLoading(false);
     nav(loc.state?.from || "/app", { replace: true });
   };
 
   return (
-    <AuthLayout
+    <AuthCard
       title="Welcome back"
       subtitle="Sign in to continue collaborating."
       footer={
@@ -70,6 +67,6 @@ export default function SignIn() {
           {loading ? "Signing in…" : "Sign in"}
         </Button>
       </form>
-    </AuthLayout>
+    </AuthCard>
   );
 }

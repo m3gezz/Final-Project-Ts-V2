@@ -7,8 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { X, Camera } from "lucide-react";
-import SectionHeader from "@/components/common/SectionHeader";
-import { findUser } from "@/app/mock-data";
+import Header from "@/components/slices/Header";
+import { findUser } from "@/data/exp";
 import { toast } from "sonner";
 
 export default function UserEdit() {
@@ -30,7 +30,7 @@ export default function UserEdit() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <SectionHeader
+      <Header
         title="Edit profile"
         description="Keep your profile fresh and discoverable."
       />

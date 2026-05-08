@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import AuthLayout from "@/components/layout/AuthLayout";
+import AuthCard from "@/components/cards/AuthCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useAuth } from "@/app/AuthContext";
 import { toast } from "sonner";
 
 export default function SignUp() {
-  const { signUp } = useAuth();
   const nav = useNavigate();
   const [form, setForm] = useState({
     full_name: "",
@@ -26,11 +24,6 @@ export default function SignUp() {
       return toast.error("Passwords do not match");
     if (!agreed) return toast.error("Please accept the Terms to continue");
     setLoading(true);
-    await signUp({
-      full_name: form.full_name,
-      email: form.email,
-      password: form.password,
-    });
     setLoading(false);
     nav("/verify-email");
   };
@@ -40,7 +33,7 @@ export default function SignUp() {
       setForm({ ...form, [k]: e.target.value });
 
   return (
-    <AuthLayout
+    <AuthCard
       title="Create your account"
       subtitle="Start sharing ideas and building teams."
       footer={
@@ -116,6 +109,6 @@ export default function SignUp() {
           {loading ? "Creating account…" : "Create account"}
         </Button>
       </form>
-    </AuthLayout>
+    </AuthCard>
   );
 }
