@@ -1,5 +1,5 @@
 import { api } from "./axios";
-import { setAuth } from "@/redux/authSlice";
+import { setAuth, unsetAuth } from "@/redux/authSlice";
 
 //Token
 const refresh = async (disp) => {
@@ -24,6 +24,12 @@ const signIn = async (data, disp) => {
 const signUp = async (data, disp) => {
   const res = await api.post("sign-up", data);
   disp(setAuth(res?.data));
+  return res;
+};
+
+const signOut = async (disp) => {
+  const res = await api.post("sign-out");
+  disp(unsetAuth());
   return res;
 };
 
@@ -116,6 +122,7 @@ export {
   me,
   signUp,
   signIn,
+  signOut,
   getProject,
   getSkills,
   getUser,

@@ -11,7 +11,7 @@ export default function General() {
   const { isLoading } = useQuery({
     queryKey: ["refresh"],
     queryFn: () => refresh(disp),
-    retry: 1,
+    retry: 0,
   });
 
   return (
