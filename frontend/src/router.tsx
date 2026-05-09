@@ -97,7 +97,7 @@ const routes = [
             element: <ProjectManipulator mode="create" />,
           },
           {
-            path: "project/:id/edit",
+            path: "projects/:id/edit",
             element: <ProjectManipulator mode="edit" />,
           },
           {

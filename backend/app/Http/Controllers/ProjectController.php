@@ -17,9 +17,9 @@ class ProjectController extends Controller
     {
         $search = $request->search;
         $category_id = $request->category_id;
-        $order = $request->order;
+        $sort = $request->sort;
 
-        $query = Project::where('privacy', 'public')->with(['user','members.user', 'skills', 'category'])->withCount(['comments', 'likes']);
+        $query = Project::where('private', 0)->with(['user','members.user', 'skills', 'category'])->withCount(['comments', 'likes']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -35,10 +35,10 @@ class ProjectController extends Controller
             $query->where('category_id', $category_id);
         }
 
-        if ($order === 'recent') {
-            $query->latest();
-        } else {   
+        if ($sort !== 1) {
             $query->orderByDesc('likes_count');
+        } else {   
+            $query->latest();
         }
 
         $projects = $query->paginate(8);
@@ -56,9 +56,9 @@ class ProjectController extends Controller
                 'title' => ['required'],
                 'description' => ['required'],
                 'category_id' => ['required'],
-                'privacy'=>['required'],
+                'private'=>['required'],
                 'manifesto'=>['required'],
-                'img_url'=>['sometimes'],
+                'image'=>['sometimes'],
                 'skills'=>['sometimes'],
             ]
         );
@@ -79,7 +79,7 @@ class ProjectController extends Controller
         $projectMember = [
             'project_id' => $project->id,
             'user_id' => $project->user_id,
-            'role' => "admin",
+            'role' => "owner",
         ];
         
         ProjectMember::create($projectMember);
@@ -102,7 +102,7 @@ class ProjectController extends Controller
         }])->loadCount(['comments','likes']);
 
         $project['isLiked'] = $project->likes()->where('user_id', $request->user()->id)->exists();
-        $project['hasRequest'] = $project->enterRequests()->where('user_id', $request->user()->id)->exists();
+        $project['isRequested'] = $project->enterRequests()->where('user_id', $request->user()->id)->exists();
 
         $membersIds = $project->members->pluck('id')->toArray();
         foreach ($project['comments'] as $comment) {

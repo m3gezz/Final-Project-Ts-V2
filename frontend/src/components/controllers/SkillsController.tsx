@@ -11,6 +11,7 @@ export default function SkillsController({ form, skills, setSkills }) {
   const { data: allowedSkills } = useQuery({
     queryKey: ["skills"],
     queryFn: getSkills,
+    staleTime: Infinity,
   });
 
   const handleSkill = (skill) => {

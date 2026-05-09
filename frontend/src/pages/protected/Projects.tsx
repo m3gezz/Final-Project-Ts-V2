@@ -1,37 +1,62 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import Header from "@/components/slices/Header";
 import ProjectCard from "@/components/cards/ProjectCard";
-import { projects } from "@/data/exp";
-
-const categories = [
-  "All",
-  "AI",
-  "Productivity",
-  "Design",
-  "Mobile",
-  "Marketing",
-];
-const sorts = ["Most liked", "Newest", "Most active"];
+import { useQueries } from "@tanstack/react-query";
+import { getCategories, getProjects } from "@/api/apiFunctions";
+import { useForm } from "react-hook-form";
+import InputController from "@/components/controllers/InputController";
+import SelectController from "@/components/controllers/SelectController";
 
 export default function Projects() {
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState("All");
-  const [sort, setSort] = useState("Most liked");
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    to: 0,
+    total: 0,
+  });
+  const form = useForm({
+    defaultValues: {
+      search: "",
+      category_id: "0",
+      sort: "1",
+    },
+  });
+  const [search, category_id, sort] = form.watch([
+    "search",
+    "category_id",
+    "sort",
+  ]);
 
-  const list = useMemo(() => {
-    let r = projects.filter(
-      (p) =>
-        (cat === "All" || p.category === cat) &&
-        p.title.toLowerCase().includes(q.toLowerCase()),
-    );
-    if (sort === "Most liked") r = [...r].sort((a, b) => b.likes - a.likes);
-    return r;
-  }, [q, cat, sort]);
+  const [{ data: projects }, { data: categories }] = useQueries({
+    queries: [
+      {
+        queryKey: [
+          "projects",
+          pagination.current_page,
+          search,
+          category_id,
+          sort,
+        ],
+
+        queryFn: () =>
+          getProjects({
+            pagination,
+            setPagination,
+            search,
+            category_id,
+            sort,
+          }),
+      },
+
+      {
+        queryKey: ["categories"],
+        queryFn: getCategories,
+      },
+    ],
+  });
 
   return (
     <div>
@@ -48,39 +73,45 @@ export default function Projects() {
         }
       />
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <Input
-          className="max-w-xs"
-          placeholder="Search projects…"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
-        <div className="flex flex-wrap gap-1.5">
-          {categories.map((c) => (
-            <Badge
-              key={c}
-              variant={cat === c ? "default" : "secondary"}
-              onClick={() => setCat(c)}
-              className="cursor-pointer"
-            >
-              {c}
-            </Badge>
-          ))}
-        </div>
-        <div className="ml-auto flex gap-1.5">
-          {sorts.map((s) => (
-            <Badge
-              key={s}
-              variant={sort === s ? "default" : "outline"}
-              onClick={() => setSort(s)}
-              className="cursor-pointer"
-            >
-              {s}
-            </Badge>
-          ))}
+        <div className="flex w-full lg:max-w-2xl gap-2 ml-auto">
+          <InputController
+            control={form.control}
+            f={{
+              name: "search",
+              placeholder: "Search projects…",
+            }}
+          />
+          <div className="flex gap-2">
+            <SelectController
+              control={form.control}
+              f={{ name: "category_id" }}
+              options={[
+                {
+                  id: 0,
+                  label: "All",
+                },
+                ...(categories ?? []),
+              ]}
+            />
+            <SelectController
+              control={form.control}
+              f={{ name: "sort" }}
+              options={[
+                {
+                  id: 1,
+                  label: "Most liked",
+                },
+                {
+                  id: 2,
+                  label: "Newest",
+                },
+              ]}
+            />
+          </div>
         </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {list.map((p) => (
+        {projects?.map((p) => (
           <ProjectCard key={p.id} project={p} />
         ))}
       </div>

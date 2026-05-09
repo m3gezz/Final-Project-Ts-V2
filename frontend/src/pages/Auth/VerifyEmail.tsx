@@ -5,8 +5,12 @@ import { useForm } from "react-hook-form";
 import InputOTPController from "@/components/controllers/InputOTPController";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { verificationCodeSchema } from "@/zod/Schemas";
+import { useMutation } from "@tanstack/react-query";
+import { signOut } from "@/api/apiFunctions";
+import { useDispatch } from "react-redux";
 
 export default function VerifyEmail() {
+  const disp = useDispatch();
   const form = useForm({
     defaultValues: {
       code: "",
@@ -18,13 +22,21 @@ export default function VerifyEmail() {
     console.log(data);
   };
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => signOut(disp),
+  });
+
   return (
     <AuthCard
       title="Verify your email"
       subtitle="We sent a 6-digit code to your inbox."
       footer={
-        <button className="text-primary hover:underline">
-          Back to sign in
+        <button
+          onClick={() => mutate()}
+          className="text-primary hover:underline"
+          disabled={isPending}
+        >
+          {isPending ? "Backing up..." : "Back to sign in"}
         </button>
       }
     >

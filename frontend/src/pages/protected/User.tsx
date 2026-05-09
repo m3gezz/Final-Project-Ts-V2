@@ -35,9 +35,9 @@ export default function User() {
             <p className="text-muted-foreground">@{profile?.username}</p>
             <p className="mt-3 max-w-2xl">{profile?.bio}</p>
             <div className="mt-4 flex flex-wrap gap-1.5">
-              {profile?.skills.map((s) => (
-                <Badge key={s} variant="secondary">
-                  {s}
+              {profile?.skills?.map((s) => (
+                <Badge key={s?.id} variant="secondary">
+                  {s?.label}
                 </Badge>
               ))}
             </div>

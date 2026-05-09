@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('username',15)->nullable();
             $table->string('bio',255)->nullable();
             $table->text('about')->nullable();
-            $table->boolean('private')->default(1);
+            $table->boolean('private')->default(0);
             $table->text('professional_title')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('img_url')->nullable();
+            $table->string('image')->nullable();
             $table->string('manifesto');
-            $table->string('privacy')->default('public');
+            $table->string('private')->default(0);
             $table->text('description');
             $table->foreignId('category_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');

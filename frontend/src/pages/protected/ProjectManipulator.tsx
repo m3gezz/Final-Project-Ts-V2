@@ -2,21 +2,22 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Upload, Earth, TriangleAlert } from "lucide-react";
+import { Upload, TriangleAlert, Lock } from "lucide-react";
 import Header from "@/components/slices/Header";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Controller, useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import SkillsController from "@/components/controllers/SkillsController";
 import TextareaController from "@/components/controllers/TextareaController";
 import SelectController from "@/components/controllers/SelectController";
-import { checkProject, getCategories, getProject } from "@/api/apiFunctions";
+import { checkProject, getCategories } from "@/api/apiFunctions";
 import { Checkbox } from "@/components/ui/checkbox";
 import DeleteAccModal from "@/components/modals/DeleteAccModal";
 import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProjectSchema } from "@/zod/schemas";
+import { api } from "@/api/axios";
 
 const textareaFields = [
   {
@@ -38,16 +39,13 @@ export default function ProjectManipulator({
   let exist = {};
   if (mode === "edit") {
     const { id } = useParams();
-
-    const { isError, isLoading, isSuccess } = useQuery({
+    const {
+      data: project,
+      isError,
+      isLoading,
+    } = useQuery({
       queryKey: ["project-check", id],
       queryFn: () => checkProject(id),
-    });
-
-    const { data: project } = useQuery({
-      queryKey: ["project", id],
-      queryFn: () => getProject(id),
-      enabled: isSuccess,
     });
 
     if (isLoading) {
@@ -58,12 +56,13 @@ export default function ProjectManipulator({
       return <>Error</>;
     }
 
-    exist = project;
+    exist = project ?? {};
   }
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
+    staleTime: Infinity,
   });
   const [skills, setSkills] = useState<[]>(exist?.skills ?? []);
   const [preview, setPreview] = useState(exist?.image ?? "");
@@ -80,9 +79,23 @@ export default function ProjectManipulator({
     resolver: zodResolver(createProjectSchema),
   });
 
-  const onSubmit = (data) => {
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data) => createProject(data),
+    onError: (err) => {
+      const res = err.response;
+      if (res.status !== 422) return alert("error");
+
+      const errors = res.data.errors;
+      for (const key in errors) {
+        form.setError(key, { message: errors[key] });
+      }
+    },
+  });
+
+  const createProject = (data) => {
     const projectSkills = skills.map((s) => s.id);
-    console.log({ ...data, skills: projectSkills });
+    const res = api.post("projects", { ...data, skills: projectSkills });
+    return res;
   };
 
   return (
@@ -92,7 +105,7 @@ export default function ProjectManipulator({
         description="Tell the community what you're building and the team you need."
       />
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit((data) => mutate(data))}
         className="space-y-6 rounded-xl border bg-card p-6"
         style={{ boxShadow: "var(--shadow-soft)" }}
       >
@@ -166,9 +179,9 @@ export default function ProjectManipulator({
                     <div className="p-4 h-full">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
-                          <Earth className="h-4 w-4" />
+                          <Lock className="h-4 w-4" />
                           <span className="flex items-center gap-2">
-                            Public
+                            Private
                           </span>
                         </div>
 
@@ -224,8 +237,12 @@ export default function ProjectManipulator({
           <Button type="button" variant="ghost" onClick={() => nav(-1)}>
             Cancel
           </Button>
-          <Button type="submit">
-            {mode === "create" ? "Create project" : "Save changes"}
+          <Button type="submit" disabled={isPending}>
+            {mode === "create"
+              ? isPending
+                ? "Creating"
+                : "Create project"
+              : "Save changes"}
           </Button>
         </div>
       </form>

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Earth, Lock, TriangleAlert } from "lucide-react";
+import { Camera, Lock, TriangleAlert } from "lucide-react";
 import Header from "@/components/slices/Header";
 import { Controller, useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import InputController from "@/components/controllers/InputController";
 import TextareaController from "@/components/controllers/TextareaController";
 import SkillsController from "@/components/controllers/SkillsController";
@@ -15,8 +15,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import DeleteAccModal from "@/components/modals/DeleteAccModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ModifyPassModal from "@/components/modals/ModifyPassModal";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/api/axios";
+import { me } from "@/api/apiFunctions";
 
 const fields = [
   {
@@ -57,13 +58,16 @@ export default function UserEdit() {
       email: user?.email ?? "",
       bio: user?.bio ?? "",
       about: user?.about ?? "",
-      professional_title: "",
+      professional_title: user?.professional_title ?? "",
       skills: "",
-      private: false,
+      private: !!user?.private,
     },
     resolver: zodResolver(userEditSchema),
   });
+
   const nav = useNavigate();
+  const disp = useDispatch();
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => updateUser(data),
@@ -75,6 +79,9 @@ export default function UserEdit() {
       for (const key in errors) {
         form.setError(key, { message: errors[key] });
       }
+    },
+    onSuccess: () => {
+      queryClient.fetchQuery({ queryKey: ["me"], queryFn: () => me(disp) });
     },
   });
 
@@ -99,8 +106,11 @@ export default function UserEdit() {
       dirtyData = { ...dirtyData, [key]: data[key] };
     }
 
-    const res = await api.patch(`users/${user?.id}`, dirtyData);
-    console.log(res);
+    const res = await api.patch(`users/${user?.id}`, {
+      ...dirtyData,
+      skills: skillsIds,
+    });
+
     return res;
   };
 
@@ -182,9 +192,9 @@ export default function UserEdit() {
                     <div className="p-4 h-full">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
-                          <Earth className="h-4 w-4" />
+                          <Lock className="h-4 w-4" />
                           <span className="flex items-center gap-2">
-                            Public
+                            Private
                           </span>
                         </div>
 

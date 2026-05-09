@@ -11,7 +11,7 @@ export default function InputController({ control, f }) {
       render={({ field, fieldState }) => (
         <Field className="space-y-2" data-invalid={fieldState.invalid}>
           <div className="flex items-center justify-between">
-            <FieldLabel htmlFor={f?.name}>{f?.label}</FieldLabel>
+            {f?.label && <FieldLabel htmlFor={f?.name}>{f?.label}</FieldLabel>}
             {f?.link && (
               <Link
                 to={f?.link?.path}

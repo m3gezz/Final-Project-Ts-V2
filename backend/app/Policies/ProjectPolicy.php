@@ -21,7 +21,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return $project->privacy === "public" || $user->id === $project->user_id || $user->admin;
+        return !$project->private || $user->id === $project->user_id || $user->admin;
     }
 
     /**
