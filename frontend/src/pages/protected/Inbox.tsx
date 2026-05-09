@@ -45,7 +45,7 @@ export default function Inbox() {
         title="Inbox"
         description="Review invitations and join requests in one place."
       />
-      <Tabs defaultValue="received">
+      <Tabs defaultValue="received" className="flex flex-col">
         <TabsList>
           <TabsTrigger value="received">
             Received ({received.length})

@@ -39,42 +39,47 @@ const resetPasswordSchema = z
 
 //Projects
 const createProjectSchema = z.object({
-  img_url: z.file().nullable(),
+  image: z.file().nullable(),
   title: z.string(),
   description: z.string(),
   category_id: z.string(),
   skills: z.string(),
-  privacy: z.string(),
+  private: z.boolean(),
   manifesto: z.string(),
 });
 
-const profileEditSchema = z.object({
+const userEditSchema = z.object({
+  avatar: z.file().nullable(),
   full_name: z.string(),
   username: z.string(),
   professional_title: z.string(),
-  avatar_url: z.file().nullable(),
   bio: z.string(),
   about: z.string(),
   email: z.string(),
-  public_profile: z.boolean(),
-  status: z.boolean(),
+  private: z.boolean(),
   skills: z.string(),
-  github: z.string(),
-  twitter: z.string(),
-  linkedin: z.string(),
-  personal_web: z.string(),
 });
 
-const changePasswordSchema = z.object({
-  old_password: z.string(),
-  new_password: z.string(),
-  new_password_confirmation: z.string(),
-});
+const modifyPasswordSchema = z
+  .object({
+    password: z.string(),
+    new_password: z.string(),
+    new_password_confirmation: z.string(),
+  })
+  .refine((vals) => vals.new_password === vals.new_password_confirmation, {
+    message: "Passwords must match",
+    path: ["new_password_confirmation"],
+  });
 
-const deleteAccountSchema = z.object({
-  password: z.string(),
-  password_confirmation: z.string(),
-});
+const deleteAccountSchema = z
+  .object({
+    password: z.string(),
+    password_confirmation: z.string(),
+  })
+  .refine((vals) => vals.password === vals.password_confirmation, {
+    message: "Passwords must match",
+    path: ["password_confirmation"],
+  });
 
 const createCommentSchema = z.object({
   content: z.string(),
@@ -87,4 +92,8 @@ export {
   verificationCodeSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  userEditSchema,
+  deleteAccountSchema,
+  modifyPasswordSchema,
+  createProjectSchema,
 };

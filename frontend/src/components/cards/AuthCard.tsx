@@ -1,20 +1,28 @@
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 export default function AuthLCard({
   title,
   subtitle,
   children,
   footer,
+  className,
 }: {
   title: string;
   subtitle?: string;
   children: ReactNode;
   footer?: ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-4 py-12">
+    <div
+      className={cn(
+        "relative flex min-h-screen items-center justify-center px-4 py-12",
+        className,
+      )}
+    >
       <div
         className="pointer-events-none absolute inset-0"
         style={{ background: "var(--gradient-hero)" }}

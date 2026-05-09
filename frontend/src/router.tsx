@@ -10,7 +10,6 @@ import Projects from "./pages/protected/Projects";
 import Project from "./pages/protected/Project";
 import Users from "./pages/protected/Users";
 import UserEdit from "./pages/protected/UserEdit";
-import CreateProject from "./pages/protected/CreateProject";
 import Workspaces from "./pages/protected/Workspaces";
 import Workspace from "./pages/protected/Workspace";
 import Inbox from "./pages/protected/Inbox";
@@ -22,6 +21,7 @@ import Guest from "./layouts/Guest";
 import Home from "./pages/protected/Home";
 import User from "./pages/protected/User";
 import Landing from "./pages/Landing";
+import ProjectManipulator from "./pages/protected/ProjectManipulator";
 
 const routes = [
   {
@@ -94,7 +94,11 @@ const routes = [
           },
           {
             path: "create-project",
-            element: <CreateProject />,
+            element: <ProjectManipulator mode="create" />,
+          },
+          {
+            path: "project/:id/edit",
+            element: <ProjectManipulator mode="edit" />,
           },
           {
             path: "workspaces",

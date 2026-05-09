@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 export default function Header({
   title,
   description,
@@ -7,7 +5,7 @@ export default function Header({
 }: {
   title: string;
   description?: string;
-  action?: ReactNode;
+  action?: React.ReactNode;
 }) {
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-3">

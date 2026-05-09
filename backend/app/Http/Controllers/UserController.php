@@ -126,17 +126,12 @@ class UserController extends Controller
             'full_name' => ['sometimes','min:5','max:30'],
             'username' => ['sometimes'],
             'professional_title' => ['sometimes'],
-            'avatar_url' => ['sometimes'],
+            'avatar' => ['sometimes'],
             'bio' => ['sometimes'],
             'about' => ['sometimes'],
-            'public_profile' => ['sometimes'],
-            'status' => ['sometimes'],
-            'github' => ['sometimes'],
-            'twitter' => ['sometimes'],
-            'linkedin' => ['sometimes'],
-            'personal_web' => ['sometimes'],
+            'private' => ['sometimes'],
             'email' => ['sometimes','email','unique:users,email'],
-            'old_password' => ['sometimes'],
+            'password' => ['sometimes'],
             'new_password' => ['sometimes','confirmed'],
             'skills' => ['sometimes']
         ]);
@@ -152,15 +147,19 @@ class UserController extends Controller
             $user->skills()->sync($fields['skills']);
         }
 
-        if ($request->has('old_password') && $request->has('new_password')) {
+        if ($request->has('password') && $request->has('new_password')) {
 
-            if (!Hash::check($fields['old_password'], $user->password)) {
+            if (!Hash::check($fields['password'], $user->password)) {
                 throw ValidationException::withMessages([
-                    'old_password' => ['The provided credentials are incorrect.'],
+                    'password' => ['The provided credentials are incorrect.'],
                 ]);
             }
 
             $user->password = Hash::make($fields['new_password']);
+            $user->save();
+
+            $data = ['user' => $user->load('skills')];
+            return response()->json($data);
         }
 
         if ($request->has('email')) {

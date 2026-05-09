@@ -13,18 +13,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('avatar_url')->nullable();
+            $table->string('avatar')->nullable();
             $table->string('full_name',30);
             $table->string('username',15)->nullable();
             $table->string('bio',255)->nullable();
             $table->text('about')->nullable();
-            $table->boolean('public_profile')->default(1);
-            $table->boolean('status')->default(1);
+            $table->boolean('private')->default(1);
             $table->text('professional_title')->nullable();
-            $table->text('github')->nullable();
-            $table->text('twitter')->nullable();
-            $table->text('linkedin')->nullable();
-            $table->text('personal_web')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

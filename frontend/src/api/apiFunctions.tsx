@@ -39,6 +39,18 @@ const getUser = async (id: string | undefined) => {
   return res?.data?.profile;
 };
 
+const updatePassword = async (id, data) => {
+  const res = await api.patch(`users/${id}`, data);
+  return res;
+};
+
+const deleteAccount = async (id, data) => {
+  const res = await api.delete(`users/${id}`, {
+    data: data,
+  });
+  return res;
+};
+
 const getProject = async (id: string | undefined) => {
   const res = await api.get(`projects/${id}`);
   return res?.data;
@@ -81,7 +93,7 @@ const getUserProjects = async (searcher) => {
   return res?.data?.data;
 };
 
-const editProject = async (id) => {
+const checkProject = async (id) => {
   const res = api.get(`projects-edit/${id}`);
   return res;
 };
@@ -128,7 +140,7 @@ export {
   getUser,
   getCategories,
   getProjects,
-  editProject,
+  checkProject,
   likeProject,
   deleteComment,
   createComment,
@@ -136,4 +148,6 @@ export {
   requestJoin,
   getInbox,
   cancelRequest,
+  updatePassword,
+  deleteAccount,
 };
