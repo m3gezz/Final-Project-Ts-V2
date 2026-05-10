@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { modifyPasswordSchema } from "@/zod/schemas";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { api } from "@/api/axios";
 import { updatePassword } from "@/api/apiFunctions";
 
 const fields = [

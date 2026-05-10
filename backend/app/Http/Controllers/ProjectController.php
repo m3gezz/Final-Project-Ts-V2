@@ -27,6 +27,9 @@ class ProjectController extends Controller
                 ->orWhere('description', 'like', "%$search%")
                 ->orWhereHas('skills', function ($q) use ($search) {
                     $q->where('label','like', "%$search%");
+                })
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('full_name','like', "%$search%")->orWhere('username','like', "%$search%");
                 });
             });
         }
@@ -35,10 +38,10 @@ class ProjectController extends Controller
             $query->where('category_id', $category_id);
         }
 
-        if ($sort !== 1) {
+        if ($sort == 1) {
             $query->orderByDesc('likes_count');
         } else {   
-            $query->latest();
+            $query->orderByDesc('created_at');
         }
 
         $projects = $query->paginate(8);

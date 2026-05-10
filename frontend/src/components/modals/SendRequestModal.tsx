@@ -13,8 +13,6 @@ export default function SendRequestModal({ project_id }) {
     },
   });
 
-  console.log(project_id);
-
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => requestJoin(data),

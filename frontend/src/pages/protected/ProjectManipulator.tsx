@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Upload, TriangleAlert, Lock } from "lucide-react";
 import Header from "@/components/slices/Header";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Controller, useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import SkillsController from "@/components/controllers/SkillsController";
 import TextareaController from "@/components/controllers/TextareaController";
 import SelectController from "@/components/controllers/SelectController";
-import { checkProject, getCategories } from "@/api/apiFunctions";
+import { checkProject, getCategories, updateProject } from "@/api/apiFunctions";
 import { Checkbox } from "@/components/ui/checkbox";
-import DeleteAccModal from "@/components/modals/DeleteAccModal";
+import DeleteProjectModal from "@/components/modals/DeleteProjectModal";
 import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProjectSchema } from "@/zod/schemas";
@@ -36,39 +36,30 @@ export default function ProjectManipulator({
   mode: "create" | "edit";
 }) {
   const nav = useNavigate();
-  let exist = {};
-  if (mode === "edit") {
-    const { id } = useParams();
-    const {
-      data: project,
-      isError,
-      isLoading,
-    } = useQuery({
-      queryKey: ["project-check", id],
-      queryFn: () => checkProject(id),
-    });
-
-    if (isLoading) {
-      return <Spinner />;
-    }
-
-    if (isError) {
-      return <>Error</>;
-    }
-
-    exist = project ?? {};
-  }
-
-  const { data: categories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-    staleTime: Infinity,
+  const { id } = useParams();
+  const [
+    { data: project, isError, isLoading, isSuccess },
+    { data: categories },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ["project-check", id],
+        queryFn: () => checkProject(id),
+        retry: 0,
+      },
+      {
+        queryKey: ["categories"],
+        queryFn: getCategories,
+        staleTime: Infinity,
+      },
+    ],
   });
-  const [skills, setSkills] = useState<[]>(exist?.skills ?? []);
-  const [preview, setPreview] = useState(exist?.image ?? "");
+
+  const [skills, setSkills] = useState<[]>([]);
+  const [preview, setPreview] = useState("");
   const form = useForm({
     defaultValues: {
-      image: exist?.image ?? null,
+      image: null,
       title: "",
       description: "",
       category_id: "1",
@@ -79,8 +70,27 @@ export default function ProjectManipulator({
     resolver: zodResolver(createProjectSchema),
   });
 
+  useEffect(() => {
+    if (!isSuccess) return;
+    setSkills(project?.skills);
+    setPreview(project?.image ?? "");
+    form.setValues({
+      image: null,
+      title: project?.title ?? "",
+      description: project?.description ?? "",
+      category_id: String(project?.category_id) ?? "1",
+      skills: "",
+      manifesto: project?.manifesto ?? "",
+      private: !!Number(project?.private),
+    });
+  }, [isSuccess]);
+
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: (data) => createProject(data),
+    mutationFn: (data) => {
+      if (mode === "create") return createProject(data);
+      return updateProject(id, data);
+    },
     onError: (err) => {
       const res = err.response;
       if (res.status !== 422) return alert("error");
@@ -90,6 +100,11 @@ export default function ProjectManipulator({
         form.setError(key, { message: errors[key] });
       }
     },
+    onSuccess: (data) => {
+      mode === "edit" &&
+        queryClient.invalidateQueries({ queryKey: ["project", String(id)] });
+      nav(`/projects/${data?.data?.id}`);
+    },
   });
 
   const createProject = (data) => {
@@ -97,6 +112,14 @@ export default function ProjectManipulator({
     const res = api.post("projects", { ...data, skills: projectSkills });
     return res;
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (isError && mode === "edit") {
+    return <>Error</>;
+  }
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -226,7 +249,7 @@ export default function ProjectManipulator({
                     </DialogTrigger>
                   </div>
 
-                  <DeleteAccModal id={6} />
+                  <DeleteProjectModal id={id} />
                 </Dialog>
               </div>
             )}
@@ -240,9 +263,11 @@ export default function ProjectManipulator({
           <Button type="submit" disabled={isPending}>
             {mode === "create"
               ? isPending
-                ? "Creating"
+                ? "Creating..."
                 : "Create project"
-              : "Save changes"}
+              : isPending
+                ? "Saving..."
+                : "Save changes"}
           </Button>
         </div>
       </form>

@@ -61,6 +61,9 @@ export default function SkillsController({ form, skills, setSkills }) {
               Add
             </Button>
           </div>
+          {fieldState.error && (
+            <FieldError>{fieldState.error.message}</FieldError>
+          )}
           <div className="flex flex-wrap gap-2">
             {skills?.slice(0, 3)?.map((s) => (
               <Badge key={s?.id} variant="secondary" className="gap-1">
@@ -70,11 +73,8 @@ export default function SkillsController({ form, skills, setSkills }) {
                 </button>
               </Badge>
             ))}
-            {skills.length > 3 && <Badge variant="secondary">•••</Badge>}
+            {skills?.length > 3 && <Badge variant="secondary">•••</Badge>}
           </div>
-          {fieldState.error && (
-            <FieldError>{fieldState.error.message}</FieldError>
-          )}
         </Field>
       )}
     />

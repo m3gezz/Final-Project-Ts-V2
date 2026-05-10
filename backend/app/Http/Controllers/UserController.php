@@ -47,16 +47,16 @@ class UserController extends Controller
     }
 
     public function getUserProjects(User $user,Request $request) {
-
-        $data = Project::whereHas('members', function ($q) use($user) {
-            $q->where('user_id',$user->id)->where('role','!=','admin');
-        })->with(['user', 'category'])->withCount(['comments', 'likes']); 
             
         if ($request->type === 'owned') {
             $data = Project::where('user_id', $user->id)->with(['user', 'category'])->withCount(['comments', 'likes']);
+        } else {
+            $data = Project::whereHas('members', function ($q) use($user) {
+                $q->where('user_id',$user->id)->where('role','!=','owner');
+            })->with(['user', 'category'])->withCount(['comments', 'likes']); 
         }
 
-        $data = $data->paginate(2);
+        $data = $data->paginate(4);
 
         return response()->json($data);
     }
@@ -67,49 +67,20 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        $user->load(['skills', 'badges'])->loadCount([ 'memberships as total_projects','projects','memberships as membershipProjects_count' => function ($q) {
-            $q->where('role', '!=', 'admin');
+        $user->load(['skills', 'badges'])->loadCount([ 'projects','memberships as worked_count' => function ($q) {
+            $q->where('role', '!=', 'owner');
         }]);
 
-        $links = [];
-
-        if ($user->github) {
-            $links = [...$links, [
-                "label"=> "Git",
-                "link"=> $user->github,
-                "desc"=> "See Repositories",
-                ]
-            ];
-        }
-
-        if ($user->twitter) {
-            $links = [...$links, [
-                "label"=> "Twitter/X",
-                "link"=> $user->twitter,
-                "desc"=> "See Repositories",
-                ]
-            ];
-        }
-
-        if ($user->linkedin) {
-            $links = [...$links, [
-                "label"=> "Linked In",
-                "link"=> $user->linkedin,
-                "desc"=> "See Repositories",
-                ]
-            ];
-        }
-
-        if ($user->personal_web) {
-            $links = [...$links, [
-                "label"=> "Portfolio",
-                "link"=> $user->personal_web,
-                "desc"=> "See Repositories",
-                ]
-            ];
-        }
-
-        $user['links'] = $links;
+      
+        $owned = Project::where('user_id', $user->id)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get();
+     
+        $worked = Project::whereHas('members', function ($q) use($user) {
+            $q->where('user_id',$user->id)->where('role','!=','owner');
+        })->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get(); 
+   
+        $user['owned'] = $owned;
+        $user['worked'] = $worked;
+        
         $data = ['profile' => $user];
 
         return response()->json($data);

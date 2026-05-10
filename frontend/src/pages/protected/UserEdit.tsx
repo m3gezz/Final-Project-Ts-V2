@@ -60,7 +60,7 @@ export default function UserEdit() {
       about: user?.about ?? "",
       professional_title: user?.professional_title ?? "",
       skills: "",
-      private: !!user?.private,
+      private: !!Number(user?.private),
     },
     resolver: zodResolver(userEditSchema),
   });
@@ -82,6 +82,8 @@ export default function UserEdit() {
     },
     onSuccess: () => {
       queryClient.fetchQuery({ queryKey: ["me"], queryFn: () => me(disp) });
+      queryClient.invalidateQueries({ queryKey: ["profile", String(user.id)] });
+      nav(-1);
     },
   });
 

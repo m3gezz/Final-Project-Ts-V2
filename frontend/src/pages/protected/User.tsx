@@ -8,14 +8,46 @@ import ProjectCard from "@/components/cards/ProjectCard";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/api/apiFunctions";
 import { useSelector } from "react-redux";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function User() {
   const { id } = useParams();
   const { user } = useSelector((state) => state?.auth);
-  const { data: profile } = useQuery({
-    queryKey: ["profile"],
+
+  const { data: profile, isLoading: isProfileLoading } = useQuery({
+    queryKey: ["profile", id],
     queryFn: () => getUser(id),
   });
+
+  if (isProfileLoading) {
+    return (
+      <div className="mx-auto max-w-5xl space-y-6">
+        <div className="flex flex-wrap items-start gap-6 rounded-2xl border bg-card p-8">
+          <Skeleton className="h-24 w-24 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-4 w-30" />
+            <Skeleton className="h-4 w-50" />
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {[...Array(5)].map((v, i) => (
+                <Skeleton key={i} className="h-3 w-10" />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="rounded-2xl md:col-span-2 space-y-2 border bg-card p-8">
+            <Skeleton className="h-5 w-30" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+          <div className="rounded-2xl space-y-2 border bg-card p-8">
+            <Skeleton className="h-5 w-30" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -23,7 +55,7 @@ export default function User() {
         className="rounded-2xl border bg-card p-8"
         style={{ boxShadow: "var(--shadow-soft)" }}
       >
-        <div className="flex flex-wrap items-start gap-6">
+        <div className="flex flex-wrap flex-col md:flex-row items-start gap-6">
           <Avatar className="h-24 w-24">
             <AvatarImage src={profile?.avatar} />
             <AvatarFallback>{profile?.full_name[0]}</AvatarFallback>
@@ -77,21 +109,25 @@ export default function User() {
         </div>
       </div>
 
-      <Tabs defaultValue="owned">
+      <Tabs defaultValue="owned" className="flex flex-col">
         <TabsList>
-          <TabsTrigger value="owned">Owned ({[].length})</TabsTrigger>
-          <TabsTrigger value="joined">Joined ({[].length})</TabsTrigger>
+          <TabsTrigger value="owned">
+            Owned ({profile?.projects_count ?? 0})
+          </TabsTrigger>
+          <TabsTrigger value="joined">
+            Joined ({profile?.worked_count ?? 0})
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="owned" className="mt-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[].map((p) => (
+            {profile?.owned?.map((p) => (
               <ProjectCard key={p.id} project={p} />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="joined" className="mt-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[].map((p) => (
+            {profile?.worked?.map((p) => (
               <ProjectCard key={p.id} project={p} />
             ))}
           </div>
