@@ -7,11 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProject, likeProject } from "@/api/apiFunctions";
 import { useSelector } from "react-redux";
 import SendRequestModal from "@/components/modals/SendRequestModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getProject, likeProject } from "@/api/functions/project";
+import { getImageUrl } from "@/lib/utils";
 
 export default function Project() {
   const { id } = useParams();
@@ -93,7 +94,7 @@ export default function Project() {
       >
         <div className="aspect-21/9 bg-muted">
           <img
-            src={project?.image}
+            src={getImageUrl(project?.image)}
             alt={project?.title}
             className="h-full w-full object-cover"
           />
@@ -244,7 +245,7 @@ export default function Project() {
                     className="flex items-center gap-3 rounded-lg p-2 hover:bg-muted"
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={m?.user?.avatar} />
+                      <AvatarImage src={getImageUrl(m?.user?.avatar)} />
                       <AvatarFallback>{m?.user?.full_name?.[0]}</AvatarFallback>
                     </Avatar>
                     <div>

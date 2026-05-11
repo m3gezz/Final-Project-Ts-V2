@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProjectCard from "@/components/cards/ProjectCard";
 import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/api/apiFunctions";
 import { useSelector } from "react-redux";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getUser } from "@/api/functions/user";
+import { getImageUrl } from "@/lib/utils";
 
 export default function User() {
   const { id } = useParams();
@@ -57,7 +58,7 @@ export default function User() {
       >
         <div className="flex flex-wrap flex-col md:flex-row items-start gap-6">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={profile?.avatar} />
+            <AvatarImage src={getImageUrl(profile?.avatar)} />
             <AvatarFallback>{profile?.full_name[0]}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">

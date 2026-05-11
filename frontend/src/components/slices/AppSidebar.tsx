@@ -16,10 +16,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
-import { signOut } from "@/api/apiFunctions";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
 import { cn } from "@/lib/utils";
+import { signOut } from "@/api/functions/ayth";
 
 const items = [
   { to: "/", label: "Home", icon: Home, end: true },

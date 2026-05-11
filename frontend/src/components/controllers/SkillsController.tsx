@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { getSkills } from "@/api/apiFunctions";
+import { getSkills } from "@/api/functions/data";
 
 export default function SkillsController({ form, skills, setSkills }) {
   const { data: allowedSkills } = useQuery({

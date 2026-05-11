@@ -5,10 +5,10 @@ import InputController from "@/components/controllers/InputController";
 import { useForm } from "react-hook-form";
 import CheckBoxController from "@/components/controllers/CheckBoxController";
 import { useDispatch } from "react-redux";
-import { signUp } from "@/api/apiFunctions";
 import { useMutation } from "@tanstack/react-query";
-import { signUpSchema } from "@/zod/Schemas";
+import { signUpSchema } from "@/zod/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signUp } from "@/api/functions/ayth";
 
 const infoFields = [
   {

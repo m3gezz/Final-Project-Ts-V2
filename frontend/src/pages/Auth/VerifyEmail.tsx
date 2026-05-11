@@ -4,10 +4,10 @@ import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import InputOTPController from "@/components/controllers/InputOTPController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { verificationCodeSchema } from "@/zod/Schemas";
+import { verificationCodeSchema } from "@/zod/schemas";
 import { useMutation } from "@tanstack/react-query";
-import { signOut } from "@/api/apiFunctions";
 import { useDispatch } from "react-redux";
+import { signOut } from "@/api/functions/ayth";
 
 export default function VerifyEmail() {
   const disp = useDispatch();

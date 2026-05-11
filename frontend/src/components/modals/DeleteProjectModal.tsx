@@ -1,7 +1,7 @@
+import { deleteProject } from "@/api/functions/project";
 import { Button } from "@/components/ui/button";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { deleteProject } from "@/api/apiFunctions";
 import { useNavigate } from "react-router-dom";
 
 export default function DeleteProjectModal({ id }) {

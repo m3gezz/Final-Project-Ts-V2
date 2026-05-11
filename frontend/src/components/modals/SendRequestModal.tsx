@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { requestJoin } from "@/api/apiFunctions";
 import TextareaController from "../controllers/TextareaController";
+import { requestJoin } from "@/api/functions/inbox";
+import { useNavigate } from "react-router-dom";
 
 export default function SendRequestModal({ project_id }) {
   const form = useForm({
@@ -12,7 +13,7 @@ export default function SendRequestModal({ project_id }) {
       message: "Hi may i join ?",
     },
   });
-
+  const nav = useNavigate();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => requestJoin(data),
@@ -41,6 +42,7 @@ export default function SendRequestModal({ project_id }) {
       queryClient.invalidateQueries({
         queryKey: ["project", String(project_id)],
       });
+      nav(`/projects/${project_id}`);
     },
   });
 

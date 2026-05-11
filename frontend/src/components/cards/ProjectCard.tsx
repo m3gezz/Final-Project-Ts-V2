@@ -3,6 +3,7 @@ import { Heart, MessageCircle } from "lucide-react";
 import { type Project, findUser } from "@/data/exp";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { getImageUrl } from "@/lib/utils";
 
 export default function ProjectCard({ project }: { project: Project }) {
   return (
@@ -13,7 +14,7 @@ export default function ProjectCard({ project }: { project: Project }) {
     >
       <div className="relative aspect-video overflow-hidden bg-muted">
         <img
-          src={project?.image}
+          src={getImageUrl(project?.image)}
           alt={project?.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -33,7 +34,7 @@ export default function ProjectCard({ project }: { project: Project }) {
         <div className="mt-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6">
-              <AvatarImage src={project?.user?.avatar} />
+              <AvatarImage src={getImageUrl(project?.user?.avatar)} />
               <AvatarFallback>{project?.user?.full_name[0]}</AvatarFallback>
             </Avatar>
             <span className="text-xs text-muted-foreground">

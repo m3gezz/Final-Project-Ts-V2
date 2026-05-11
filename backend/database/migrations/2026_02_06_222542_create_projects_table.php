@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('image')->nullable();
+            $table->string('image')->default('projectImages/placeholder-image.jpg');
             $table->string('manifesto');
             $table->string('private')->default(0);
             $table->text('description');

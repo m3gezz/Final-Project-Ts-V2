@@ -5,7 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { modifyPasswordSchema } from "@/zod/schemas";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { updatePassword } from "@/api/apiFunctions";
+import { updatePassword } from "@/api/functions/user";
+import { useNavigate } from "react-router-dom";
 
 const fields = [
   {
@@ -38,6 +39,8 @@ export default function ModifyPassModal({ id }) {
     resolver: zodResolver(modifyPasswordSchema),
   });
 
+  const nav = useNavigate();
+
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => updatePassword(id, data),
     onError: (err) => {
@@ -50,7 +53,7 @@ export default function ModifyPassModal({ id }) {
       }
     },
     onSuccess: () => {
-      form.reset();
+      nav(-1);
     },
   });
 

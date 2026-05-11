@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/slices/Header";
 import ProjectCard from "@/components/cards/ProjectCard";
 import { useQueries } from "@tanstack/react-query";
-import { getCategories, getProjects } from "@/api/apiFunctions";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import SelectController from "@/components/controllers/SelectController";
+import { getProjects } from "@/api/functions/project";
+import { getCategories } from "@/api/functions/data";
 
 export default function Projects() {
   const [pagination, setPagination] = useState({

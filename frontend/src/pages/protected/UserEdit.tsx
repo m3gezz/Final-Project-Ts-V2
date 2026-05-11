@@ -16,8 +16,9 @@ import DeleteAccModal from "@/components/modals/DeleteAccModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ModifyPassModal from "@/components/modals/ModifyPassModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/api/axios";
-import { me } from "@/api/apiFunctions";
+import { me } from "@/api/functions/ayth";
+import { updateUser } from "@/api/functions/user";
+import { getImageUrl } from "@/lib/utils";
 
 const fields = [
   {
@@ -49,10 +50,10 @@ const fields = [
 export default function UserEdit() {
   const { user } = useSelector((state) => state?.auth);
   const [skills, setSkills] = useState<[]>(user?.skills ?? []);
-  const [preview, setPreview] = useState(user?.avatar ?? "");
+  const [preview, setPreview] = useState(getImageUrl(user?.avatar));
   const form = useForm({
     defaultValues: {
-      avatar: user?.avatar ?? null,
+      avatar: null,
       full_name: user?.full_name ?? "",
       username: user?.username ?? "",
       email: user?.email ?? "",
@@ -68,9 +69,42 @@ export default function UserEdit() {
   const nav = useNavigate();
   const disp = useDispatch();
   const queryClient = useQueryClient();
-
+  const isDirty = form.formState.isDirty;
+  const dirtyFields = form.formState.dirtyFields;
   const { mutate, isPending } = useMutation({
-    mutationFn: (data) => updateUser(data),
+    mutationFn: (args) => {
+      const data = args.data;
+      const skillsIds = skills.map((s) => s?.id);
+      const userSkillsIds = user?.skills.map((s) => s?.id) || [];
+      const skillsChanged = !(
+        skillsIds.length === userSkillsIds.length &&
+        skillsIds.every((id) => userSkillsIds.includes(id))
+      );
+
+      if (!isDirty && !skillsChanged && !(data.avatar instanceof File)) {
+        return alert("No changes detected!");
+      }
+
+      const formData = new FormData();
+      for (const key in dirtyFields) {
+        if (data[key] !== undefined && data[key] !== null) {
+          formData.append(key, data[key]);
+        }
+      }
+
+      if (skillsChanged) {
+        skillsIds?.forEach((s) => {
+          formData.append("skills[]", s);
+        });
+      }
+
+      if (data?.avatar instanceof File) {
+        formData.append("avatar", data.avatar);
+      }
+
+      formData.append("_method", "PATCH");
+      return updateUser(args.id, formData);
+    },
     onError: (err) => {
       const res = err.response;
       if (res.status !== 422) return alert("error");
@@ -80,41 +114,14 @@ export default function UserEdit() {
         form.setError(key, { message: errors[key] });
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.fetchQuery({ queryKey: ["me"], queryFn: () => me(disp) });
       queryClient.invalidateQueries({ queryKey: ["profile", String(user.id)] });
-      nav(-1);
+      if (data) {
+        nav(-1);
+      }
     },
   });
-
-  const dirtyFields = form.formState.dirtyFields;
-  const isDirty = form.formState.isDirty;
-
-  const updateUser = async (data) => {
-    const skillsIds = skills.map((s) => s?.id);
-    const userSkillsIds = user?.skills.map((s) => s?.id);
-    const isEqual =
-      skillsIds.length === userSkillsIds.length &&
-      skillsIds.every((v, i) => v === userSkillsIds[i]);
-
-    const isOnlySkillsDirty =
-      Object.keys(dirtyFields).length === 1 && dirtyFields.skills === true;
-
-    if ((isEqual && !isDirty) || isOnlySkillsDirty)
-      return alert("change first");
-
-    let dirtyData = {};
-    for (const key in dirtyFields) {
-      dirtyData = { ...dirtyData, [key]: data[key] };
-    }
-
-    const res = await api.patch(`users/${user?.id}`, {
-      ...dirtyData,
-      skills: skillsIds,
-    });
-
-    return res;
-  };
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -123,7 +130,7 @@ export default function UserEdit() {
         description="Keep your profile fresh and discoverable."
       />
       <form
-        onSubmit={form.handleSubmit((data) => mutate(data))}
+        onSubmit={form.handleSubmit((data) => mutate({ id: user.id, data }))}
         className="space-y-6 rounded-xl border bg-card p-6"
         style={{ boxShadow: "var(--shadow-soft)" }}
       >

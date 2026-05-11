@@ -7,6 +7,7 @@ use App\Models\Project;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -18,6 +19,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $search = $request->search;
+        $skill_id = $request->skill_id;
+        $sort = $request->sort;
 
         $query = User::with(['skills','badges'])->latest();
 
@@ -33,7 +36,19 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->paginate(10);
+        if ($skill_id && $skill_id != 0) {
+            $query->orWhereHas('skills', function ($q) use ($skill_id) {
+                $q->where('id',$skill_id);
+            });
+        }
+
+        if ($sort == 1) {
+            // $query->orderByDesc('likes_count'); needs work
+        } else {   
+            $query->orderByDesc('created_at');
+        }
+
+        $users = $query->paginate(8);
 
         return response()->json($users);
     }
@@ -101,18 +116,20 @@ class UserController extends Controller
             'bio' => ['sometimes'],
             'about' => ['sometimes'],
             'private' => ['sometimes'],
-            'email' => ['sometimes','email','unique:users,email'],
+            'email' => ['sometimes','email','unique:users,email,' . $user->id],
             'password' => ['sometimes'],
             'new_password' => ['sometimes','confirmed'],
             'skills' => ['sometimes']
         ]);
 
-        //needs work
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar !== null) {
+                Storage::disk('public')->delete($user->avatar);
+            }
 
-        // if ($request->hasFile('avatar_url')) {
-        //     $path = $request->file('avatar_url')->store('usersImages', 'public');
-        //     $fields['avatar_url'] = $path;
-        // }
+            $path = $request->file('avatar')->store('usersImages', 'public');
+            $fields['avatar'] = $path;
+        }
 
         if ($request->has('skills')) {
             $user->skills()->sync($fields['skills']);

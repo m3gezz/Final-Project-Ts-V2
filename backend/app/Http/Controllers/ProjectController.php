@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\ProjectMember;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -19,7 +20,7 @@ class ProjectController extends Controller
         $category_id = $request->category_id;
         $sort = $request->sort;
 
-        $query = Project::where('private', 0)->with(['user','members.user', 'skills', 'category'])->withCount(['comments', 'likes']);
+        $query = Project::where('private', false)->with(['user','members.user', 'skills', 'category'])->withCount(['comments', 'likes']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -59,12 +60,17 @@ class ProjectController extends Controller
                 'title' => ['required'],
                 'description' => ['required'],
                 'category_id' => ['required'],
-                'private'=>['required'],
+                'private'=>['required','boolean'],
                 'manifesto'=>['required'],
-                'image'=>['sometimes'],
+                'image'=>[ 'image'],
                 'skills'=>['sometimes'],
             ]
         );
+        
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('projectImages', 'public');
+            $fields['image'] = $path;
+        }
 
         $project = $request->user()->projects()->create($fields);
         
@@ -72,12 +78,6 @@ class ProjectController extends Controller
             $project->skills()->sync($fields['skills']);
         }
 
-        //needs work
-
-        // if ($request->hasFile('img_url')) {
-        //     $path = $request->file('img_url')->store('projectImages', 'public');
-        //     $fields['img_url'] = $path;
-        // }
 
         $projectMember = [
             'project_id' => $project->id,
@@ -128,9 +128,22 @@ class ProjectController extends Controller
                 'title' => ['sometimes','string','min:5','max:255'],
                 'description' => ['sometimes','string','min:10'],
                 'category_id' => ['sometimes','exists:categories,id'],
-                // 'images' => ['sometimes','json'],
+                'private'=>['sometimes','boolean'],
+                'manifesto'=>['sometimes'],
+                'image'=>['sometimes'],
+                'skills'=>['sometimes'],
             ]
         );
+
+        if ($request->has('skills')) {
+            $project->skills()->sync($fields['skills']);
+        }
+
+        if ($request->hasFile('image')) {
+            Storage::disk('public')->delete($project->image);
+            $path = $request->file('image')->store('projectImages', 'public');
+            $fields['image'] = $path;
+        }
 
         $project->update($fields);
 

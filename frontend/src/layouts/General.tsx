@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import { router } from "@/router";
-import { refresh } from "@/api/apiFunctions";
+import { refresh } from "@/api/functions/ayth";
 
 export default function General() {
   const disp = useDispatch();

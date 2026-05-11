@@ -11,13 +11,18 @@ import InputController from "@/components/controllers/InputController";
 import SkillsController from "@/components/controllers/SkillsController";
 import TextareaController from "@/components/controllers/TextareaController";
 import SelectController from "@/components/controllers/SelectController";
-import { checkProject, getCategories, updateProject } from "@/api/apiFunctions";
 import { Checkbox } from "@/components/ui/checkbox";
 import DeleteProjectModal from "@/components/modals/DeleteProjectModal";
 import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProjectSchema } from "@/zod/schemas";
-import { api } from "@/api/axios";
+import {
+  checkProject,
+  createProject,
+  updateProject,
+} from "@/api/functions/project";
+import { getCategories } from "@/api/functions/data";
+import { getImageUrl } from "@/lib/utils";
 
 const textareaFields = [
   {
@@ -56,7 +61,7 @@ export default function ProjectManipulator({
   });
 
   const [skills, setSkills] = useState<[]>([]);
-  const [preview, setPreview] = useState("");
+  const [preview, setPreview] = useState<string | null>(null);
   const form = useForm({
     defaultValues: {
       image: null,
@@ -73,7 +78,7 @@ export default function ProjectManipulator({
   useEffect(() => {
     if (!isSuccess) return;
     setSkills(project?.skills);
-    setPreview(project?.image ?? "");
+    setPreview(getImageUrl(project?.image));
     form.setValues({
       image: null,
       title: project?.title ?? "",
@@ -88,8 +93,27 @@ export default function ProjectManipulator({
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => {
-      if (mode === "create") return createProject(data);
-      return updateProject(id, data);
+      const formData = new FormData();
+      for (const key in data) {
+        if (data[key] !== undefined && data[key] !== null) {
+          formData.append(key, data[key]);
+        }
+      }
+
+      skills.forEach((s) => {
+        formData.append("skills[]", s.id);
+      });
+
+      if (data.image instanceof File) {
+        formData.append("image", data.image);
+      }
+
+      if (mode !== "edit") {
+        return createProject(formData);
+      }
+
+      formData.append("_method", "PATCH");
+      return updateProject(id, formData);
     },
     onError: (err) => {
       const res = err.response;
@@ -101,17 +125,18 @@ export default function ProjectManipulator({
       }
     },
     onSuccess: (data) => {
-      mode === "edit" &&
-        queryClient.invalidateQueries({ queryKey: ["project", String(id)] });
+      if (mode === "edit") {
+        queryClient.invalidateQueries({
+          queryKey: ["project", String(id)],
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: ["project-check", String(id)],
+        });
+      }
       nav(`/projects/${data?.data?.id}`);
     },
   });
-
-  const createProject = (data) => {
-    const projectSkills = skills.map((s) => s.id);
-    const res = api.post("projects", { ...data, skills: projectSkills });
-    return res;
-  };
 
   if (isLoading) {
     return <Spinner />;
@@ -134,19 +159,16 @@ export default function ProjectManipulator({
       >
         <div className="space-y-2">
           <Label>Cover image</Label>
-          <label className="flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed bg-muted/50 hover:bg-muted">
-            {preview ? (
-              <img
-                src={preview}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                <Upload className="h-6 w-6" />
-                <span className="text-sm">Click to upload an image</span>
-              </div>
-            )}
+          <label className="relative aspect-video flex  w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed ">
+            <img src={preview} alt="" className="h-full w-full object-cover" />
+
+            <div
+              className={`absolute z-10 flex flex-col items-center justify-center gap-2  ${preview ? "hover:bg-muted/80 hover:text-muted-foreground text-transparent bg-transparent" : "bg-muted/80 text-muted-foreground"} w-full h-full transition-all`}
+            >
+              <Upload className="h-6 w-6" />
+              <span className="text-sm">Click to upload an image</span>
+            </div>
+
             <input
               type="file"
               accept="image/*"

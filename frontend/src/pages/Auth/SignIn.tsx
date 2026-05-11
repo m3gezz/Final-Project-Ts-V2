@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { useMutation } from "@tanstack/react-query";
-import { signIn } from "@/api/apiFunctions";
 import { useDispatch } from "react-redux";
-import { signInSchema } from "@/zod/Schemas";
+import { signInSchema } from "@/zod/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "@/api/functions/ayth";
 
 const fields = [
   {

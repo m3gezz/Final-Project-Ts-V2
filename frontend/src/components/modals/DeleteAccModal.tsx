@@ -5,9 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { deleteAccountSchema } from "@/zod/schemas";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { deleteAccount } from "@/api/apiFunctions";
 import { useDispatch } from "react-redux";
 import { unsetAuth } from "@/redux/authSlice";
+import { deleteAccount } from "@/api/functions/user";
 
 const fields = [
   {
@@ -35,7 +35,7 @@ export default function DeleteAccModal({ id }) {
   const disp = useDispatch();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data) => deleteAccount(id, data),
+    mutationFn: (data) => deleteAccount(id, data, disp),
     onError: (err) => {
       const res = err.response;
       if (res.status !== 422) return alert("error");
@@ -44,9 +44,6 @@ export default function DeleteAccModal({ id }) {
       for (const key in errors) {
         form.setError(key, { message: errors[key] });
       }
-    },
-    onSuccess: () => {
-      disp(unsetAuth());
     },
   });
 
