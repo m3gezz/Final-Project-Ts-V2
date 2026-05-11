@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 import { signOut } from "@/api/functions/ayth";
 
 const items = [
@@ -113,7 +113,7 @@ export default function AppSidebar() {
           className={`flex w-full items-center gap-3 ${isOpen && "p-2"} rounded-lg text-left hover:bg-sidebar-accent/60`}
         >
           <Avatar className="h-9 w-9">
-            <AvatarImage src={user?.avatar} />
+            <AvatarImage src={getImageUrl(user?.avatar)} />
             <AvatarFallback>{user?.full_name?.[0]}</AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">

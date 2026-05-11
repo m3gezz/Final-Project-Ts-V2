@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom";
-import { projects, workspaces } from "@/data/exp";
-import ProjectCard from "@/components/cards/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Plus, FolderKanban, Briefcase, Inbox } from "lucide-react";
-import WorkspaceCard from "@/components/cards/WorkspaceCard";
-import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import { getHome } from "@/api/functions/user";
+import ProjectsList from "@/components/lists/ProjectsList";
+import WorkspacesList from "@/components/lists/WorkspacesList";
 
 export default function Home() {
-  const { user } = useSelector((state) => state?.auth);
+  const { data, isLoading } = useQuery({
+    queryKey: ["home"],
+    queryFn: getHome,
+  });
+
   return (
     <div className="space-y-10">
       <div
@@ -21,7 +25,7 @@ export default function Home() {
           <div>
             <p className="text-sm text-muted-foreground">Welcome back,</p>
             <h1 className="text-3xl font-semibold tracking-tight">
-              {user?.full_name?.split(" ")[0]}
+              {data?.user?.full_name?.split(" ")?.[0]}
             </h1>
             <p className="mt-1 text-muted-foreground">
               Here's what's happening across your projects today.
@@ -44,16 +48,21 @@ export default function Home() {
             {
               icon: FolderKanban,
               label: "Projects",
-              value: projects.length,
+              value: data?.user?.projects_count ?? 0,
               to: "/projects",
             },
             {
               icon: Briefcase,
               label: "Workspaces",
-              value: workspaces.length,
+              value: data?.user?.projects_count ?? 0,
               to: "/workspaces",
             },
-            { icon: Inbox, label: "Pending invites", value: 1, to: "/inbox" },
+            {
+              icon: Inbox,
+              label: "Pending invites",
+              value: data?.user?.requests_count ?? 0,
+              to: "/inbox",
+            },
           ].map((s) => (
             <Link
               key={s.label}
@@ -81,11 +90,7 @@ export default function Home() {
             </Link>
           </Button>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {workspaces.map((w) => (
-            <WorkspaceCard key={w.id} workspace={w} />
-          ))}
-        </div>
+        <WorkspacesList workspaces={data?.workspaces} isLoading={isLoading} />
       </section>
 
       <section>
@@ -97,11 +102,7 @@ export default function Home() {
             </Link>
           </Button>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.slice(0, 3).map((p) => (
-            <ProjectCard key={p.id} project={p} />
-          ))}
-        </div>
+        <ProjectsList projects={data?.projects} isLoading={isLoading} />
       </section>
     </div>
   );

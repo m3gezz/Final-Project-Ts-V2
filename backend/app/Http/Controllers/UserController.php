@@ -26,12 +26,12 @@ class UserController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%$search%");
-                $q->orWhere('last_name', 'like', "%$search%");
+                $q->where('full_name', 'like', "%$search%");
+                $q->orWhere('username', 'like', "%$search%");
                 $q->orWhere('bio', 'like', "%$search%");
 
                 $q->orWhereHas('skills', function ($q) use ($search) {
-                    $q->where('name','like', "%$search%");
+                    $q->where('label','like', "%$search%");
                 });
             });
         }
@@ -60,22 +60,6 @@ class UserController extends Controller
     {
         //
     }
-
-    public function getUserProjects(User $user,Request $request) {
-            
-        if ($request->type === 'owned') {
-            $data = Project::where('user_id', $user->id)->with(['user', 'category'])->withCount(['comments', 'likes']);
-        } else {
-            $data = Project::whereHas('members', function ($q) use($user) {
-                $q->where('user_id',$user->id)->where('role','!=','owner');
-            })->with(['user', 'category'])->withCount(['comments', 'likes']); 
-        }
-
-        $data = $data->paginate(4);
-
-        return response()->json($data);
-    }
-
     /**
      * Display the specified resource.
      */
@@ -186,5 +170,19 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'Deleted successfully']);
+    }
+
+    public function home(Request $request) {
+        $user = $request->user()->loadCount(['projects','requests' => function ($q) {
+            $q->where('status', 'pending');
+        }]);
+    
+        $projects = Project::where('private', false)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(3)->get();
+        
+        $data = [];
+        $data['user'] = $user;
+        $data['workspaces'] = [];
+        $data['projects'] = $projects;
+        return response()->json($data);
     }
 }

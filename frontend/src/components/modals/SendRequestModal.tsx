@@ -10,6 +10,7 @@ export default function SendRequestModal({ project_id }) {
   const form = useForm({
     defaultValues: {
       project_id,
+      type: "enter",
       message: "Hi may i join ?",
     },
   });
@@ -32,7 +33,6 @@ export default function SendRequestModal({ project_id }) {
     onError: (err) => {
       const res = err.response;
       if (res.status !== 422) return alert("error");
-
       const errors = res.data.errors;
       for (const key in errors) {
         form.setError(key, { message: errors[key] });
@@ -42,7 +42,7 @@ export default function SendRequestModal({ project_id }) {
       queryClient.invalidateQueries({
         queryKey: ["project", String(project_id)],
       });
-      nav(`/projects/${project_id}`);
+      nav(`/inbox`);
     },
   });
 

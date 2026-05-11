@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LeaveRequest extends Model
+class Request extends Model
 {
-    /** @use HasFactory<\Database\Factories\LeaveRequestFactory> */
+    /** @use HasFactory<\Database\Factories\RequestFactory> */
     use HasFactory;
 
     protected $fillable = [
         'project_id',
         'user_id',
         'message',
+        'type',
         'status',
     ];
 

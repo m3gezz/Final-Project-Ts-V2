@@ -9,6 +9,7 @@ import { getUsers } from "@/api/functions/user";
 import UserCard from "@/components/cards/UserCard";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import UsersList from "@/components/lists/UsersList";
 
 export default function Users() {
   const [pagination, setPagination] = useState({
@@ -26,7 +27,7 @@ export default function Users() {
   });
   const [search, skill_id, sort] = form.watch(["search", "skill_id", "sort"]);
 
-  const [{ data: users, isFetching: isFetchingProjects }, { data: skills }] =
+  const [{ data: users, isFetching: isFetchingUsers }, { data: skills }] =
     useQueries({
       queries: [
         {
@@ -93,12 +94,8 @@ export default function Users() {
             />
           </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {users?.map((u) => (
-            <UserCard key={u?.id} user={u} />
-          ))}
-        </div>
       </div>
+      <UsersList users={users} isLoading={isFetchingUsers} />
       <div className="mt-10 flex justify-center gap-2">
         <Button
           onClick={() => {
@@ -108,7 +105,7 @@ export default function Users() {
               current_page: prev?.current_page - 1,
             }));
           }}
-          disabled={pagination?.current_page <= 1 || isFetchingProjects}
+          disabled={pagination?.current_page <= 1 || isFetchingUsers}
           variant={"outline"}
           size="sm"
           className="h-9 w-9 rounded-full p-0"
@@ -131,8 +128,7 @@ export default function Users() {
             }));
           }}
           disabled={
-            pagination?.current_page >= pagination?.last_page ||
-            isFetchingProjects
+            pagination?.current_page >= pagination?.last_page || isFetchingUsers
           }
           variant={"outline"}
           size="sm"

@@ -77,8 +77,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(ProjectMember::class);
     }
 
-    public function enterRequests() {
-        return $this->hasMany(EnterRequest::class);
+    public function requests() {
+        return $this->hasMany(Request::class);
     }
 
     public function invitationRequestsSent() {
@@ -87,14 +87,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function invitationRequestsReceived() {
         return $this->hasMany(InvitationRequest::class,'receiver_id');
-    }
-
-    public function leaveRequests() {
-        return $this->hasMany(LeaveRequest::class);
-    }
-
-    public function leaveRequestsReceived() {
-        return $this->hasMany(LeaveRequest::class, 'receiver_id');
     }
 
     public function comments() {

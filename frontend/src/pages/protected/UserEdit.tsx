@@ -73,7 +73,8 @@ export default function UserEdit() {
   const dirtyFields = form.formState.dirtyFields;
   const { mutate, isPending } = useMutation({
     mutationFn: (args) => {
-      const data = args.data;
+      let data = args.data;
+      data = { ...data, private: data?.private ? "1" : "0" };
       const skillsIds = skills.map((s) => s?.id);
       const userSkillsIds = user?.skills.map((s) => s?.id) || [];
       const skillsChanged = !(

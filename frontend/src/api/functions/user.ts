@@ -1,6 +1,11 @@
 import { unsetAuth } from "@/redux/authSlice";
 import { api } from "../axios";
 
+const getHome = async () => {
+  const res = await api.get(`home`);
+  return res?.data;
+};
+
 const getUser = async (id: string | undefined) => {
   const res = await api.get(`users/${id}`);
   return res?.data?.profile;
@@ -37,4 +42,11 @@ const getUsers = async (searcher) => {
   return res?.data?.data;
 };
 
-export { getUser, updatePassword, deleteAccount, updateUser, getUsers };
+export {
+  getHome,
+  getUser,
+  updatePassword,
+  deleteAccount,
+  updateUser,
+  getUsers,
+};

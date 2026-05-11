@@ -94,6 +94,7 @@ export default function ProjectManipulator({
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => {
       const formData = new FormData();
+      data = { ...data, private: data?.private ? "1" : "0" };
       for (const key in data) {
         if (data[key] !== undefined && data[key] !== null) {
           formData.append(key, data[key]);

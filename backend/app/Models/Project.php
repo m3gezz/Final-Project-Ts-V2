@@ -36,16 +36,12 @@ class Project extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function enterRequests() {
-        return $this->hasMany(EnterRequest::class);
+    public function requests() {
+        return $this->hasMany(Request::class);
     }
 
     public function invitationsRequests() {
         return $this->hasMany(InvitationRequest::class);
-    }
-
-    public function leaveRequests() {
-        return $this->hasMany(LeaveRequest::class);
     }
 
     public function comments() {

@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getUser } from "@/api/functions/user";
 import { getImageUrl } from "@/lib/utils";
+import ProjectsList from "@/components/lists/ProjectsList";
 
 export default function User() {
   const { id } = useParams();
@@ -120,18 +121,16 @@ export default function User() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="owned" className="mt-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {profile?.owned?.map((p) => (
-              <ProjectCard key={p.id} project={p} />
-            ))}
-          </div>
+          <ProjectsList
+            projects={profile?.owned}
+            isLoading={isProfileLoading}
+          />
         </TabsContent>
         <TabsContent value="joined" className="mt-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {profile?.worked?.map((p) => (
-              <ProjectCard key={p.id} project={p} />
-            ))}
-          </div>
+          <ProjectsList
+            projects={profile?.worked}
+            isLoading={isProfileLoading}
+          />
         </TabsContent>
       </Tabs>
     </div>

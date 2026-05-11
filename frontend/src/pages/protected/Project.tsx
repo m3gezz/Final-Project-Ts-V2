@@ -143,14 +143,18 @@ export default function Project() {
                 </Button>
               ) : (
                 <Dialog>
-                  <DialogTrigger asChild>
-                    <Button disabled={project?.isRequested}>
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      {project?.isRequested
-                        ? "Request sent"
-                        : "Request to join"}
-                    </Button>
-                  </DialogTrigger>
+                  {project?.isRequested ? (
+                    <Link to={"/inbox"}>
+                      <Button>Check inbox</Button>
+                    </Link>
+                  ) : (
+                    <DialogTrigger asChild>
+                      <Button disabled={project?.isRequested}>
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Send request
+                      </Button>
+                    </DialogTrigger>
+                  )}
                   <SendRequestModal project_id={id} />
                 </Dialog>
               )}

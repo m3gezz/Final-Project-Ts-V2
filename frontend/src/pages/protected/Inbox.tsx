@@ -1,43 +1,21 @@
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import Header from "@/components/slices/Header";
-import { invitations, findUser, findWorkspace } from "@/data/exp";
-import { Inbox as InboxIcon, Check, X } from "lucide-react";
-import { toast } from "sonner";
+import { Inbox as InboxIcon } from "lucide-react";
 import EmptyCard from "@/components/cards/EmptyCard";
+import { useQueries } from "@tanstack/react-query";
+import { getRequests } from "@/api/functions/inbox";
+import RequestsList from "@/components/lists/RequestsList";
 
 export default function Inbox() {
-  const me = "u1";
-  const [items, setItems] = useState(invitations);
-
-  const received = items.filter(
-    (i) =>
-      i.toUserId === me && (i.kind === "invite" || i.kind === "join_request"),
-  );
-  const sent = items.filter((i) => i.fromUserId === me);
-
-  const update = (
-    id: string,
-    status: "accepted" | "declined" | "cancelled",
-  ) => {
-    setItems((prev) =>
-      prev.map((i) =>
-        i.id === id
-          ? { ...i, status: status === "cancelled" ? "declined" : status }
-          : i,
-      ),
-    );
-    toast.success(
-      status === "accepted"
-        ? "Accepted"
-        : status === "declined"
-          ? "Declined"
-          : "Cancelled",
-    );
-  };
+  const [
+    { data: requests, isLoading: isRequestsLoading },
+    { data: invitations },
+  ] = useQueries({
+    queries: [
+      { queryKey: ["requests"], queryFn: getRequests },
+      { queryKey: ["invitations"], queryFn: () => console.log("hi") },
+    ],
+  });
 
   return (
     <div>
@@ -45,25 +23,28 @@ export default function Inbox() {
         title="Inbox"
         description="Review invitations and join requests in one place."
       />
-      <Tabs defaultValue="received" className="flex flex-col">
+      <Tabs defaultValue="requests" className="flex flex-col">
         <TabsList>
-          <TabsTrigger value="received">
-            Received ({received.length})
+          <TabsTrigger value="requests">
+            Sent ({requests?.length ?? 0})
           </TabsTrigger>
-          <TabsTrigger value="sent">Sent ({sent.length})</TabsTrigger>
+          <TabsTrigger value="invitations">
+            Received ({invitations?.length ?? 0})
+          </TabsTrigger>
         </TabsList>
+        <TabsContent value="requests" className="mt-6 space-y-3">
+          <RequestsList requests={requests} isLoading={isRequestsLoading} />
+        </TabsContent>
 
-        <TabsContent value="received" className="mt-6 space-y-3">
-          {received.length === 0 && (
+        <TabsContent value="invitations" className="mt-6 space-y-3">
+          {[].length === 0 && (
             <EmptyCard
               icon={InboxIcon}
               title="Nothing here"
               description="You're all caught up."
             />
           )}
-          {received.map((i) => {
-            const from = findUser(i.fromUserId);
-            const ws = findWorkspace(i.workspaceId);
+          {/* {[].map((i) => {
             return (
               <div
                 key={i.id}
@@ -101,47 +82,7 @@ export default function Inbox() {
                 )}
               </div>
             );
-          })}
-        </TabsContent>
-
-        <TabsContent value="sent" className="mt-6 space-y-3">
-          {sent.length === 0 && (
-            <EmptyCard icon={InboxIcon} title="No sent requests" />
-          )}
-          {sent.map((i) => {
-            const to = findUser(i.toUserId);
-            const ws = findWorkspace(i.workspaceId);
-            return (
-              <div
-                key={i.id}
-                className="flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4"
-              >
-                <Avatar>
-                  <AvatarImage src={to.avatar} />
-                  <AvatarFallback>{to.full_name[0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="text-sm">
-                    Invitation to{" "}
-                    <span className="font-medium">{to.full_name}</span> for{" "}
-                    <span className="font-medium">{ws?.name}</span>
-                  </div>
-                  <div className="mt-1">
-                    <Badge variant="outline">{i.status}</Badge>
-                  </div>
-                </div>
-                {i.status === "pending" && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => update(i.id, "cancelled")}
-                  >
-                    Cancel
-                  </Button>
-                )}
-              </div>
-            );
-          })}
+          })} */}
         </TabsContent>
       </Tabs>
     </div>

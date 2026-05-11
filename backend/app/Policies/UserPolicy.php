@@ -20,7 +20,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $model->public_profile || $user->id === $model->id || $user->admin;
+        return !$model->private || $user->id === $model->id || $user->admin;
     }
 
     /**

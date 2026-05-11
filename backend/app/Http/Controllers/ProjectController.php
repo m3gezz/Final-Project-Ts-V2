@@ -105,7 +105,7 @@ class ProjectController extends Controller
         }])->loadCount(['comments','likes']);
 
         $project['isLiked'] = $project->likes()->where('user_id', $request->user()->id)->exists();
-        $project['isRequested'] = $project->enterRequests()->where('user_id', $request->user()->id)->exists();
+        $project['isRequested'] = $project->requests()->where('user_id', $request->user()->id)->exists();
 
         $membersIds = $project->members->pluck('id')->toArray();
         foreach ($project['comments'] as $comment) {

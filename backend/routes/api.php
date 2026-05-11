@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailController;
@@ -9,12 +8,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\InvitationRequestController;
-use App\Http\Controllers\EnterRequestController;
-use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\RequestController;
 use App\Http\Controllers\SkillController;
 
 Route::get('/', function () {return ['api' => 'ready'];});
@@ -35,15 +33,15 @@ Route::post('/password/send-code', [PasswordController::class, 'send_reset_code'
 Route::post('/password/verify-code', [PasswordController::class, 'verify_reset_code']);
 Route::post('/password/reset-password', [PasswordController::class, 'reset_password']);
 
+//Data routes
 Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('users', UserController::class);
-    Route::get('/user-projects/{user}', [UserController::class, 'getUserProjects']);
+    Route::get('home', [UserController::class, 'home']);
     Route::apiResource('projects', ProjectController::class);
     Route::get('/projects-edit/{project}', [ProjectController::class, 'edit']);
     Route::apiResource('project-members', ProjectMemberController::class);
     Route::apiResource('invitation-requests', InvitationRequestController::class);
-    Route::apiResource('enter-requests', EnterRequestController::class);
-    Route::apiResource('leave-requests', LeaveRequestController::class);
+    Route::apiResource('requests', RequestController::class);
     Route::apiResource('comments', CommentController::class);
     Route::apiResource('likes', LikeController::class);
     Route::apiResource('categories', CategoryController::class);

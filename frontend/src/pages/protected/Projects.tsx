@@ -10,6 +10,7 @@ import InputController from "@/components/controllers/InputController";
 import SelectController from "@/components/controllers/SelectController";
 import { getProjects } from "@/api/functions/project";
 import { getCategories } from "@/api/functions/data";
+import ProjectsList from "@/components/lists/ProjectsList";
 
 export default function Projects() {
   const [pagination, setPagination] = useState({
@@ -118,11 +119,7 @@ export default function Projects() {
           </div>
         </div>
       </div>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {projects?.map((p) => (
-          <ProjectCard key={p.id} project={p} />
-        ))}
-      </div>
+      <ProjectsList projects={projects} isLoading={isFetchingProjects} />
       <div className="mt-10 flex justify-center gap-2">
         <Button
           onClick={() => {
