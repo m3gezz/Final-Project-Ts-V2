@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/slices/Header";
-import ProjectCard from "@/components/cards/ProjectCard";
 import { useQueries } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
@@ -11,6 +10,7 @@ import SelectController from "@/components/controllers/SelectController";
 import { getProjects } from "@/api/functions/project";
 import { getCategories } from "@/api/functions/data";
 import ProjectsList from "@/components/lists/ProjectsList";
+import PageFooter from "@/components/slices/PageFooter";
 
 export default function Projects() {
   const [pagination, setPagination] = useState({
@@ -120,48 +120,9 @@ export default function Projects() {
         </div>
       </div>
       <ProjectsList projects={projects} isLoading={isFetchingProjects} />
-      <div className="mt-10 flex justify-center gap-2">
-        <Button
-          onClick={() => {
-            if (pagination?.current_page <= 1) return;
-            setPagination((prev) => ({
-              ...prev,
-              current_page: prev?.current_page - 1,
-            }));
-          }}
-          disabled={pagination?.current_page <= 1 || isFetchingProjects}
-          variant={"outline"}
-          size="sm"
-          className="h-9 w-9 rounded-full p-0"
-        >
-          <ChevronLeft />
-        </Button>
-        <Button
-          variant={"default"}
-          size="sm"
-          className="h-9 w-9 rounded-full p-0"
-        >
-          {pagination?.current_page}
-        </Button>
-        <Button
-          onClick={() => {
-            if (pagination?.current_page >= pagination?.last_page) return;
-            setPagination((prev) => ({
-              ...prev,
-              current_page: prev?.current_page + 1,
-            }));
-          }}
-          disabled={
-            pagination?.current_page >= pagination?.last_page ||
-            isFetchingProjects
-          }
-          variant={"outline"}
-          size="sm"
-          className="h-9 w-9 rounded-full p-0"
-        >
-          <ChevronRight />
-        </Button>
-      </div>
+      {!isFetchingProjects && (
+        <PageFooter pagination={pagination} setPagination={setPagination} />
+      )}
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function Inbox() {
   ] = useQueries({
     queries: [
       { queryKey: ["requests"], queryFn: getRequests },
-      { queryKey: ["invitations"], queryFn: () => console.log("hi") },
+      { queryKey: ["invitations"], queryFn: getRequests },
     ],
   });
 
@@ -24,7 +24,7 @@ export default function Inbox() {
         description="Review invitations and join requests in one place."
       />
       <Tabs defaultValue="requests" className="flex flex-col">
-        <TabsList>
+        <TabsList className="p-1">
           <TabsTrigger value="requests">
             Sent ({requests?.length ?? 0})
           </TabsTrigger>

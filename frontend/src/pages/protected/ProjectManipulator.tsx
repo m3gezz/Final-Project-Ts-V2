@@ -23,6 +23,7 @@ import {
 } from "@/api/functions/project";
 import { getCategories } from "@/api/functions/data";
 import { getImageUrl } from "@/lib/utils";
+import ErrorCard from "@/components/cards/ErrorCard";
 
 const textareaFields = [
   {
@@ -140,11 +141,15 @@ export default function ProjectManipulator({
   });
 
   if (isLoading) {
-    return <Spinner />;
+    return (
+      <div className="w-fit mx-auto my-40">
+        <Spinner />
+      </div>
+    );
   }
 
   if (isError && mode === "edit") {
-    return <>Error</>;
+    return <ErrorCard />;
   }
 
   return (

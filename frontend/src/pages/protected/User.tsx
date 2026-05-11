@@ -11,17 +11,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getUser } from "@/api/functions/user";
 import { getImageUrl } from "@/lib/utils";
 import ProjectsList from "@/components/lists/ProjectsList";
+import ErrorCard from "@/components/cards/ErrorCard";
 
 export default function User() {
   const { id } = useParams();
   const { user } = useSelector((state) => state?.auth);
 
-  const { data: profile, isLoading: isProfileLoading } = useQuery({
+  const {
+    data: profile,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["profile", id],
     queryFn: () => getUser(id),
+    retry: 0,
   });
 
-  if (isProfileLoading) {
+  if (isLoading) {
     return (
       <div className="mx-auto max-w-5xl space-y-6">
         <div className="flex flex-wrap items-start gap-6 rounded-2xl border bg-card p-8">
@@ -49,6 +55,10 @@ export default function User() {
         </div>
       </div>
     );
+  }
+
+  if (isError) {
+    return <ErrorCard />;
   }
 
   return (
@@ -121,16 +131,10 @@ export default function User() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="owned" className="mt-6">
-          <ProjectsList
-            projects={profile?.owned}
-            isLoading={isProfileLoading}
-          />
+          <ProjectsList projects={profile?.owned} isLoading={isLoading} />
         </TabsContent>
         <TabsContent value="joined" className="mt-6">
-          <ProjectsList
-            projects={profile?.worked}
-            isLoading={isProfileLoading}
-          />
+          <ProjectsList projects={profile?.worked} isLoading={isLoading} />
         </TabsContent>
       </Tabs>
     </div>

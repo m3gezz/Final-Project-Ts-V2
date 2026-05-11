@@ -113,7 +113,7 @@ export default function Project() {
                 className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
               >
                 <Avatar className="h-6 w-6">
-                  <AvatarImage src={project?.user?.avatar} />
+                  <AvatarImage src={getImageUrl(project?.user?.avatar)} />
                   <AvatarFallback>
                     {project?.user?.full_name?.[0]}
                   </AvatarFallback>
