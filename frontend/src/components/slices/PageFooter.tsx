@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function PageFooter({ pagination, setPagination }) {
+export default function PageFooter({ pagination, setPagination, isLoading }) {
   return (
     <div className="mt-10 flex justify-center gap-2">
       <Button
@@ -12,7 +12,7 @@ export default function PageFooter({ pagination, setPagination }) {
             current_page: prev?.current_page - 1,
           }));
         }}
-        disabled={pagination?.current_page <= 1 || isFetchingProjects}
+        disabled={pagination?.current_page <= 1 || isLoading}
         variant={"outline"}
         size="sm"
         className="h-9 w-9 rounded-full p-0"
@@ -35,8 +35,7 @@ export default function PageFooter({ pagination, setPagination }) {
           }));
         }}
         disabled={
-          pagination?.current_page >= pagination?.last_page ||
-          isFetchingProjects
+          pagination?.current_page >= pagination?.last_page || isLoading
         }
         variant={"outline"}
         size="sm"

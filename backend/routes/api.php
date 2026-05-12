@@ -14,6 +14,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\SkillController;
+use App\Http\Controllers\WorkspaceController;
 
 Route::get('/', function () {return ['api' => 'ready'];});
 Route::post('/refresh', [AuthController::class, 'refresh']);//I use this route to keep the user logged in, I send a cookie then get a token (the cookie is created during sign in/up)
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('users', UserController::class);
     Route::get('home', [UserController::class, 'home']);
     Route::apiResource('projects', ProjectController::class);
+    Route::apiResource('workspaces', WorkspaceController::class);
     Route::get('/projects-edit/{project}', [ProjectController::class, 'edit']);
     Route::apiResource('project-members', ProjectMemberController::class);
     Route::apiResource('invitation-requests', InvitationRequestController::class);

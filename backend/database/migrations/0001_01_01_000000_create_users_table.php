@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('avatar')->nullable();
             $table->string('full_name',30);
-            $table->string('username',15)->nullable();
+            $table->string('username')->nullable();
             $table->string('bio',255)->nullable();
             $table->text('about')->nullable();
             $table->boolean('private')->default(0);

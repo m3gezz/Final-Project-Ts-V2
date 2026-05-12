@@ -23,7 +23,7 @@ export default function Projects() {
     defaultValues: {
       search: "",
       category_id: "0",
-      sort: "1",
+      sort: "likes",
     },
   });
   const [search, category_id, sort] = form.watch([
@@ -81,47 +81,51 @@ export default function Projects() {
           </Button>
         }
       />
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <div className="flex w-full lg:max-w-2xl gap-2 ml-auto">
-          <InputController
+
+      <div className="mb-6 flex w-full lg:max-w-2xl gap-2 ml-auto">
+        <InputController
+          control={form.control}
+          f={{
+            name: "search",
+            placeholder: "Search projects…",
+          }}
+        />
+        <div className="flex gap-2">
+          <SelectController
             control={form.control}
-            f={{
-              name: "search",
-              placeholder: "Search projects…",
-            }}
+            f={{ name: "category_id" }}
+            options={[
+              {
+                id: 0,
+                label: "All",
+              },
+              ...(categories ?? []),
+            ]}
           />
-          <div className="flex gap-2">
-            <SelectController
-              control={form.control}
-              f={{ name: "category_id" }}
-              options={[
-                {
-                  id: 0,
-                  label: "All",
-                },
-                ...(categories ?? []),
-              ]}
-            />
-            <SelectController
-              control={form.control}
-              f={{ name: "sort" }}
-              options={[
-                {
-                  id: 1,
-                  label: "Most liked",
-                },
-                {
-                  id: 2,
-                  label: "Newest",
-                },
-              ]}
-            />
-          </div>
+          <SelectController
+            control={form.control}
+            f={{ name: "sort" }}
+            options={[
+              {
+                id: "likes",
+                label: "Most liked",
+              },
+              {
+                id: "date",
+                label: "Newest",
+              },
+            ]}
+          />
         </div>
       </div>
+
       <ProjectsList projects={projects} isLoading={isFetchingProjects} />
       {!isFetchingProjects && (
-        <PageFooter pagination={pagination} setPagination={setPagination} />
+        <PageFooter
+          pagination={pagination}
+          setPagination={setPagination}
+          isLoading={isFetchingProjects}
+        />
       )}
     </div>
   );

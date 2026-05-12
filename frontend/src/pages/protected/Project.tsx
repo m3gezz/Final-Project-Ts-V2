@@ -13,13 +13,19 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getProject, likeProject } from "@/api/functions/project";
 import { getImageUrl } from "@/lib/utils";
+import ErrorCard from "@/components/cards/ErrorCard";
 
 export default function Project() {
   const { id } = useParams();
   const { user } = useSelector((state) => state?.auth);
-  const { data: project, isLoading } = useQuery({
+  const {
+    data: project,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["project", id],
     queryFn: () => getProject(id),
+    retry: 0,
   });
 
   const queryClient = useQueryClient();
@@ -84,6 +90,10 @@ export default function Project() {
         </div>
       </div>
     );
+  }
+
+  if (isError) {
+    return <ErrorCard />;
   }
 
   return (

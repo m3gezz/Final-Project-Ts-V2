@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Project;
+use App\Models\Workspace;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -66,14 +67,16 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        $user->load(['skills', 'badges'])->loadCount([ 'projects','memberships as worked_count' => function ($q) {
-            $q->where('role', '!=', 'owner');
+        $user->load(['skills', 'badges'])->loadCount([ 'projects' => function ($q) {
+            $q->where('private', false);
+        },'memberships as worked_count' => function ($q) {
+            $q->where('private', false)->where('role', '!=', 'owner');
         }]);
 
       
-        $owned = Project::where('user_id', $user->id)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get();
+        $owned = Project::where('private', false)->where('user_id', $user->id)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get();
      
-        $worked = Project::whereHas('members', function ($q) use($user) {
+        $worked = Project::where('private', false)->whereHas('members', function ($q) use($user) {
             $q->where('user_id',$user->id)->where('role','!=','owner');
         })->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get(); 
    
@@ -176,12 +179,18 @@ class UserController extends Controller
         $user = $request->user()->loadCount(['projects','requests' => function ($q) {
             $q->where('status', 'pending');
         }]);
-    
+        $workspaces_count = Workspace::whereHas('project', function($q) use($request) {
+            $q->whereHas('members', function($q) use($request) {
+                $q->where('user_id', $request->user()->id);
+            });
+        })->count();
+        $user['workspaces_count'] = $workspaces_count;
         $projects = Project::where('private', false)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(3)->get();
-        
+        $workspaces = Project::where('user_id', $request->user()->id)->with(['workspace','members.user', 'skills', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(3)->get();
+
         $data = [];
         $data['user'] = $user;
-        $data['workspaces'] = [];
+        $data['workspaces'] = $workspaces;
         $data['projects'] = $projects;
         return response()->json($data);
     }

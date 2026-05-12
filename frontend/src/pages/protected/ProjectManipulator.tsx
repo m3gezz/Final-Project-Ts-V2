@@ -140,7 +140,7 @@ export default function ProjectManipulator({
     },
   });
 
-  if (isLoading) {
+  if (isLoading && mode === "edit") {
     return (
       <div className="w-fit mx-auto my-40">
         <Spinner />

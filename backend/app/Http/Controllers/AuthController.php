@@ -22,6 +22,8 @@ class AuthController extends Controller
             'terms' => ['required'],
         ]);
 
+        $fields['username'] = str_replace(" ", "_", $fields['full_name']);
+
         if (!$fields['terms']) {
             throw ValidationException::withMessages([
                 'terms' => ['Terms must be accepted.'],

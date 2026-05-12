@@ -136,6 +136,12 @@ export default function User() {
         <TabsContent value="joined" className="mt-6">
           <ProjectsList projects={profile?.worked} isLoading={isLoading} />
         </TabsContent>
+        <p className="w-fit mx-auto text-sm text-muted-foreground">
+          For more search the users name{" "}
+          <Link className="text-primary hover:underline" to={"/projects"}>
+            Here
+          </Link>
+        </p>
       </Tabs>
     </div>
   );

@@ -39,7 +39,7 @@ class ProjectController extends Controller
             $query->where('category_id', $category_id);
         }
 
-        if ($sort == 1) {
+        if ($sort === 'likes') {
             $query->orderByDesc('likes_count');
         } else {   
             $query->orderByDesc('created_at');
@@ -84,6 +84,8 @@ class ProjectController extends Controller
             'user_id' => $project->user_id,
             'role' => "owner",
         ];
+
+        $project->workspace()->create();
         
         ProjectMember::create($projectMember);
 

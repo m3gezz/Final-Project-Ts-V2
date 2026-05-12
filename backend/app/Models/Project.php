@@ -20,6 +20,10 @@ class Project extends Model
         'category_id',
     ];
 
+    public function workspace() {
+        return $this->hasOne(Workspace::class);
+    }
+
     public function skills() {
         return $this->belongsToMany(Skill::class);
     }

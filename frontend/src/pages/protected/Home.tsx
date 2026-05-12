@@ -54,7 +54,7 @@ export default function Home() {
             {
               icon: Briefcase,
               label: "Workspaces",
-              value: data?.user?.projects_count ?? 0,
+              value: data?.user?.workspaces_count ?? 0,
               to: "/workspaces",
             },
             {
