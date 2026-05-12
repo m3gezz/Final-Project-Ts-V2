@@ -248,10 +248,10 @@ export default function Project() {
           </section>
           <section className="rounded-xl border bg-card p-6">
             <h3 className="text-sm font-semibold text-muted-foreground">
-              Members ({project?.members?.length})
+              Members ({project?.workspace?.memberships?.length})
             </h3>
             <div className="mt-3 space-y-3">
-              {project?.members?.map((m) => {
+              {project?.workspace?.memberships?.map((m) => {
                 return (
                   <Link
                     key={m?.id}

@@ -21,23 +21,29 @@ export default function RequestCard({ request }) {
       queryClient.invalidateQueries({ queryKey: ["requests"] });
     },
   });
+
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4">
       <Avatar>
-        <AvatarImage src={getImageUrl(request?.project?.user?.avatar)} />
+        <AvatarImage
+          src={getImageUrl(request?.workspace?.project?.user?.avatar)}
+        />
         <AvatarFallback>{request?.user?.full_name?.[0]}</AvatarFallback>
       </Avatar>
       <div className="flex-1">
         <div className="text-sm">
           Request to{" "}
-          <Link to={`/users/${request?.project?.user_id}`}>
+          <Link to={`/users/${request?.workspace?.project?.user_id}`}>
             <span className="font-medium">
-              {request?.project?.user?.full_name}
+              {request?.workspace?.project?.user?.full_name}
             </span>
           </Link>{" "}
           for joining{" "}
-          <Link to={`/projects/${request?.project_id}`} className="font-medium">
-            {request?.project?.title}
+          <Link
+            to={`/projects/${request?.workspace?.project_id}`}
+            className="font-medium"
+          >
+            {request?.workspace?.project?.title}
           </Link>
         </div>
         <div className="mt-1">

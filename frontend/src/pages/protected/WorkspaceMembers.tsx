@@ -30,15 +30,12 @@ export default function WorkspaceMembers() {
         </Dialog>
       </div>
 
-      <WsMembersList
-        members={workspace?.project?.members}
-        isLoading={isLoading}
-      />
+      <WsMembersList members={workspace?.memberships} isLoading={isLoading} />
 
       <div>
         <h2 className="mb-3 text-lg font-semibold">Requests & invitations</h2>
         <ProjectRequestList
-          requests={workspace?.project?.requests}
+          requests={workspace?.requests}
           isLoading={isLoading}
         />
       </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Membership;
 use App\Models\Project;
 use App\Models\ProjectMember;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -20,7 +21,7 @@ class ProjectController extends Controller
         $category_id = $request->category_id;
         $sort = $request->sort;
 
-        $query = Project::where('private', false)->with(['user','members.user', 'skills', 'category'])->withCount(['comments', 'likes']);
+        $query = Project::where('private', false)->with(['user','category'])->withCount(['comments', 'likes']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -45,9 +46,9 @@ class ProjectController extends Controller
             $query->orderByDesc('created_at');
         }
 
-        $projects = $query->paginate(8);
+        $data = $query->paginate(8);
 
-        return response()->json($projects);
+        return response()->json($data);
     }
 
     /**
@@ -71,27 +72,22 @@ class ProjectController extends Controller
             $path = $request->file('image')->store('projectImages', 'public');
             $fields['image'] = $path;
         }
-
+        
         $project = $request->user()->projects()->create($fields);
+        $workspace = $project->workspace()->create();
         
         if ($request->has('skills')) {
             $project->skills()->sync($fields['skills']);
         }
-
-
-        $projectMember = [
-            'project_id' => $project->id,
+        
+        $workspace->memberships()->create([
             'user_id' => $project->user_id,
             'role' => "owner",
-        ];
+        ]);
 
-        $project->workspace()->create();
-        
-        ProjectMember::create($projectMember);
+        $data = $project->id;
 
-        $project->load(['members.user', 'category']);
-
-        return response()->json($project);
+        return response()->json($data);
     }
 
     /**
@@ -100,22 +96,18 @@ class ProjectController extends Controller
     public function show(Project $project, Request $request)
     {
         $this->authorize('view', $project);
-        $project->load(['user' => function ($q) {
-            $q->withCount(['projects']);
-        },'members.user','category','skills','comments'=> function ($q) {
+
+        $project->load(['user','workspace.memberships.user','category','skills',
+            'comments'=> function ($q) {
             $q->latest()->with('user');
         }])->loadCount(['comments','likes']);
 
         $project['isLiked'] = $project->likes()->where('user_id', $request->user()->id)->exists();
-        $project['isRequested'] = $project->requests()->where('user_id', $request->user()->id)->exists();
+        $project['isRequested'] = $project->workspace->requests()->where('user_id', $request->user()->id)->exists();
 
-        $membersIds = $project->members->pluck('id')->toArray();
-        foreach ($project['comments'] as $comment) {
-            $comment['isMember'] = in_array($request->user()->id, $membersIds);
-            $comment['isOwner'] = $comment->user_id === $project->user_id;
-        }
+        $data = $project;
 
-        return response()->json($project);
+        return response()->json($data);
     }
 
     /**
@@ -142,16 +134,19 @@ class ProjectController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            Storage::disk('public')->delete($project->image);
+            if ($project->image !== null && $project->image !== 'projectImages/placeholder-image.jpg') {
+                Storage::disk('public')->delete($project->image);
+            }
+
             $path = $request->file('image')->store('projectImages', 'public');
             $fields['image'] = $path;
         }
 
         $project->update($fields);
 
-        $project->load(['members.user', 'category']);
+        $data = $project->id;
 
-        return response()->json($project);
+        return response()->json($data);
     }
 
     /**
@@ -163,13 +158,16 @@ class ProjectController extends Controller
         
         $project->delete();
 
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'deleted']);
     }
 
-    public function edit(Project $project, Request $request)
+    public function edit(Project $project)
     {
         $this->authorize('edit', $project);
+
         $project->load(['category','skills']);
-        return response()->json($project);
+        $data = $project;
+
+        return response()->json($data);
     }
 }

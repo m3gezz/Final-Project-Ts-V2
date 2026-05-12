@@ -21,7 +21,6 @@ class AuthController extends Controller
             'password' => ['required'],
             'terms' => ['required'],
         ]);
-
         $fields['username'] = str_replace(" ", "_", $fields['full_name']);
 
         if (!$fields['terms']) {

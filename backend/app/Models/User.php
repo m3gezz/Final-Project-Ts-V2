@@ -30,6 +30,26 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
     ];
 
+    public function projects() {
+        return $this->hasMany(Project::class);
+    }
+
+    public function memberships() {
+        return $this->hasMany(Membership::class);
+    }
+
+    public function requests() {
+        return $this->hasMany(Request::class);
+    }
+
+    public function skills() {
+        return $this->belongsToMany(Skill::class);
+    }
+
+    public function badges() {
+        return $this->belongsToMany(Badge::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -61,25 +81,15 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(PasswordResetCode::class); 
     }
 
-    public function skills() {
-        return $this->belongsToMany(Skill::class);
-    }
+    
 
-    public function badges() {
-        return $this->belongsToMany(Badge::class);
-    }
+    
 
-    public function projects() {
-        return $this->hasMany(Project::class);
-    }
+    
 
-    public function memberships() {
-        return $this->hasMany(ProjectMember::class);
-    }
+    
 
-    public function requests() {
-        return $this->hasMany(Request::class);
-    }
+    
 
     public function invitationRequestsSent() {
         return $this->hasMany(InvitationRequest::class);

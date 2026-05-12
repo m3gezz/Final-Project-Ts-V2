@@ -20,38 +20,49 @@ class WorkspaceController extends Controller
         $status = $request->status;
         $type = $request->type;
 
-        $query = Project::where('private', false)->with(['workspace','members.user', 'skills', 'category'])->withCount(['comments', 'likes']);
+        $query = Workspace::with(['memberships.user',
+            'project' => function ($q) {
+                $q->with(['skills', 'category'])->withCount(['comments', 'likes']);
+            }
+        ]);
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%$search%")
-                ->orWhere('description', 'like', "%$search%")
-                ->orWhereHas('skills', function ($q) use ($search) {
-                    $q->where('label','like', "%$search%");
-                })
-                ->orWhereHas('user', function ($q) use ($search) {
-                    $q->where('full_name','like', "%$search%")->orWhere('username','like', "%$search%");
+            $query->whereHas('project', 
+                function ($q) use ($search) {
+                    $q->where('title', 'like', "%$search%")
+                        ->orWhere('description', 'like', "%$search%")
+                        ->orWhereHas('skills', 
+                            function ($q) use ($search) {
+                                $q->where('label','like', "%$search%");
+                            })
+                        ->orWhereHas('category', 
+                            function ($q) use ($search) {
+                                $q->where('label','like', "%$search%");
+                            })
+                        ->orWhereHas('user', 
+                            function ($q) use ($search) {
+                                $q->where('full_name','like', "%$search%")->orWhere('username','like', "%$search%");
+                            });
                 });
-            });
         }
 
-        if ($status && $status != 0) {
-            $query->whereHas('workspace', function ($q) use($status) {
-                $q->where('status', $status);
-            });
+        if ($status) {
+            $query->where('status', $status);
         }
 
         if ($type == 'owned') {
-            $query->where('user_id', $request->user()->id);
+            $query->whereHas('memberships', function ($q) use($request) {
+                $q->where('user_id', $request->user()->id)->where('role', 'owner');
+            });
         } else {   
-            $query->whereHas('members', function ($q) use($request) {
+            $query->whereHas('memberships', function ($q) use($request) {
                 $q->where('user_id', $request->user()->id)->where('role', '!=', 'owner');
             });
         }
 
-        $projects = $query->paginate(8);
+        $data = $query->paginate(8);
 
-        return response()->json($projects);
+        return response()->json($data);
     }
 
     /**
@@ -68,13 +79,13 @@ class WorkspaceController extends Controller
     public function show(Workspace $workspace, Request $request)
     {
         if ($request->dataType === 'overview') {
-            $workspace->load(['project'])->loadCount(['project as members_count' => function ($q){
-                $q->withCount('members');
-            }]);
+            $workspace->load(['project'])->loadCount(['memberships']);
         } else {
-            $workspace->load(['project.members.user', 'project.requests.user']);
+            $workspace->load(['memberships.user', 'requests.user']);
         }
-        return response()->json($workspace);
+        $data = $workspace;
+        
+        return response()->json($data);
     }
 
     /**

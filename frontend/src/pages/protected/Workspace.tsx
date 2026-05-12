@@ -88,7 +88,7 @@ export default function Workspace() {
         >
           <div className="text-sm text-muted-foreground">Members</div>
           <div className="mt-1 text-3xl font-semibold">
-            {workspace?.members_count ?? 0}
+            {workspace?.memberships_count ?? 0}
           </div>
         </Link>
       </div>

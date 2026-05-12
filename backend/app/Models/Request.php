@@ -11,7 +11,7 @@ class Request extends Model
     use HasFactory;
 
     protected $fillable = [
-        'project_id',
+        'workspace_id',
         'user_id',
         'message',
         'type',
@@ -22,7 +22,7 @@ class Request extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function project() {
-        return $this->belongsTo(Project::class);
+    public function workspace() {
+        return $this->belongsTo(Workspace::class);
     }
 }

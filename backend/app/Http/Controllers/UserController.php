@@ -49,9 +49,9 @@ class UserController extends Controller
             $query->orderByDesc('created_at');
         }
 
-        $users = $query->paginate(8);
+        $data = $query->paginate(8);
 
-        return response()->json($users);
+        return response()->json($data);
     }
 
     /**
@@ -67,18 +67,18 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        $user->load(['skills', 'badges'])->loadCount([ 'projects' => function ($q) {
-            $q->where('private', false);
-        },'memberships as worked_count' => function ($q) {
-            $q->where('private', false)->where('role', '!=', 'owner');
-        }]);
+
+        $user->load(['skills', 'badges'])->loadCount([
+            'projects as owned_count' => function ($q) {$q->where('private', false);},
+            'memberships as worked_count' => function ($q) {$q->where('private', false)->where('role', '!=', 'owner');}
+        ]);
 
       
         $owned = Project::where('private', false)->where('user_id', $user->id)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get();
      
-        $worked = Project::where('private', false)->whereHas('members', function ($q) use($user) {
-            $q->where('user_id',$user->id)->where('role','!=','owner');
-        })->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get(); 
+        $worked = Project::where('private', false)->whereHas(
+            'workspace.memberships', function ($q) use($user) {$q->where('user_id',$user->id)->where('role','!=','owner');})
+            ->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get(); 
    
         $user['owned'] = $owned;
         $user['worked'] = $worked;
@@ -175,18 +175,24 @@ class UserController extends Controller
         return response()->json(['message' => 'Deleted successfully']);
     }
 
-    public function home(Request $request) {
+    public function home(Request $request) 
+    {
         $user = $request->user()->loadCount(['projects','requests' => function ($q) {
             $q->where('status', 'pending');
         }]);
-        $workspaces_count = Workspace::whereHas('project', function($q) use($request) {
-            $q->whereHas('members', function($q) use($request) {
+
+        $user['workspaces_count'] = Workspace::whereHas('memberships', 
+            function($q) use($request) {
                 $q->where('user_id', $request->user()->id);
-            });
-        })->count();
-        $user['workspaces_count'] = $workspaces_count;
+            })->count();
+
         $projects = Project::where('private', false)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(3)->get();
-        $workspaces = Project::where('user_id', $request->user()->id)->with(['workspace','members.user', 'skills', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(3)->get();
+        $workspaces = Workspace::whereHas('memberships', 
+            function ($q) use($request) {
+                $q->where('user_id', $request->user()->id)->where('role', 'owner');
+            })->with(['memberships.user','project'=> function($q) {
+                $q->with(['user', 'skills', 'category'])->withCount(['comments','likes'])->orderByDesc('likes_count');
+            }])->limit(3)->get();
 
         $data = [];
         $data['user'] = $user;

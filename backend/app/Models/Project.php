@@ -20,6 +20,10 @@ class Project extends Model
         'category_id',
     ];
 
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
     public function workspace() {
         return $this->hasOne(Workspace::class);
     }
@@ -28,24 +32,8 @@ class Project extends Model
         return $this->belongsToMany(Skill::class);
     }
 
-    public function user() {
-        return $this->belongsTo(User::class);
-    }
-
-    public function members() {
-        return $this->hasMany(ProjectMember::class);
-    }
-
     public function category() {
         return $this->belongsTo(Category::class);
-    }
-
-    public function requests() {
-        return $this->hasMany(Request::class);
-    }
-
-    public function invitationsRequests() {
-        return $this->hasMany(InvitationRequest::class);
     }
 
     public function comments() {
@@ -54,5 +42,9 @@ class Project extends Model
 
     public function likes() {
         return $this->hasMany(Like::class);
+    }
+
+    public function invitationsRequests() {
+        return $this->hasMany(InvitationRequest::class);
     }
 }

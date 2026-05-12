@@ -136,7 +136,7 @@ export default function ProjectManipulator({
           queryKey: ["project-check", String(id)],
         });
       }
-      nav(`/projects/${data?.data?.id}`);
+      nav(`/projects/${data?.data}`);
     },
   });
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRequestRequest;
 use App\Http\Requests\UpdateRequestRequest;
 use App\Models\ProjectMember;
+use App\Models\Workspace;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Validation\ValidationException;
@@ -18,10 +19,8 @@ class RequestController extends Controller
      * Display a listing of the resource.
      */
     public function index(HttpRequest $rq)
-    {
-        $user = $rq->user();
-        
-        $data = $user->requests()->with(['project' => function ($q) {
+    {   
+        $data = $rq->user()->requests()->with(['workspace.project' => function ($q) {
             $q->with('user');
         },'user'])->get();
 
@@ -41,10 +40,12 @@ class RequestController extends Controller
             ]
         );
 
-        $alreadyMember = ProjectMember::where('project_id', $fields['project_id'])->where('user_id', $rq->user()->id)->exists();
-        $haRequest = Request::where('project_id', $fields['project_id'])->where('user_id', $rq->user()->id)->exists();
+        $workspace = Workspace::where('project_id', $fields['project_id'])->first();
+        $fields['workspace_id'] = $workspace->id;
+        $isMember = $rq->user()->memberships()->where('workspace_id', $workspace->id)->exists();
+        $hasRequest = $rq->user()->requests()->where('workspace_id', $workspace->id)->exists();
 
-        if ($alreadyMember || $haRequest) 
+        if ($isMember || $hasRequest) 
             throw ValidationException::withMessages([
                 'message' => ['You either already a member, or you have a request.'],
             ]);

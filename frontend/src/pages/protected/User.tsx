@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProjectCard from "@/components/cards/ProjectCard";
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -124,7 +123,7 @@ export default function User() {
       <Tabs defaultValue="owned" className="flex flex-col">
         <TabsList>
           <TabsTrigger value="owned">
-            Owned ({profile?.projects_count ?? 0})
+            Owned ({profile?.owned_count ?? 0})
           </TabsTrigger>
           <TabsTrigger value="joined">
             Joined ({profile?.worked_count ?? 0})

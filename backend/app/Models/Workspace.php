@@ -15,4 +15,12 @@ class Workspace extends Model
     public function project() {
         return $this->belongsTo(Project::class);
     }
+
+    public function memberships() {
+        return $this->hasMany(Membership::class);
+    }
+
+     public function requests() {
+        return $this->hasMany(Request::class);
+    }
 }
