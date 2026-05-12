@@ -72,7 +72,7 @@ class WorkspaceController extends Controller
                 $q->withCount('members');
             }]);
         } else {
-            $workspace->load(['project.members.user']);
+            $workspace->load(['project.members.user', 'project.requests.user']);
         }
         return response()->json($workspace);
     }

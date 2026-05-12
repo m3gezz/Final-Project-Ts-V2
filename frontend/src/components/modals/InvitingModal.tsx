@@ -1,5 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DialogContent,
   DialogHeader,
@@ -10,8 +8,6 @@ import { getUsers } from "@/api/functions/user";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import InputController from "../controllers/InputController";
-import { getImageUrl } from "@/lib/utils";
-import InvitingUserCard from "../cards/InvitingUserCard";
 import InvitingUsersList from "../lists/InvitingUsersList";
 
 export default function InvitingModal() {

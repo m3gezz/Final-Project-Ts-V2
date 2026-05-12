@@ -53,7 +53,7 @@ import { Link } from "react-router-dom";
 export default function Workspace() {
   const { id } = useParams();
   const { data: workspace } = useQuery({
-    queryKey: ["workspace", id],
+    queryKey: ["workspace", id, "overview"],
     queryFn: () => getWorkspace(id, "overview"),
   });
 

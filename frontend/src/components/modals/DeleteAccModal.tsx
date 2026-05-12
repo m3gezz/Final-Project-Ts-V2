@@ -6,7 +6,6 @@ import { deleteAccountSchema } from "@/zod/schemas";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
-import { unsetAuth } from "@/redux/authSlice";
 import { deleteAccount } from "@/api/functions/user";
 
 const fields = [
