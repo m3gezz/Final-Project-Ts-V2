@@ -46,81 +46,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { getWorkspace } from "@/api/functions/workspace";
+import { Link } from "react-router-dom";
 
 export default function Workspace() {
   const { id } = useParams();
-  const ws = findWorkspace(id || "");
-  if (!ws) return <Navigate to="/workspaces" replace />;
-  const project = findProject(ws.projectId);
+  const { data: workspace } = useQuery({
+    queryKey: ["workspace", id],
+    queryFn: () => getWorkspace(id, "overview"),
+  });
 
-  const tabs = [
-    { to: "", label: "Overview", icon: LayoutDashboard, end: true },
-    { to: "members", label: "Members", icon: UsersIcon },
-    { to: "chat", label: "Chat", icon: MessageSquare },
-    { to: "tasks", label: "Tasks", icon: KanbanSquare },
-    { to: "attachments", label: "Attachments", icon: Paperclip },
-    { to: "settings", label: "Settings", icon: Settings },
-  ];
-
-  return (
-    <div className="-m-4 md:-m-8 flex min-h-[calc(100vh-3.5rem)]">
-      <aside className="hidden w-56 shrink-0 border-r bg-sidebar/40 p-4 lg:block">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="h-10 w-10 overflow-hidden rounded-lg bg-muted">
-            {project && (
-              <img
-                src={project.image}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            )}
-          </div>
-          <div className="min-w-0">
-            <div className="truncate text-sm font-semibold">{ws.name}</div>
-            <div className="truncate text-xs text-muted-foreground">
-              {project?.category}
-            </div>
-          </div>
-        </div>
-        <nav className="space-y-1">
-          {tabs.map((t) => (
-            <NavLink
-              key={t.label}
-              to={t.to}
-              end={t.end}
-              className={({ isActive }) =>
-                `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-muted-foreground hover:bg-sidebar-accent/60"}`
-              }
-            >
-              <t.icon className="h-4 w-4" />
-              {t.label}
-            </NavLink>
-          ))}
-        </nav>
-      </aside>
-      <div className="flex-1 p-4 md:p-8">
-        <Routes>
-          <Route index element={<Overview workspaceId={ws.id} />} />
-          <Route path="members" element={<Members workspaceId={ws.id} />} />
-          <Route path="chat" element={<Chat workspaceId={ws.id} />} />
-          <Route path="tasks" element={<TasksBoard workspaceId={ws.id} />} />
-          <Route path="attachments" element={<Attachments />} />
-          <Route path="settings" element={<WSettings name={ws.name} />} />
-        </Routes>
-      </div>
-    </div>
-  );
-}
-
-function Overview({ workspaceId }: { workspaceId: string }) {
-  const ws = findWorkspace(workspaceId)!;
-  const ts = allTasks.filter((t) => t.workspaceId === workspaceId);
-  const done = ts.filter((t) => t.status === "done").length;
-  const pct = ts.length ? Math.round((done / ts.length) * 100) : 0;
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{ws.name}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {workspace?.project?.title}'s Workspace
+        </h1>
         <p className="text-sm text-muted-foreground">
           Project overview & activity
         </p>
@@ -128,19 +70,27 @@ function Overview({ workspaceId }: { workspaceId: string }) {
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border bg-card p-5">
           <div className="text-sm text-muted-foreground">Progress</div>
-          <div className="mt-1 text-3xl font-semibold">{pct}%</div>
-          <Progress value={pct} className="mt-3" />
+          <div className="mt-1 text-3xl font-semibold">{100}%</div>
+          <Progress value={100} className="mt-3" />
         </div>
-        <div className="rounded-xl border bg-card p-5">
+        <Link
+          to={"tasks"}
+          className="rounded-xl border bg-card p-4 hover:border-primary/50"
+        >
           <div className="text-sm text-muted-foreground">Open tasks</div>
           <div className="mt-1 text-3xl font-semibold">
-            {ts.filter((t) => t.status !== "done").length}
+            {workspace?.tasks_count ?? 0}
           </div>
-        </div>
-        <div className="rounded-xl border bg-card p-5">
+        </Link>
+        <Link
+          to={"members"}
+          className="rounded-xl border bg-card p-4 hover:border-primary/50"
+        >
           <div className="text-sm text-muted-foreground">Members</div>
-          <div className="mt-1 text-3xl font-semibold">{ws.members.length}</div>
-        </div>
+          <div className="mt-1 text-3xl font-semibold">
+            {workspace?.members_count ?? 0}
+          </div>
+        </Link>
       </div>
       <div className="rounded-xl border bg-card p-6">
         <h2 className="text-lg font-semibold">Recent activity</h2>

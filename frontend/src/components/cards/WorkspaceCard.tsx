@@ -23,7 +23,7 @@ export default function WorkspaceCard({ project }) {
             {project?.category?.label}
           </div>
           <h3 className="mt-0.5 font-semibold group-hover:text-primary">
-            {project?.title}
+            {project?.title}'s Workspace
           </h3>
         </div>
         <div className="h-10 w-10 overflow-hidden rounded-lg bg-muted">

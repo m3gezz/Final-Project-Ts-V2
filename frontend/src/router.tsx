@@ -22,6 +22,10 @@ import Home from "./pages/protected/Home";
 import User from "./pages/protected/User";
 import Landing from "./pages/Landing";
 import ProjectManipulator from "./pages/protected/ProjectManipulator";
+import WorkspaceMembers from "./pages/protected/WorkspaceMembers";
+import WorkspaceChat from "./pages/protected/WorkspaceChat";
+import WorkspaceTasks from "./pages/protected/WorkspaceTasks";
+import WorkspaceLayout from "./layouts/WorkspaceLayout";
 
 const routes = [
   {
@@ -105,8 +109,25 @@ const routes = [
             element: <Workspaces />,
           },
           {
-            path: "workspaces/:id",
-            element: <Workspace />,
+            element: <WorkspaceLayout />,
+            children: [
+              {
+                path: "workspaces/:id",
+                element: <Workspace />,
+              },
+              {
+                path: "workspaces/:id/members",
+                element: <WorkspaceMembers />,
+              },
+              {
+                path: "workspaces/:id/chat",
+                element: <WorkspaceChat />,
+              },
+              {
+                path: "workspaces/:id/tasks",
+                element: <WorkspaceTasks />,
+              },
+            ],
           },
           { path: "inbox", element: <Inbox /> },
           {

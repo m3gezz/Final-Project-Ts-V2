@@ -65,9 +65,16 @@ class WorkspaceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Workspace $workspace)
+    public function show(Workspace $workspace, Request $request)
     {
-        //
+        if ($request->dataType === 'overview') {
+            $workspace->load(['project'])->loadCount(['project as members_count' => function ($q){
+                $q->withCount('members');
+            }]);
+        } else {
+            $workspace->load(['project.members.user']);
+        }
+        return response()->json($workspace);
     }
 
     /**

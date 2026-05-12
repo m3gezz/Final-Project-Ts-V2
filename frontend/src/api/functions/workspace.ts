@@ -13,4 +13,9 @@ const getWorkspaces = async (searcher) => {
   return res?.data?.data;
 };
 
-export { getWorkspaces };
+const getWorkspace = async (id, dataType) => {
+  const res = await api.get(`workspaces/${id}?dataType=${dataType}`);
+  return res.data;
+};
+
+export { getWorkspaces, getWorkspace };
