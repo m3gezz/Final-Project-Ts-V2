@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreRequestRequest;
-use App\Http\Requests\UpdateRequestRequest;
-use App\Models\ProjectMember;
+use App\Models\Membership;
 use App\Models\Workspace;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request as HttpRequest;
@@ -77,12 +75,10 @@ class RequestController extends Controller
         $request->update($fields);
 
         if ($fields['status'] === 'accepted') {
-            $projectMember = [
-                'project_id' => $request->project_id,
+            Membership::create([
+                'workspace_id' => $request->workspace_id,
                 'user_id' => $request->user_id,
-                'invited_by' => $rq->user()->only(['id', 'full_name', 'username', 'avatar'])
-            ];
-            ProjectMember::create($projectMember);
+            ]);
         }
 
         if ($fields['status'] != 'pending') {

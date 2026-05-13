@@ -6,8 +6,15 @@ import { Badge } from "../ui/badge";
 import { X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getSkills } from "@/api/functions/data";
+import type { Skill } from "../cards/UserCard";
 
-export default function SkillsController({ form, skills, setSkills }) {
+export default function SkillsController({
+  form,
+  skills,
+  setSkills,
+}: {
+  skills: Skill[];
+}) {
   const { data: allowedSkills } = useQuery({
     queryKey: ["skills"],
     queryFn: getSkills,

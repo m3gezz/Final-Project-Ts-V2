@@ -5,8 +5,9 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { FieldError } from "../ui/field";
+import type { FieldType } from "./CheckBoxController";
 
-export default function InputOTPController({ control, f }) {
+export default function InputOTPController({ control, f }: { f: FieldType }) {
   return (
     <Controller
       control={control}

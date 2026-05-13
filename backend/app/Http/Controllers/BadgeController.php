@@ -41,7 +41,7 @@ class BadgeController extends Controller
      */
     public function show(Badge $badge)
     {
-        return response()->json($badge);
+        //
     }
 
     /**

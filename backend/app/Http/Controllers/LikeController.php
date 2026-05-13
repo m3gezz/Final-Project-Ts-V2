@@ -9,16 +9,9 @@ class LikeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->has('project_id')) {
-            $request->validate(['project_id' => ['required','exists:projects,id']]);
-            $likes = Like::where('project_id', $request->project_id)->paginate(20);
-            return response()->json($likes);
-        }
-
-        $likes = $request->user()->likes()->paginate(20);
-        return response()->json($likes);
+       //
     }
 
     /**

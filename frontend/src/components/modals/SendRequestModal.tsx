@@ -6,7 +6,11 @@ import TextareaController from "../controllers/TextareaController";
 import { requestJoin } from "@/api/functions/inbox";
 import { useNavigate } from "react-router-dom";
 
-export default function SendRequestModal({ project_id }) {
+export default function SendRequestModal({
+  project_id,
+}: {
+  project_id: string | undefined;
+}) {
   const form = useForm({
     defaultValues: {
       project_id,

@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom";
 import { Heart, MessageCircle } from "lucide-react";
-import { type Project, findUser } from "@/data/exp";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getImageUrl } from "@/lib/utils";
+import type { Skill, User } from "./UserCard";
+
+export type Project = {
+  id: string;
+  title: string;
+  image: string;
+  category: Skill;
+  skills: Skill[];
+  description: string;
+  manifesto: string;
+  user: User;
+  likes_count: number;
+  comments_count: number;
+};
 
 export default function ProjectCard({ project }: { project: Project }) {
   return (

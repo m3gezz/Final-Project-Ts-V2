@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { verificationCodeSchema } from "@/zod/schemas";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
-import { signOut } from "@/api/functions/ayth";
+import { signOut } from "@/api/functions/auth";
 
 export default function VerifyEmail() {
   const disp = useDispatch();

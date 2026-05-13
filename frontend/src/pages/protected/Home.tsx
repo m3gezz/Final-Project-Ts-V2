@@ -14,13 +14,7 @@ export default function Home() {
 
   return (
     <div className="space-y-10">
-      <div
-        className="overflow-hidden rounded-2xl border p-8"
-        style={{
-          background: "var(--gradient-soft)",
-          boxShadow: "var(--shadow-soft)",
-        }}
-      >
+      <div className="bg-muted overflow-hidden rounded-2xl border p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm text-muted-foreground">Welcome back,</p>

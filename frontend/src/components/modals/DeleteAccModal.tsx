@@ -23,7 +23,7 @@ const fields = [
   },
 ];
 
-export default function DeleteAccModal({ id }) {
+export default function DeleteAccModal({ id }: { id: string }) {
   const form = useForm({
     defaultValues: {
       password: "",

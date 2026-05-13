@@ -12,15 +12,14 @@ class PasswordController extends Controller
 {
     public function send_reset_code(Request $request) {
         $request->validate(
-            ['email' => ['required','email','exists:users,email']],
-            ['email.exists' => 'No account was found.']
+            ['email' => ['required','email','exists:users,email']]
         );
 
         $user = User::where('email', $request->email)->first();
 
         $code = random_int(100000, 999999);
         $user->passwordResetCode()->updateOrCreate(
-            ['user_id' => $user->id],
+            // ['user_id' => $user->id],
             ['code' => Hash::make($code),
             'expires_at' => now()->addMinutes(10),]
         );

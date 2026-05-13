@@ -18,4 +18,14 @@ const getWorkspace = async (id, dataType) => {
   return res.data;
 };
 
-export { getWorkspaces, getWorkspace };
+const deleteMember = async (id) => {
+  const res = await api.delete(`memberships/${id}`);
+  return res.data;
+};
+
+const updateMemberRole = async (id, data) => {
+  const res = await api.put(`memberships/${id}`, data);
+  return res.data;
+};
+
+export { getWorkspaces, getWorkspace, deleteMember, updateMemberRole };

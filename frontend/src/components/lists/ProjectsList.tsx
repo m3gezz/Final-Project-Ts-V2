@@ -1,12 +1,20 @@
-import ProjectCard from "../cards/ProjectCard";
+import ProjectCard, { type Project } from "../cards/ProjectCard";
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import { Spinner } from "../ui/spinner";
+import ProjectCardSkeleton from "../skeletons/ProjectCardSkeleton";
 
-export default function ProjectsList({ projects, isLoading }) {
+export default function ProjectsList({
+  projects,
+  isLoading,
+}: {
+  projects: Project[];
+  isLoading: boolean;
+}) {
   return isLoading ? (
-    <div className="w-fit mx-auto my-[10%]">
-      <Spinner />
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {[...Array(4)].map((_, i) => (
+        <ProjectCardSkeleton key={i} />
+      ))}
     </div>
   ) : projects?.length ? (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

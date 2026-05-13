@@ -1,17 +1,24 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
 import { Spinner } from "../ui/spinner";
-import RequestCard from "../cards/RequestCard";
+import ReceivedRequestCard from "../cards/ReceivedRequestCard";
+import type { Request } from "../cards/SentRequestCard";
 
-export default function RequestsList({ requests, isLoading }) {
+export default function ReceivedRequestList({
+  requests,
+  isLoading,
+}: {
+  requests: Request[];
+  isLoading: boolean;
+}) {
   return isLoading ? (
     <div className="w-fit mx-auto my-[10%]">
       <Spinner />
     </div>
   ) : requests?.length ? (
-    <div className="mt-6 space-y-3">
+    <div className="space-y-2">
       {requests?.map((r) => (
-        <RequestCard key={r?.id} request={r} />
+        <ReceivedRequestCard key={r?.id} request={r} />
       ))}
     </div>
   ) : (

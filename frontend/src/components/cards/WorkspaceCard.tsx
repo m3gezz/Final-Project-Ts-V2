@@ -2,8 +2,18 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getImageUrl } from "@/lib/utils";
 import { Badge } from "../ui/badge";
+import type { Member } from "./WsMemberCard";
+import type { Project } from "./ProjectCard";
 
-export default function WorkspaceCard({ workspace }) {
+export type Workspace = {
+  id: number;
+  project_id: number;
+  memberships: Member[];
+  status: string;
+  project: Project;
+};
+
+export default function WorkspaceCard({ workspace }: { workspace: Workspace }) {
   return (
     <Link
       to={`/workspaces/${workspace?.id}`}
@@ -41,7 +51,7 @@ export default function WorkspaceCard({ workspace }) {
         <div className="flex -space-x-2">
           {workspace?.memberships?.slice(0, 4)?.map((m) => {
             return (
-              <Avatar key={m?.user_id} className="h-7 w-7 ring-2 ring-card">
+              <Avatar key={m?.user?.id} className="h-7 w-7 ring-2 ring-card">
                 <AvatarImage src={getImageUrl(m?.user?.avatar)} />
                 <AvatarFallback>{m?.user?.full_name?.[0]}</AvatarFallback>
               </Avatar>

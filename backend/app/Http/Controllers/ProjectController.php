@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Membership;
+
 use App\Models\Project;
-use App\Models\ProjectMember;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -103,7 +102,8 @@ class ProjectController extends Controller
         }])->loadCount(['comments','likes']);
 
         $project['isLiked'] = $project->likes()->where('user_id', $request->user()->id)->exists();
-        $project['isRequested'] = $project->workspace->requests()->where('user_id', $request->user()->id)->exists();
+        $project['isRequested'] = $project->workspace->requests()->where('user_id', $request->user()->id)->exists() ||
+        $project->workspace->memberships()->where('user_id', $request->user()->id)->exists();
 
         $data = $project;
 

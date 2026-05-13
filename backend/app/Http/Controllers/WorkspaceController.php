@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Workspace;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreWorkspaceRequest;
-use App\Http\Requests\UpdateWorkspaceRequest;
-use App\Models\Project;
 use Illuminate\Http\Request;
 
 class WorkspaceController extends Controller
@@ -68,7 +65,7 @@ class WorkspaceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreWorkspaceRequest $request)
+    public function store(Request $request)
     {
         //
     }
@@ -81,7 +78,7 @@ class WorkspaceController extends Controller
         if ($request->dataType === 'overview') {
             $workspace->load(['project'])->loadCount(['memberships']);
         } else {
-            $workspace->load(['memberships.user', 'requests.user']);
+            $workspace->load(['project','memberships.user', 'requests.user']);
         }
         $data = $workspace;
         
@@ -91,7 +88,7 @@ class WorkspaceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateWorkspaceRequest $request, Workspace $workspace)
+    public function update(Request $request, Workspace $workspace)
     {
         //
     }

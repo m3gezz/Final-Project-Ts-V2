@@ -4,7 +4,7 @@ import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
-export default function DeleteProjectModal({ id }) {
+export default function DeleteProjectModal({ id }: { id: string }) {
   const nav = useNavigate();
   const { mutate, isPending } = useMutation({
     mutationFn: () => deleteProject(id),

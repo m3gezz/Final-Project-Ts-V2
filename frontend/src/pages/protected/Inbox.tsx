@@ -4,11 +4,11 @@ import { Inbox as InboxIcon } from "lucide-react";
 import EmptyCard from "@/components/cards/EmptyCard";
 import { useQueries } from "@tanstack/react-query";
 import { getRequests } from "@/api/functions/inbox";
-import RequestsList from "@/components/lists/RequestsList";
+import SentRequestsList from "@/components/lists/SentRequestsList";
 
 export default function Inbox() {
   const [
-    { data: requests, isLoading: isRequestsLoading },
+    { data: requests, isFetching: isRequestsFetching },
     { data: invitations },
   ] = useQueries({
     queries: [
@@ -33,7 +33,10 @@ export default function Inbox() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="requests" className="mt-6 space-y-3">
-          <RequestsList requests={requests} isLoading={isRequestsLoading} />
+          <SentRequestsList
+            requests={requests}
+            isLoading={isRequestsFetching}
+          />
         </TabsContent>
 
         <TabsContent value="invitations" className="mt-6 space-y-3">

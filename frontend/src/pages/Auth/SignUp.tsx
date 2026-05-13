@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import { signUpSchema } from "@/zod/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUp } from "@/api/functions/ayth";
+import { signUp } from "@/api/functions/auth";
 
 const infoFields = [
   {

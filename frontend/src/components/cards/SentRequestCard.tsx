@@ -5,8 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { getImageUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cancelRequest } from "@/api/functions/inbox";
+import type { User } from "./UserCard";
+import type { Workspace } from "./WorkspaceCard";
 
-export default function RequestCard({ request }) {
+export type Request = {
+  id: number;
+  user: User;
+  workspace: Workspace;
+  type: "enter" | "leave";
+  status: "pending" | "accepted" | "declined";
+};
+
+export default function SentRequestCard({ request }: { request: Request }) {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: () => cancelRequest(request?.id),
@@ -33,7 +43,7 @@ export default function RequestCard({ request }) {
       <div className="flex-1">
         <div className="text-sm">
           Request to{" "}
-          <Link to={`/users/${request?.workspace?.project?.user_id}`}>
+          <Link to={`/users/${request?.workspace?.project?.user?.id}`}>
             <span className="font-medium">
               {request?.workspace?.project?.user?.full_name}
             </span>
@@ -45,6 +55,7 @@ export default function RequestCard({ request }) {
           >
             {request?.workspace?.project?.title}
           </Link>
+          ' workspace
         </div>
         <div className="mt-1">
           <Badge variant="outline">{request?.status}</Badge>

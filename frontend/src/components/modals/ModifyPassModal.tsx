@@ -29,7 +29,7 @@ const fields = [
   },
 ];
 
-export default function ModifyPassModal({ id }) {
+export default function ModifyPassModal({ id }: { id: string }) {
   const form = useForm({
     defaultValues: {
       password: "",

@@ -1,20 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { ShieldX, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
-interface ForbiddenCardProps {
-  title?: string;
-  description?: string;
-  fullPage?: boolean;
-  className?: string;
-  onBack?: () => void;
-}
 
 export default function ErrorCard({
   title = "Access forbidden",
   description = "You don't have permission to view this content. It may be private or restricted to its members.",
-}: ForbiddenCardProps) {
+}: {
+  title?: string;
+  description?: string;
+}) {
   const nav = useNavigate();
 
   return (

@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { signInSchema } from "@/zod/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "@/api/functions/ayth";
+import { signIn } from "@/api/functions/auth";
 
 const fields = [
   {

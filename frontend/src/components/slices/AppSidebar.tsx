@@ -19,7 +19,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
 import { cn, getImageUrl } from "@/lib/utils";
-import { signOut } from "@/api/functions/ayth";
+import { signOut } from "@/api/functions/auth";
 
 const items = [
   { to: "/", label: "Home", icon: Home, end: true },

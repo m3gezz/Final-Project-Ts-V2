@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
-import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export default function AuthLCard({
@@ -12,8 +11,8 @@ export default function AuthLCard({
 }: {
   title: string;
   subtitle?: string;
-  children: ReactNode;
-  footer?: ReactNode;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
   className?: string;
 }) {
   return (
@@ -28,7 +27,10 @@ export default function AuthLCard({
         style={{ background: "var(--gradient-hero)" }}
       />
       <div className="relative w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
+        <Link
+          to="/welcome"
+          className="mb-8 flex items-center justify-center gap-2"
+        >
           <div
             className="flex h-9 w-9 items-center justify-center rounded-lg"
             style={{ background: "var(--gradient-primary)" }}

@@ -1,5 +1,4 @@
 import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
 
 export default function EmptyCard({
   icon: Icon,
@@ -10,7 +9,7 @@ export default function EmptyCard({
   icon: LucideIcon;
   title: string;
   description?: string;
-  action?: ReactNode;
+  action?: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed p-12 text-center">

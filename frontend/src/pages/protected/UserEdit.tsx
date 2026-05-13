@@ -16,7 +16,7 @@ import DeleteAccModal from "@/components/modals/DeleteAccModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ModifyPassModal from "@/components/modals/ModifyPassModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { me } from "@/api/functions/ayth";
+import { me } from "@/api/functions/auth";
 import { updateUser } from "@/api/functions/user";
 import { getImageUrl } from "@/lib/utils";
 

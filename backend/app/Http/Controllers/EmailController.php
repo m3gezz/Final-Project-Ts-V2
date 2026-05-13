@@ -22,7 +22,7 @@ class EmailController extends Controller
         $code = random_int(100000, 999999);
 
         $user->emailVerificationCode()->updateOrCreate(
-            ['user_id' => $user->id],
+            // ['user_id' => $user->id],
             ['code' => Hash::make($code),
             'expires_at' => now()->addMinutes(10),]
         );

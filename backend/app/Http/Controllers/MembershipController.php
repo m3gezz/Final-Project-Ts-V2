@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Membership;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreMembershipRequest;
-use App\Http\Requests\UpdateMembershipRequest;
 use Illuminate\Http\Request;
 
 class MembershipController extends Controller
@@ -23,21 +21,7 @@ class MembershipController extends Controller
      */
     public function store(Request $request)
     {
-        $fields = $request->validate(
-            [
-                'project_id' => ['required','exists:projects,id'],
-                'role' => ['sometimes','string'],
-            ]
-        );
-
-        $exist = ProjectMember::where('project_id', $fields['project_id'])->where('user_id', $fields['user_id'])->exists();
-
-        if ($exist) abort(422, 'User is already a member');
-
-        $fields['invited_by'] = $request->user()->only(['id', 'first_name', 'last_name', 'avatar_url']);
-        $projectMember = ProjectMember::create($fields);
-
-        return response()->json($projectMember);
+        //
     }
 
     /**
@@ -51,9 +35,15 @@ class MembershipController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMembershipRequest $request, Membership $membership)
+    public function update(Request $request, Membership $membership)
     {
-        //
+        $fields = $request->validate([
+            'role' => 'string'
+        ]);
+
+        $membership->update($fields);
+
+        return response()->json('updated');
     }
 
     /**
@@ -61,6 +51,7 @@ class MembershipController extends Controller
      */
     public function destroy(Membership $membership)
     {
-        //
+        // $membership->delete();
+        return response()->json('deleted');
     }
 }

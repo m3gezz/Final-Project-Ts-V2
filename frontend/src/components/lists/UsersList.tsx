@@ -1,12 +1,20 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import { Spinner } from "../ui/spinner";
-import UserCard from "../cards/UserCard";
+import UserCard, { type User } from "../cards/UserCard";
+import UserCardSkeleton from "../skeletons/UserCardSkeleton";
 
-export default function UsersList({ users, isLoading }) {
+export default function UsersList({
+  users,
+  isLoading,
+}: {
+  users: User[];
+  isLoading: boolean;
+}) {
   return isLoading ? (
-    <div className="w-fit mx-auto my-[10%]">
-      <Spinner />
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {[...Array(4)].map((_, i) => (
+        <UserCardSkeleton key={i} />
+      ))}
     </div>
   ) : users?.length ? (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

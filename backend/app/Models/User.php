@@ -81,29 +81,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(PasswordResetCode::class); 
     }
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    public function invitationRequestsSent() {
-        return $this->hasMany(InvitationRequest::class);
-    }
-
-    public function invitationRequestsReceived() {
-        return $this->hasMany(InvitationRequest::class,'receiver_id');
-    }
-
     public function comments() {
         return $this->hasMany(Comment::class);
     }
 
     public function likes() {
         return $this->hasMany(Like::class);
-    }
+    } 
 }

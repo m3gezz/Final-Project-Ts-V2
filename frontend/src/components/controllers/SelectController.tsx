@@ -7,8 +7,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Controller } from "react-hook-form";
+import type { FieldType } from "./CheckBoxController";
+import type { Skill } from "../cards/UserCard";
 
-export default function SelectController({ control, f, options }) {
+export default function SelectController({
+  control,
+  f,
+  options,
+}: {
+  f: FieldType;
+  options: Skill[];
+}) {
   return (
     <Controller
       name={f?.name}

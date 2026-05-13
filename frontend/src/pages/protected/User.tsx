@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getUser } from "@/api/functions/user";
 import { getImageUrl } from "@/lib/utils";
 import ProjectsList from "@/components/lists/ProjectsList";
 import ErrorCard from "@/components/cards/ErrorCard";
+import UserSkeleton from "@/components/skeletons/UserSkeleton";
 
 export default function User() {
   const { id } = useParams();
@@ -26,40 +26,8 @@ export default function User() {
     retry: 0,
   });
 
-  if (isLoading) {
-    return (
-      <div className="mx-auto max-w-5xl space-y-6">
-        <div className="flex flex-wrap items-start gap-6 rounded-2xl border bg-card p-8">
-          <Skeleton className="h-24 w-24 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-4 w-30" />
-            <Skeleton className="h-4 w-50" />
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {[...Array(5)].map((v, i) => (
-                <Skeleton key={i} className="h-3 w-10" />
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl md:col-span-2 space-y-2 border bg-card p-8">
-            <Skeleton className="h-5 w-30" />
-            <Skeleton className="h-20 w-full" />
-          </div>
-          <div className="rounded-2xl space-y-2 border bg-card p-8">
-            <Skeleton className="h-5 w-30" />
-            <Skeleton className="h-20 w-full" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return <ErrorCard />;
-  }
-
+  if (isLoading) return <UserSkeleton />;
+  if (isError) return <ErrorCard />;
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <div

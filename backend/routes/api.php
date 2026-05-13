@@ -12,13 +12,14 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BadgeController;
+use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\WorkspaceController;
 
 Route::get('/', function () {return ['api' => 'ready'];});
-Route::post('/refresh', [AuthController::class, 'refresh']);//I use this route to keep the user logged in, I send a cookie then get a token (the cookie is created during sign in/up)
-Route::post('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');//I use this route to get the user
+Route::post('/refresh', [AuthController::class, 'refresh']);
+Route::post('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 
 //Authentication routes
 Route::post('/sign-up', [AuthController::class, 'sign_up']);
@@ -36,17 +37,16 @@ Route::post('/password/reset-password', [PasswordController::class, 'reset_passw
 
 //Data routes
 Route::middleware('auth:sanctum')->group(function() {
-    Route::apiResource('users', UserController::class);
-    Route::get('home', [UserController::class, 'home']);
+    Route::apiResource('users', UserController::class)->except(['store']);
     Route::apiResource('projects', ProjectController::class);
-    Route::apiResource('workspaces', WorkspaceController::class);
-    Route::get('/projects-edit/{project}', [ProjectController::class, 'edit']);
-    Route::apiResource('project-members', ProjectMemberController::class);
-    Route::apiResource('invitation-requests', InvitationRequestController::class);
-    Route::apiResource('requests', RequestController::class);
+    Route::apiResource('workspaces', WorkspaceController::class)->only(['index', 'show']);
+    Route::apiResource('requests', RequestController::class)->except(['show']);
+    Route::apiResource('memberships', MembershipController::class)->only(['destroy','update']);
     Route::apiResource('comments', CommentController::class);
-    Route::apiResource('likes', LikeController::class);
-    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('likes', LikeController::class)->only(['store']);
+    Route::apiResource('categories', CategoryController::class)->only(['index']);
     Route::apiResource('badges', BadgeController::class);
-    Route::apiResource('skills', SkillController::class);
+    Route::apiResource('skills', SkillController::class)->only(['index']);
+    Route::get('home', [UserController::class, 'home']);
+    Route::get('/projects-edit/{project}', [ProjectController::class, 'edit']);
 });

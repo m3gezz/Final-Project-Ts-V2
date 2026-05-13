@@ -1,12 +1,20 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import { Spinner } from "../ui/spinner";
-import WorkspaceCard from "../cards/WorkspaceCard";
+import WorkspaceCard, { type Workspace } from "../cards/WorkspaceCard";
+import WorkspaceCardSkeleton from "../skeletons/WorkspaceCardSkeleton";
 
-export default function WorkspacesList({ workspaces, isLoading }) {
+export default function WorkspacesList({
+  workspaces,
+  isLoading,
+}: {
+  workspaces: Workspace[];
+  isLoading: boolean;
+}) {
   return isLoading ? (
-    <div className="w-fit mx-auto my-[10%]">
-      <Spinner />
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {[...Array(4)]?.map((_, i) => (
+        <WorkspaceCardSkeleton key={i} />
+      ))}
     </div>
   ) : workspaces?.length ? (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
