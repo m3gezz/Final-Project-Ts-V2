@@ -16,7 +16,7 @@ export type Request = {
   status: "pending" | "accepted" | "declined";
 };
 
-export default function SentRequestCard({ request }: { request: Request }) {
+export default function UserSentRequestCard({ request }: { request: Request }) {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: () => cancelRequest(request?.id),
@@ -38,7 +38,9 @@ export default function SentRequestCard({ request }: { request: Request }) {
         <AvatarImage
           src={getImageUrl(request?.workspace?.project?.user?.avatar)}
         />
-        <AvatarFallback>{request?.user?.full_name?.[0]}</AvatarFallback>
+        <AvatarFallback>
+          {request?.workspace?.project?.user?.full_name?.[0]}
+        </AvatarFallback>
       </Avatar>
       <div className="flex-1">
         <div className="text-sm">
@@ -55,7 +57,7 @@ export default function SentRequestCard({ request }: { request: Request }) {
           >
             {request?.workspace?.project?.title}
           </Link>
-          ' workspace
+          's workspace
         </div>
         <div className="mt-1">
           <Badge variant="outline">{request?.status}</Badge>

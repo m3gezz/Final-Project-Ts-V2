@@ -4,16 +4,13 @@ import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import TextareaController from "../controllers/TextareaController";
 import { requestJoin } from "@/api/functions/inbox";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function SendRequestModal({
-  project_id,
-}: {
-  project_id: string | undefined;
-}) {
+export default function SendRequestModal() {
+  const { id } = useParams();
   const form = useForm({
     defaultValues: {
-      project_id,
+      project_id: String(id),
       type: "enter",
       message: "Hi may i join ?",
     },
@@ -23,12 +20,8 @@ export default function SendRequestModal({
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => requestJoin(data),
     onMutate: () => {
-      const previousProject = queryClient.getQueryData([
-        "project",
-        String(project_id),
-      ]);
-
-      queryClient.setQueryData(["project", String(project_id)], (old) => ({
+      const previousProject = queryClient.getQueryData(["project", String(id)]);
+      queryClient.setQueryData(["project", String(id)], (old) => ({
         ...old,
         isRequested: true,
       }));
@@ -44,7 +37,7 @@ export default function SendRequestModal({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["project", String(project_id)],
+        queryKey: ["project", String(id)],
       });
       nav(`/inbox`);
     },

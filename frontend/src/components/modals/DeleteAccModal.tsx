@@ -7,6 +7,7 @@ import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { deleteAccount } from "@/api/functions/user";
+import { useParams } from "react-router-dom";
 
 const fields = [
   {
@@ -23,7 +24,8 @@ const fields = [
   },
 ];
 
-export default function DeleteAccModal({ id }: { id: string }) {
+export default function DeleteAccModal() {
+  const { id } = useParams();
   const form = useForm({
     defaultValues: {
       password: "",

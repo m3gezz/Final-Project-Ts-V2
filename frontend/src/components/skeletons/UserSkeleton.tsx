@@ -4,7 +4,7 @@ import ProjectCardSkeleton from "./ProjectCardSkeleton";
 export default function UserSkeleton() {
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <div className="flex flex-wrap items-start gap-6 p-8">
+      <div className="flex flex-wrap items-start gap-6 p-8 border rounded-xl">
         <Skeleton className="h-24 w-24 rounded-full" />
         <div className="space-y-2">
           <Skeleton className="h-5 w-40" />
@@ -18,11 +18,11 @@ export default function UserSkeleton() {
         </div>
       </div>
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="rounded-2xl md:col-span-2 space-y-2 p-8">
+        <div className="rounded-xl md:col-span-2 space-y-2 p-4 border">
           <Skeleton className="h-5 w-30" />
           <Skeleton className="h-20 w-full" />
         </div>
-        <div className="rounded-2xl space-y-2 p-8">
+        <div className="border rounded-xl space-y-2 p-4">
           <Skeleton className="h-5 w-30" />
           <Skeleton className="h-20 w-full" />
         </div>

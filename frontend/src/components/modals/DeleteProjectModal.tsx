@@ -2,9 +2,10 @@ import { deleteProject } from "@/api/functions/project";
 import { Button } from "@/components/ui/button";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function DeleteProjectModal({ id }: { id: string }) {
+export default function DeleteProjectModal() {
+  const { id } = useParams();
   const nav = useNavigate();
   const { mutate, isPending } = useMutation({
     mutationFn: () => deleteProject(id),

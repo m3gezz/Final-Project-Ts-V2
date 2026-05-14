@@ -134,7 +134,7 @@ class ProjectController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            if ($project->image !== null && $project->image !== 'projectImages/placeholder-image.jpg') {
+            if ($project->image !== null && $project->image !== 'default/default-project-image.jpg') {
                 Storage::disk('public')->delete($project->image);
             }
 

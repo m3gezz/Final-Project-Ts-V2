@@ -20,7 +20,11 @@ class Workspace extends Model
         return $this->hasMany(Membership::class);
     }
 
-     public function requests() {
+    public function requests() {
         return $this->hasMany(Request::class);
+    }
+
+    public function invitations() {
+        return $this->hasMany(Invitation::class);
     }
 }

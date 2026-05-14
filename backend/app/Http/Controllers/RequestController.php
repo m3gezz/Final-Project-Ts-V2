@@ -81,11 +81,6 @@ class RequestController extends Controller
             ]);
         }
 
-        if ($fields['status'] != 'pending') {
-            $request->delete();
-            return response()->json(['message' => 'Request ' . $fields['status'] . ' successfully']);
-        }
-
         return response()->json('updated');
     }
 

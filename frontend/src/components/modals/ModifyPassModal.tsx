@@ -6,7 +6,7 @@ import { modifyPasswordSchema } from "@/zod/schemas";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
 import { updatePassword } from "@/api/functions/user";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const fields = [
   {
@@ -29,7 +29,8 @@ const fields = [
   },
 ];
 
-export default function ModifyPassModal({ id }: { id: string }) {
+export default function ModifyPassModal() {
+  const { id } = useParams();
   const form = useForm({
     defaultValues: {
       password: "",

@@ -51,7 +51,7 @@ class MembershipController extends Controller
      */
     public function destroy(Membership $membership)
     {
-        // $membership->delete();
+        $membership->delete();
         return response()->json('deleted');
     }
 }

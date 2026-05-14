@@ -78,7 +78,7 @@ class WorkspaceController extends Controller
         if ($request->dataType === 'overview') {
             $workspace->load(['project'])->loadCount(['memberships']);
         } else {
-            $workspace->load(['project','memberships.user', 'requests.user']);
+            $workspace->load(['project','memberships.user', 'requests.user', 'invitations.receiver']);
         }
         $data = $workspace;
         

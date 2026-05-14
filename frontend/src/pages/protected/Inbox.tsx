@@ -1,18 +1,18 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/slices/Header";
 import { useQueries } from "@tanstack/react-query";
-import { getRequests } from "@/api/functions/inbox";
+import { getInvitations, getRequests } from "@/api/functions/inbox";
 import SentRequestsList from "@/components/lists/SentRequestsList";
 import ReceivedRequestsList from "@/components/lists/ReceivedRequestsList";
 
 export default function Inbox() {
   const [
-    { data: requests, isFetching: isRequestsFetching },
-    { data: invitations },
+    { data: requests, isLoading: isRequestsLoading },
+    { data: invitations, isLoading: isInvitationsLoading },
   ] = useQueries({
     queries: [
       { queryKey: ["requests"], queryFn: getRequests },
-      { queryKey: ["invitations"], queryFn: getRequests },
+      { queryKey: ["invitations"], queryFn: getInvitations },
     ],
   });
 
@@ -32,16 +32,13 @@ export default function Inbox() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="requests">
-          <SentRequestsList
-            requests={requests}
-            isLoading={isRequestsFetching}
-          />
+          <SentRequestsList requests={requests} isLoading={isRequestsLoading} />
         </TabsContent>
 
         <TabsContent value="invitations">
           <ReceivedRequestsList
-            requests={requests}
-            isLoading={isRequestsFetching}
+            requests={invitations}
+            isLoading={isInvitationsLoading}
           />
         </TabsContent>
       </Tabs>

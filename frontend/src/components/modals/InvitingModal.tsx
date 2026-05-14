@@ -3,14 +3,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUsers } from "@/api/functions/user";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import InputController from "../controllers/InputController";
 import InvitingUsersList from "../lists/InvitingUsersList";
+import { useParams } from "react-router-dom";
 
 export default function InvitingModal() {
+  const { id } = useParams();
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -23,7 +25,6 @@ export default function InvitingModal() {
     },
   });
   const search = form.watch("search");
-
   const { data: users, isFetching } = useQuery({
     queryKey: ["users", pagination.current_page, search],
     queryFn: () =>
@@ -36,6 +37,14 @@ export default function InvitingModal() {
       }),
   });
 
+  const queryClient = useQueryClient();
+  const previous = queryClient.getQueryData([
+    "workspace",
+    String(id),
+    "members",
+  ]);
+  const membersIds = previous?.memberships?.map((m) => m?.user?.id);
+
   return (
     <DialogContent aria-describedby="">
       <DialogHeader>
@@ -43,7 +52,10 @@ export default function InvitingModal() {
       </DialogHeader>
       <div className="space-y-3">
         <InputController control={form.control} f={{ name: "search" }} />
-        <InvitingUsersList users={users} isLoading={isFetching} />
+        <InvitingUsersList
+          users={[...(users ?? []).filter((u) => !membersIds?.includes(u.id))]}
+          isLoading={isFetching}
+        />
       </div>
     </DialogContent>
   );

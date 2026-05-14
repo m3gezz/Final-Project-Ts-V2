@@ -1,15 +1,18 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import ReceivedRequestCard from "../cards/ReceivedRequestCard";
-import type { Request } from "../cards/SentRequestCard";
+import type { Request } from "../cards/UserSentRequestCard";
 import ReceivedRequestCardSkeleton from "../skeletons/ReceivedRequestCardSkeleton";
+import ProjectReceivedRequestCard from "../cards/ProjectReceivedRequestCard";
+import UserReceivedRequestCard from "../cards/UserReceivedRequestCard";
 
 export default function ReceivedRequestList({
   requests,
   isLoading,
+  type = "user",
 }: {
   requests: Request[];
   isLoading: boolean;
+  type?: string;
 }) {
   return isLoading ? (
     <div className="mt-6 space-y-3">
@@ -19,9 +22,13 @@ export default function ReceivedRequestList({
     </div>
   ) : requests?.length ? (
     <div className="space-y-2">
-      {requests?.map((r) => (
-        <ReceivedRequestCard key={r?.id} request={r} />
-      ))}
+      {requests?.map((r) =>
+        type === "user" ? (
+          <UserReceivedRequestCard key={r?.id} request={r} />
+        ) : (
+          <ProjectReceivedRequestCard key={r?.id} request={r} />
+        ),
+      )}
     </div>
   ) : (
     <EmptyCard
