@@ -2,6 +2,7 @@ import WsMemberCard, { type Member } from "../cards/WsMemberCard";
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
+import WsMemberCardSkeleton from "../skeletons/WsMemberCardSkeleton";
 
 export default function WsMembersList({
   members,
@@ -13,16 +14,7 @@ export default function WsMembersList({
   return isLoading ? (
     <div className="rounded-xl border">
       {[...Array(3)].map((_, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-4 border-b p-4 last:border-b-0"
-        >
-          <Skeleton className="w-10 h-10 rounded-full" />
-          <div className="space-y-1">
-            <Skeleton className="w-20 h-3" />
-            <Skeleton className="w-30 h-2.5" />
-          </div>
-        </div>
+        <WsMemberCardSkeleton key={i} />
       ))}
     </div>
   ) : members?.length ? (

@@ -1,7 +1,7 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import { Spinner } from "../ui/spinner";
 import SentRequestCard, { type Request } from "../cards/SentRequestCard";
+import SentRequestCardSkeleton from "../skeletons/SentRequestCardSkeleton";
 
 export default function SentRequestsList({
   requests,
@@ -11,8 +11,10 @@ export default function SentRequestsList({
   isLoading: boolean;
 }) {
   return isLoading ? (
-    <div className="w-fit mx-auto my-[10%]">
-      <Spinner />
+    <div className="mt-6 space-y-3">
+      {[...Array(3)].map((_, i) => (
+        <SentRequestCardSkeleton key={i} />
+      ))}
     </div>
   ) : requests?.length ? (
     <div className="mt-6 space-y-3">
