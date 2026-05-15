@@ -27,6 +27,7 @@ export default function Project() {
     queryKey: ["project", id],
     queryFn: () => getProject(id),
     retry: 0,
+    staleTime: 1000 * 60 * 10,
   });
 
   const queryClient = useQueryClient();

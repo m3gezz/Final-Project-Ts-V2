@@ -24,6 +24,7 @@ export default function User() {
     queryKey: ["profile", id],
     queryFn: () => getUser(id),
     retry: 0,
+    staleTime: 1000 * 60 * 10,
   });
 
   if (isLoading) return <UserSkeleton />;

@@ -12,15 +12,12 @@ export default function General() {
     queryKey: ["refresh"],
     queryFn: () => refresh(disp),
     retry: 0,
+    staleTime: Infinity,
   });
 
-  return (
-    <>
-      {isLoading ? (
-        <Spinner className="absolute top-1/2 left-1/2 -translate-1/2" />
-      ) : (
-        <RouterProvider router={router} />
-      )}
-    </>
+  return isLoading ? (
+    <Spinner className="absolute top-1/2 left-1/2 -translate-1/2" />
+  ) : (
+    <RouterProvider router={router} />
   );
 }

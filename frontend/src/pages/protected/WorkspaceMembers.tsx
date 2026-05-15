@@ -17,6 +17,7 @@ export default function WorkspaceMembers() {
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "members"],
     queryFn: () => getWorkspace(id, "members"),
+    staleTime: 1000 * 60 * 10,
   });
 
   const isAdmin = workspace?.memberships?.find(
@@ -29,15 +30,15 @@ export default function WorkspaceMembers() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Members</h1>
         <Dialog>
-          <DialogTrigger asChild>
-            {isAdmin && (
+          {isAdmin && (
+            <DialogTrigger asChild>
               <Button>
                 <UserPlus className="mr-2 h-4 w-4" />
                 Invite
               </Button>
-            )}
-          </DialogTrigger>
-          <InvitingModal id={workspace?.id} />
+            </DialogTrigger>
+          )}
+          <InvitingModal />
         </Dialog>
       </div>
 

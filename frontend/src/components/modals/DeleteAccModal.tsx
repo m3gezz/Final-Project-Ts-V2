@@ -5,9 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { deleteAccountSchema } from "@/zod/schemas";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteAccount } from "@/api/functions/user";
-import { useParams } from "react-router-dom";
 
 const fields = [
   {
@@ -25,7 +24,7 @@ const fields = [
 ];
 
 export default function DeleteAccModal() {
-  const { id } = useParams();
+  const { id } = useSelector((state) => state?.auth?.user);
   const form = useForm({
     defaultValues: {
       password: "",

@@ -4,7 +4,13 @@ import { Input } from "../ui/input";
 import { Link } from "react-router-dom";
 import type { FieldType } from "./CheckBoxController";
 
-export default function InputController({ control, f }: { f: FieldType }) {
+export default function InputController({
+  control,
+  f,
+}: {
+  control: any;
+  f: FieldType;
+}) {
   return (
     <Controller
       control={control}

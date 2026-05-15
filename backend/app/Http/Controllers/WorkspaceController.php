@@ -76,10 +76,23 @@ class WorkspaceController extends Controller
     public function show(Workspace $workspace, Request $request)
     {
         if ($request->dataType === 'overview') {
-            $workspace->load(['project'])->loadCount(['memberships']);
-        } else {
+            $workspace
+                ->load(['project', 'tasks.user'])
+                ->loadCount(['memberships',
+                    'tasks as open_tasks_count' => function ($q) {
+                        $q->where('status','!=', 'done');
+                    }, 'tasks'
+            ]);
+        }
+
+        if ($request->dataType === 'members') {
             $workspace->load(['project','memberships.user', 'requests.user', 'invitations.receiver']);
         }
+
+        if ($request->dataType === 'tasks') {
+            $workspace->load(['project','memberships.user', 'tasks.user']);
+        }
+
         $data = $workspace;
         
         return response()->json($data);

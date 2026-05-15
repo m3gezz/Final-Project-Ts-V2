@@ -10,6 +10,7 @@ export default function Home() {
   const { data, isLoading } = useQuery({
     queryKey: ["home"],
     queryFn: getHome,
+    staleTime: 1000 * 60 * 10,
   });
 
   return (

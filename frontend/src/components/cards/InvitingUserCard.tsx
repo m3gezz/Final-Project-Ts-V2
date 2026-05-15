@@ -32,6 +32,9 @@ export default function InvitingUserCard({ user }: { user: User }) {
       queryClient.invalidateQueries({
         queryKey: ["workspace", String(id), "members"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["workspace", String(id), "overview"],
+      });
     },
   });
 

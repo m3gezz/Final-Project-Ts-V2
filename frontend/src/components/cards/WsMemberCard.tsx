@@ -63,6 +63,12 @@ export default function WsMemberCard({ member }: { member: Member }) {
       queryClient.invalidateQueries({
         queryKey: ["workspace", String(member?.workspace_id), "members"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["workspace", String(member?.workspace_id), "overview"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["workspace", String(member?.workspace_id), "tasks"],
+      });
     },
   });
 

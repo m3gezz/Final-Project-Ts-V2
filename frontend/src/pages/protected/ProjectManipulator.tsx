@@ -131,7 +131,6 @@ export default function ProjectManipulator({
         queryClient.invalidateQueries({
           queryKey: ["project", String(id)],
         });
-
         queryClient.invalidateQueries({
           queryKey: ["project-check", String(id)],
         });

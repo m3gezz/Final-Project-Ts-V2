@@ -43,6 +43,9 @@ export default function ProjectSentRequestCard({
       queryClient.invalidateQueries({
         queryKey: ["workspace", String(request?.workspace_id), "members"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["workspace", String(id), "overview"],
+      });
     },
   });
 

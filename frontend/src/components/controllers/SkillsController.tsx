@@ -18,7 +18,7 @@ export default function SkillsController({
   const { data: allowedSkills } = useQuery({
     queryKey: ["skills"],
     queryFn: getSkills,
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 10,
   });
 
   const handleSkill = (skill) => {

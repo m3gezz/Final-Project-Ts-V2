@@ -27,7 +27,6 @@ export default function Workspaces() {
 
   const { data: workspaces, isFetching } = useQuery({
     queryKey: ["workspaces", pagination.current_page, search, status, type],
-
     queryFn: () =>
       getWorkspaces({
         pagination,
@@ -36,6 +35,7 @@ export default function Workspaces() {
         status,
         type,
       }),
+    staleTime: 1000 * 60 * 10,
   });
 
   useEffect(() => {

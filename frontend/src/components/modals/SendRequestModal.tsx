@@ -4,7 +4,7 @@ import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import TextareaController from "../controllers/TextareaController";
 import { requestJoin } from "@/api/functions/inbox";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export default function SendRequestModal() {
   const { id } = useParams();
@@ -15,7 +15,6 @@ export default function SendRequestModal() {
       message: "Hi may i join ?",
     },
   });
-  const nav = useNavigate();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => requestJoin(data),
@@ -39,7 +38,9 @@ export default function SendRequestModal() {
       queryClient.invalidateQueries({
         queryKey: ["project", String(id)],
       });
-      nav(`/inbox`);
+      queryClient.invalidateQueries({
+        queryKey: ["requests"],
+      });
     },
   });
 
