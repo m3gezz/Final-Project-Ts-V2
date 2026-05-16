@@ -14,6 +14,7 @@ class Message extends Model
         'workspace_id',
         'user_id',
         'message',
+        'isDeleted'
     ];
 
     public function user() {

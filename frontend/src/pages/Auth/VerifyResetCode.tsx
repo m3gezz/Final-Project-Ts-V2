@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import InputOTPController from "@/components/controllers/InputOTPController";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { verificationCodeSchema } from "@/zod/Schemas";
+import { verificationCodeSchema } from "@/zod/schemas";
 
 export default function VerifyResetCode() {
   const form = useForm({

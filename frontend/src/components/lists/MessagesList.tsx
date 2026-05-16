@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import MessageCard from "../cards/MessageCard";
+import MessageCardSkeleton from "../skeletons/MessageCardSkeleton";
 
 export default function MessagesList({
   messages,
@@ -14,7 +15,11 @@ export default function MessagesList({
   }, [messages]);
 
   return isLoading ? (
-    <div className="mt-6 space-y-3">loading</div>
+    <div className="flex-1 h-full space-y-4 overflow-auto p-4">
+      {[...Array(2)].map((_, i) => (
+        <MessageCardSkeleton key={i} />
+      ))}
+    </div>
   ) : messages?.length ? (
     <div className="flex-1 h-full space-y-4 overflow-auto p-4">
       {messages?.map((m) => (
@@ -23,6 +28,8 @@ export default function MessagesList({
       <div ref={bottomRef} />
     </div>
   ) : (
-    <>nothing</>
+    <p className="text-sm text-muted-foreground text-center">
+      No messages yet.
+    </p>
   );
 }

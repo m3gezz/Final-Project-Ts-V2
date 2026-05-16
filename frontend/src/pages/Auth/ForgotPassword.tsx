@@ -4,7 +4,7 @@ import AuthCard from "@/components/cards/AuthCard";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotPasswordSchema } from "@/zod/Schemas";
+import { forgotPasswordSchema } from "@/zod/schemas";
 
 export default function ForgotPassword() {
   const form = useForm({

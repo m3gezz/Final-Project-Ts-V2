@@ -59,6 +59,8 @@ class MessageController extends Controller
             ]
         );
 
+        if ($message->isDeleted) return response()->json('deleted');
+
         $message->update($fields);
 
         broadcast(new EventsMessage('updated'));
@@ -71,7 +73,7 @@ class MessageController extends Controller
      */
     public function destroy(Message $message)
     {
-        $message->update(['message' => 'This message has been deleted.']);
+        $message->update(['message' => 'This message has been deleted.', 'isDeleted' => 1]);
         broadcast(new EventsMessage('deleted'));
         return response()->json('deleted');
     }

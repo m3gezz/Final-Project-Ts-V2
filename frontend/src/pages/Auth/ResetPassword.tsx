@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { resetPasswordSchema } from "@/zod/Schemas";
+import { resetPasswordSchema } from "@/zod/schemas";
 
 const fields = [
   {

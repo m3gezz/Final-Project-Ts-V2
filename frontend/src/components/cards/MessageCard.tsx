@@ -46,13 +46,11 @@ export default function MessageCard({ message }) {
     },
   });
 
-  const isDeleted = "This message has been deleted." === message?.message;
-
   return user?.id === message?.user?.id ? (
     <div className="flex justify-end gap-2 items-start text-end">
       <div className="flex flex-col gap-1 w-full">
         <div>
-          {!isDeleted && (
+          {!message?.isDeleted && (
             <Button
               size={"icon-xs"}
               variant={"secondary"}
@@ -64,7 +62,7 @@ export default function MessageCard({ message }) {
               {edit?.editing ? <X /> : <Pen />}
             </Button>
           )}
-          {edit?.editing && !isDeleted && (
+          {edit?.editing && !message?.isDeleted && (
             <Button
               size={"icon-xs"}
               variant={"secondary"}
@@ -82,7 +80,7 @@ export default function MessageCard({ message }) {
           </span>
         </div>
         <div className="relative rounded flex justify-end">
-          {!edit?.editing && !isDeleted && (
+          {!edit?.editing && !message?.isDeleted && (
             <Button
               size={"icon-xs"}
               variant={"destructive"}
@@ -92,17 +90,17 @@ export default function MessageCard({ message }) {
               <X />
             </Button>
           )}
-          {edit?.editing && !isDeleted ? (
+          {edit?.editing && !message?.isDeleted ? (
             <Input
               value={edit?.message}
               onChange={(e) =>
                 setEdit((prev) => ({ ...prev, message: e?.target?.value }))
               }
-              className="w-[90%] p-2 rounded border rounded-tr-none"
+              className="w-[80%] max-w-200 p-2 rounded border rounded-tr-none"
             />
           ) : (
             <p
-              className={`w-[90%] p-2 rounded border rounded-tr-none ${isDeleted ? "text-destructive border-destructive" : ""}`}
+              className={`w-[80%] max-w-200 p-2 rounded border rounded-tr-none ${message?.isDeleted ? "text-destructive border-destructive" : ""}`}
             >
               {message?.message}
             </p>
@@ -129,7 +127,7 @@ export default function MessageCard({ message }) {
         </span>
         <div className="relative rounded flex">
           <p
-            className={`w-[90%] p-2 rounded border rounded-tl-none ${isDeleted ? "text-destructive border-destructive" : ""}`}
+            className={`w-[80%] max-w-200 p-2 rounded border rounded-tl-none ${message?.isDeleted ? "text-destructive border-destructive" : ""}`}
           >
             {message?.message}
           </p>

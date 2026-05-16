@@ -10,7 +10,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import SendRequestModal from "@/components/modals/SendRequestModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getProject, likeProject } from "@/api/functions/project";
 import { getImageUrl } from "@/lib/utils";
 import ErrorCard from "@/components/cards/ErrorCard";
