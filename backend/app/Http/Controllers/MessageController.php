@@ -53,7 +53,17 @@ class MessageController extends Controller
      */
     public function update(Request $request, Message $message)
     {
-        //
+        $fields = $request->validate(
+            [
+                'message' => ['required','string','min:1','max:255']
+            ]
+        );
+
+        $message->update($fields);
+
+        broadcast(new EventsMessage('updated'));
+
+        return response()->json('updated');
     }
 
     /**
@@ -61,7 +71,7 @@ class MessageController extends Controller
      */
     public function destroy(Message $message)
     {
-        $message->delete();
+        $message->update(['message' => 'This message has been deleted.']);
         broadcast(new EventsMessage('deleted'));
         return response()->json('deleted');
     }

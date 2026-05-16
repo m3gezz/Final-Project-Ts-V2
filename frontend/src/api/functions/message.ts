@@ -15,4 +15,9 @@ const deleteMessage = async (id) => {
   return res;
 };
 
-export { getMessages, createMessage, deleteMessage };
+const editMessage = async (id, data) => {
+  const res = await api.put(`messages/${id}`, data);
+  return res;
+};
+
+export { getMessages, createMessage, deleteMessage, editMessage };

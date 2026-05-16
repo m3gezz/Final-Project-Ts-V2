@@ -167,3 +167,24 @@
     letter-spacing: -0.02em;
   }
 }
+
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--primary) 60%, transparent);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--primary) 45%, transparent);
+}
