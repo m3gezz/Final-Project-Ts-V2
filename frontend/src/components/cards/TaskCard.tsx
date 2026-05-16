@@ -12,7 +12,7 @@ export default function TaskCard({ task }) {
   const { user } = useSelector((state) => state?.auth);
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
-    mutationFn: (data) => modifyTask(id, data),
+    mutationFn: (data) => modifyTask(task?.id, data),
     onMutate: (data) => {
       const previousProject = queryClient.getQueryData([
         "workspace",

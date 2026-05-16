@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { getImageUrl } from "@/lib/utils";
 
 export type Skill = {
-  id: number;
+  id: number | string;
   label: string;
 };
 

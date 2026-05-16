@@ -1,7 +1,6 @@
 import WsMemberCard, { type Member } from "../cards/WsMemberCard";
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import { Skeleton } from "../ui/skeleton";
 import WsMemberCardSkeleton from "../skeletons/WsMemberCardSkeleton";
 
 export default function WsMembersList({
@@ -13,7 +12,7 @@ export default function WsMembersList({
 }) {
   return isLoading ? (
     <div className="rounded-xl border">
-      {[...Array(3)].map((_, i) => (
+      {[...Array(2)].map((_, i) => (
         <WsMemberCardSkeleton key={i} />
       ))}
     </div>

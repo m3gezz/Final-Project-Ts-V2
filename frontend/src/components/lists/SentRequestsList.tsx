@@ -16,7 +16,7 @@ export default function SentRequestsList({
 }) {
   return isLoading ? (
     <div className="mt-6 space-y-3">
-      {[...Array(3)].map((_, i) => (
+      {[...Array(2)].map((_, i) => (
         <SentRequestCardSkeleton key={i} />
       ))}
     </div>

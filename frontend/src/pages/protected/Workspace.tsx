@@ -32,8 +32,8 @@ export default function Workspace() {
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border bg-card p-5">
           <div className="text-sm text-muted-foreground">Progress</div>
-          <div className="mt-1 text-3xl font-semibold">{percentage}%</div>
-          <Progress value={percentage} className="mt-3" />
+          <div className="mt-1 text-3xl font-semibold">{percentage ?? 0}%</div>
+          <Progress value={percentage ?? 0} className="mt-3" />
         </div>
         <Link
           to={"tasks"}
@@ -78,76 +78,6 @@ export default function Workspace() {
     </div>
   );
 }
-
-// function Chat({ workspaceId }: { workspaceId: string }) {
-//   const [msgs, setMsgs] = useState(
-//     allMsgs.filter((m) => m.workspaceId === workspaceId),
-//   );
-//   const [text, setText] = useState("");
-
-//   const send = () => {
-//     if (!text.trim()) return;
-//     setMsgs([
-//       ...msgs,
-//       { id: `m${Date.now()}`, workspaceId, userId: "u1", text, at: "now" },
-//     ]);
-//     setText("");
-//   };
-
-//   return (
-//     <div className="flex h-[calc(100vh-8rem)] flex-col rounded-xl border bg-card">
-//       <div className="border-b p-4">
-//         <h1 className="text-lg font-semibold">Chat</h1>
-//         <p className="text-xs text-muted-foreground">
-//           All messages stay private to this workspace.
-//         </p>
-//       </div>
-//       <div className="flex-1 space-y-4 overflow-auto p-4">
-//         {msgs.map((m) => {
-//           const u = findUser(m.userId);
-//           return (
-//             <div key={m.id} className="flex gap-3">
-//               <Avatar className="h-9 w-9">
-//                 <AvatarImage src={u.avatar} />
-//                 <AvatarFallback>{u.full_name[0]}</AvatarFallback>
-//               </Avatar>
-//               <div className="flex-1">
-//                 <div className="flex items-baseline gap-2">
-//                   <span className="font-medium">{u.full_name}</span>
-//                   <span className="text-xs text-muted-foreground">{m.at}</span>
-//                 </div>
-//                 <div className="mt-0.5 text-sm">{m.text}</div>
-//                 {m.attachment && (
-//                   <div className="mt-2 inline-flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2 text-sm">
-//                     <FileText className="h-4 w-4 text-primary" />{" "}
-//                     {m.attachment.name}{" "}
-//                     <span className="text-xs text-muted-foreground">
-//                       {m.attachment.size}
-//                     </span>
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-//           );
-//         })}
-//       </div>
-//       <div className="flex items-center gap-2 border-t p-3">
-//         <Button variant="ghost" size="icon">
-//           <Paperclip className="h-4 w-4" />
-//         </Button>
-//         <Input
-//           value={text}
-//           onChange={(e) => setText(e.target.value)}
-//           onKeyDown={(e) => e.key === "Enter" && send()}
-//           placeholder="Message the team…"
-//         />
-//         <Button onClick={send}>
-//           <Send className="h-4 w-4" />
-//         </Button>
-//       </div>
-//     </div>
-//   );
-// }
 
 // function WSettings({ name }: { name: string }) {
 //   const [n, setN] = useState(name);

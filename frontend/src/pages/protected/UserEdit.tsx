@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -48,6 +48,7 @@ const fields = [
 ];
 
 export default function UserEdit() {
+  const avatarRef = useRef("");
   const { user } = useSelector((state) => state?.auth);
   const [skills, setSkills] = useState<[]>(user?.skills ?? []);
   const [preview, setPreview] = useState(getImageUrl(user?.avatar));
@@ -140,26 +141,27 @@ export default function UserEdit() {
             <AvatarImage src={preview} />
             <AvatarFallback>{user?.full_name?.[0]}</AvatarFallback>
           </Avatar>
-          <label className="cursor-pointer">
-            <Button type="button" variant="outline" asChild>
-              <span>
-                <Camera className="mr-2 h-4 w-4" />
-                Change avatar
-              </span>
-            </Button>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) {
-                  form.setValue("avatar", f);
-                  setPreview(URL.createObjectURL(f));
-                }
-              }}
-            />
-          </label>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => avatarRef.current.click()}
+          >
+            <Camera className="mr-2 h-4 w-4" />
+            Change avatar
+          </Button>
+          <input
+            ref={avatarRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) {
+                form.setValue("avatar", f);
+                setPreview(URL.createObjectURL(f));
+              }
+            }}
+          />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
