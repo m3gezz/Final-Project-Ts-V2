@@ -31,4 +31,8 @@ class Workspace extends Model
     public function tasks() {
         return $this->hasMany(Task::class);
     }
+
+    public function messages() {
+        return $this->hasMany(Message::class);
+    }
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\TaskController;
@@ -42,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('workspaces', WorkspaceController::class)->only(['index', 'show']);
     Route::apiResource('requests', RequestController::class)->except(['show']);
     Route::apiResource('invitations', InvitationController::class)->only(['index','store','destroy','update']);
+    Route::apiResource('messages', MessageController::class)->only(['index','store','destroy','update']);
     Route::apiResource('memberships', MembershipController::class)->only(['destroy','update']);
     Route::apiResource('tasks', TaskController::class)->only(['store','destroy','update']);
     Route::apiResource('comments', CommentController::class);
