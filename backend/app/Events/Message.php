@@ -20,10 +20,12 @@ class Message implements ShouldBroadcastNow
      */
 
     public string $action;
+    public int $workspace_id;
 
-    public function __construct(string $action)
+    public function __construct(string $action, int $workspace_id)
     {
         $this->action = $action;
+        $this->workspace_id = $workspace_id;
     }
 
     /**
@@ -34,7 +36,7 @@ class Message implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('workspace-chat'),
+            new PrivateChannel('workspace.'.$this->workspace_id),
         ];
     }
 

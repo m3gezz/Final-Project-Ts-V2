@@ -35,7 +35,6 @@ export default function Workspaces() {
         status,
         type,
       }),
-    staleTime: 1000 * 60 * 10,
   });
 
   useEffect(() => {

@@ -17,6 +17,12 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WorkspaceController;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Http\Request;
+
+Route::middleware('auth:sanctum')->post('/broadcasting/auth', function (Request $request) {
+    return Broadcast::auth($request);
+});
 
 Route::get('/', function () {return ['api' => 'ready'];});
 Route::post('/refresh', [AuthController::class, 'refresh']);

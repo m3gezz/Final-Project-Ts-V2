@@ -12,7 +12,6 @@ export default function General() {
     queryKey: ["refresh"],
     queryFn: () => refresh(disp),
     retry: 0,
-    staleTime: Infinity,
   });
 
   return isLoading ? (

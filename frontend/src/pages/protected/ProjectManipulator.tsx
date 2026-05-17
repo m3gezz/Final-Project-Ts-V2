@@ -56,7 +56,6 @@ export default function ProjectManipulator({
       {
         queryKey: ["categories"],
         queryFn: getCategories,
-        staleTime: Infinity,
       },
     ],
   });

@@ -1,3 +1,4 @@
+import { store } from "@/redux/store";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
@@ -10,6 +11,18 @@ const echo = new Echo({
   wsPort: 8080,
   forceTLS: false,
   enabledTransports: ["ws"],
+
+  authEndpoint: "http://127.0.0.1:8000/api/broadcasting/auth",
+
+  auth: {
+    headers: {
+      get Authorization() {
+        const token = store.getState()?.auth?.token;
+        return token ? `Bearer ${token}` : "";
+      },
+      Accept: "application/json",
+    },
+  },
 });
 
 export default echo;

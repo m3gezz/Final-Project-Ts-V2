@@ -14,7 +14,6 @@ export default function WorkspaceTasks() {
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "tasks"],
     queryFn: () => getWorkspace(id, "tasks"),
-    staleTime: 1000 * 60 * 10,
   });
 
   const isAdmin = workspace?.memberships?.find(

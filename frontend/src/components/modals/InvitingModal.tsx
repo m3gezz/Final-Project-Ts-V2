@@ -35,7 +35,6 @@ export default function InvitingModal() {
         skill_id: 0,
         sort: 1,
       }),
-    staleTime: 1000 * 60 * 10,
   });
 
   const queryClient = useQueryClient();

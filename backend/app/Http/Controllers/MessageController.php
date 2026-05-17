@@ -35,7 +35,7 @@ class MessageController extends Controller
 
         $request->user()->messages()->create($fields);
 
-        broadcast(new EventsMessage('created'));
+        broadcast(new EventsMessage('created',$fields['workspace_id']));
 
         return response()->json('created');
     }
@@ -63,7 +63,7 @@ class MessageController extends Controller
 
         $message->update($fields);
 
-        broadcast(new EventsMessage('updated'));
+        broadcast(new EventsMessage('updated', $message->workspace_id));
 
         return response()->json('updated');
     }
@@ -74,7 +74,7 @@ class MessageController extends Controller
     public function destroy(Message $message)
     {
         $message->update(['message' => 'This message has been deleted.', 'isDeleted' => 1]);
-        broadcast(new EventsMessage('deleted'));
+        broadcast(new EventsMessage('deleted', $message->workspace_id));
         return response()->json('deleted');
     }
 }

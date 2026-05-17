@@ -24,7 +24,6 @@ export default function WorkspaceChat() {
   const { data: messages, isLoading } = useQuery({
     queryKey: ["messages", id],
     queryFn: () => getMessages(id),
-    staleTime: Infinity,
   });
   const { mutate } = useMutation({
     mutationFn: (data) => createMessage(data),
@@ -40,12 +39,12 @@ export default function WorkspaceChat() {
   });
 
   useEffect(() => {
-    echo.channel("workspace-chat").listen(".MessageAction", () => {
+    echo.private(`workspace.${id}`).listen(".MessageAction", () => {
       queryClient.invalidateQueries({ queryKey: ["messages", String(id)] });
     });
 
     return () => {
-      echo.channel("workspace-chat").stopListening(".MessageAction");
+      echo.private(`workspace.${id}`).stopListening(".MessageAction");
     };
   }, [id, queryClient]);
 

@@ -5,18 +5,25 @@ import { getWorkspace } from "@/api/functions/workspace";
 import { Link } from "react-router-dom";
 import WorkspaceSkeleton from "@/components/skeletons/WorkspaceSkeleton";
 import { formatTime } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 export default function Workspace() {
+  const [percentage, setPercentage] = useState(0);
   const { id } = useParams();
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "overview"],
     queryFn: () => getWorkspace(id, "overview"),
-    staleTime: 1000 * 60 * 10,
   });
 
-  const percentage =
-    ((workspace?.tasks_count - workspace?.open_tasks_count) * 100) /
-    workspace?.tasks_count;
+  useEffect(() => {
+    if (!workspace) return;
+    setPercentage(
+      ((workspace?.tasks_count - workspace?.open_tasks_count) * 100) /
+        workspace?.tasks_count,
+    );
+  }, [workspace]);
+
+  console.log(workspace);
 
   if (isLoading) return <WorkspaceSkeleton />;
   return (

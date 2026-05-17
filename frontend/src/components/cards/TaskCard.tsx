@@ -43,7 +43,7 @@ export default function TaskCard({ task }) {
   });
 
   const { mutate: removeTask } = useMutation({
-    mutationFn: () => deleteTask(id),
+    mutationFn: () => deleteTask(task?.id),
     onMutate: () => {
       const previousProject = queryClient.getQueryData([
         "workspace",
