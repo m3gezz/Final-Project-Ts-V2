@@ -5,13 +5,13 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const getImageUrl = (path: string) => {
+const getImageUrl = (path: string | undefined) => {
   if (!path) return "";
   const baseURL = import.meta.env.VITE_API_URL;
   return `${baseURL}/storage/${path}`;
 };
 
-function formatTime(created_at: { created_at: string | Date }) {
+function formatTime(created_at: string) {
   if (!created_at) return "";
 
   const createdDate = new Date(created_at);

@@ -1,19 +1,19 @@
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { getImageUrl } from "@/lib/utils";
-import type { User } from "./UserCard";
 import { Link, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { inviteUser } from "@/api/functions/inbox";
+import { createInvitation } from "@/api/functions/invitations";
+import type { PopulatedWorkspace, UserType } from "@/assets/types";
 
-export default function InvitingUserCard({ user }: { user: User }) {
+export default function InvitingUserCard({ user }: { user: UserType }) {
   const { id } = useParams();
   const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
+  const { mutate: createInvitationMutation, isPending } = useMutation({
     mutationFn: () =>
-      inviteUser({
+      createInvitation({
         workspace_id: id,
-        receiver_id: user?.id,
+        user_id: user?.id,
       }),
     onMutate: () => {
       const previous = queryClient.getQueryData([
@@ -23,7 +23,10 @@ export default function InvitingUserCard({ user }: { user: User }) {
       ]);
       queryClient.setQueryData(
         ["workspace", String(id), "members"],
-        (old) => old,
+        (old: PopulatedWorkspace) => ({
+          ...old,
+          memberships: old.memberships.filter((m) => m.user.id !== user?.id),
+        }),
       );
 
       return { previous };
@@ -51,7 +54,7 @@ export default function InvitingUserCard({ user }: { user: User }) {
       <Button
         size="sm"
         variant="outline"
-        onClick={() => mutate()}
+        onClick={() => createInvitationMutation()}
         disabled={isPending}
       >
         Invite

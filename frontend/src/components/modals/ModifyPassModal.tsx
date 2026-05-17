@@ -2,12 +2,16 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { modifyPasswordSchema } from "@/zod/schemas";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { updatePassword } from "@/api/functions/user";
+import { updatePassword } from "@/api/functions/users";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import {
+  updatePasswordSchema,
+  type updatePasswordSchemaType,
+} from "@/zod/usersSchemas";
+import { useAppSelector } from "@/redux/store";
+import { handleApiErrors } from "@/api/functions/validation";
 
 const fields = [
   {
@@ -28,31 +32,26 @@ const fields = [
     label: "Confirm New Password",
     placeholder: "••••••••",
   },
-];
+] as const;
 
 export default function ModifyPassModal() {
-  const { id } = useSelector((state) => state?.auth?.user);
-  const form = useForm({
+  const { user } = useAppSelector((state) => state?.auth);
+  const form = useForm<updatePasswordSchemaType>({
     defaultValues: {
       password: "",
       new_password: "",
       new_password_confirmation: "",
     },
-    resolver: zodResolver(modifyPasswordSchema),
+    resolver: zodResolver(updatePasswordSchema),
   });
 
   const nav = useNavigate();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data) => updatePassword(id, data),
+    mutationFn: (data: updatePasswordSchemaType) =>
+      updatePassword(user?.id, data),
     onError: (err) => {
-      const res = err.response;
-      if (res.status !== 422) return alert("error");
-
-      const errors = res.data.errors;
-      for (const key in errors) {
-        form.setError(key, { message: errors[key] });
-      }
+      handleApiErrors(err, form);
     },
     onSuccess: () => {
       nav(-1);

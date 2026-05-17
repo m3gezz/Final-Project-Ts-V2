@@ -1,13 +1,14 @@
-import WsMemberCard, { type Member } from "../cards/WsMemberCard";
+import WsMemberCard from "../cards/WsMemberCard";
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
 import WsMemberCardSkeleton from "../skeletons/WsMemberCardSkeleton";
+import type { MembershipType } from "@/assets/types";
 
 export default function WsMembersList({
   members,
   isLoading,
 }: {
-  members: Member[];
+  members: MembershipType[];
   isLoading: boolean;
 }) {
   return isLoading ? (

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailController;
@@ -18,15 +19,15 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Http\Request;
 
-Route::middleware('auth:sanctum')->post('/broadcasting/auth', function (Request $request) {
+//Broadcasting
+Route::post('/broadcasting/auth', function (Request $request) {
     return Broadcast::auth($request);
-});
+})->middleware('auth:sanctum');
 
 Route::get('/', function () {return ['api' => 'ready'];});
-Route::post('/refresh', [AuthController::class, 'refresh']);
-Route::post('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
+Route::post('/refreshToken', [AuthController::class, 'refreshToken']);
+Route::post('/getMe', [AuthController::class, 'getMe'])->middleware('auth:sanctum');
 
 //Authentication routes
 Route::post('/sign-up', [AuthController::class, 'sign_up']);
@@ -44,19 +45,22 @@ Route::post('/password/reset-password', [PasswordController::class, 'reset_passw
 
 //Data routes
 Route::middleware('auth:sanctum')->group(function() {
+    Route::apiResource('skills', SkillController::class)->only(['index']);
+    Route::apiResource('categories', CategoryController::class)->only(['index']);
+
     Route::apiResource('users', UserController::class)->except(['store']);
     Route::apiResource('projects', ProjectController::class);
     Route::apiResource('workspaces', WorkspaceController::class)->only(['index', 'show']);
+
     Route::apiResource('requests', RequestController::class)->except(['show']);
-    Route::apiResource('invitations', InvitationController::class)->only(['index','store','destroy','update']);
-    Route::apiResource('messages', MessageController::class)->only(['index','store','destroy','update']);
+    Route::apiResource('invitations', InvitationController::class)->except(['show']);
     Route::apiResource('memberships', MembershipController::class)->only(['destroy','update']);
-    Route::apiResource('tasks', TaskController::class)->only(['store','destroy','update']);
+    Route::apiResource('messages', MessageController::class)->except(['show']);
+    Route::apiResource('tasks', TaskController::class)->except(['index', 'show']);
+    
     Route::apiResource('comments', CommentController::class);
     Route::apiResource('likes', LikeController::class)->only(['store']);
-    Route::apiResource('categories', CategoryController::class)->only(['index']);
-    Route::apiResource('badges', BadgeController::class);
-    Route::apiResource('skills', SkillController::class)->only(['index']);
-    Route::get('home', [UserController::class, 'home']);
-    Route::get('/projects-edit/{project}', [ProjectController::class, 'edit']);
+
+    Route::get('/userDashboard', [UserController::class, 'userDashboard']);
+    Route::get('/can-edit/{project}', [ProjectController::class, 'canEdit']);
 });

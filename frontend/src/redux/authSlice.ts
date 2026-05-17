@@ -1,13 +1,13 @@
-import type { User } from "@/data/exp";
+import type { PopulatedUser } from "@/assets/types";
 import { createSlice } from "@reduxjs/toolkit";
 
 type AuthStateType = {
-  user: User | null;
+  user: PopulatedUser | null;
   token: string | null;
 };
 
 const initialState: AuthStateType = {
-  token: "",
+  token: null,
   user: null,
 };
 
@@ -15,12 +15,15 @@ const slice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setAuth: (state, action) =>
-      (state = {
-        user: action?.payload?.user ?? state?.user,
-        token: action?.payload?.token ?? state?.token,
-      }),
-    unsetAuth: (state) => (state = initialState),
+    setAuth: (state, action) => {
+      if (action.payload?.user !== undefined) {
+        state.user = action.payload.user;
+      }
+      if (action.payload?.token !== undefined) {
+        state.token = action.payload.token;
+      }
+    },
+    unsetAuth: () => initialState,
   },
 });
 

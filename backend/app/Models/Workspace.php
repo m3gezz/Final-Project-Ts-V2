@@ -10,7 +10,7 @@ class Workspace extends Model
     /** @use HasFactory<\Database\Factories\WorkspaceFactory> */
     use HasFactory;
 
-    protected $fillable = ['project_id', 'status'];
+    protected $fillable = ['project_id'];
 
     public function project() {
         return $this->belongsTo(Project::class);

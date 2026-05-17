@@ -12,15 +12,9 @@ class EmailController extends Controller
     public function resend_verification_code(Request $request) {
         $user = $request->user();
 
-        if ($user->hasVerifiedEmail()) {
-            return response()->json([
-                'user' => $user,
-                'message' => 'Email already verified.'
-            ]);
-        }
+        if ($user->hasVerifiedEmail()) return response()->json(['message' => 'Email already verified.']);
 
         $code = random_int(100000, 999999);
-
         $user->emailVerificationCode()->updateOrCreate(
             // ['user_id' => $user->id],
             ['code' => Hash::make($code),
@@ -35,35 +29,16 @@ class EmailController extends Controller
     }
 
     public function verify_email_code(Request $request) {
+        $request->validate(['code' => ['required','digits:6']]);
+        
         $user = $request->user();
-
-        if ($user->hasVerifiedEmail()) {
-            return response()->json([
-                'user' => $user,
-                'message' => 'Email already verified.'
-            ]);
-        }
+        if ($user->hasVerifiedEmail()) return response()->json(['message' => 'Email already verified.']);
 
         $record = $user->emailVerificationCode;
+        if (!$record || $record->expires_at->isPast() || !Hash::check($request->code, $record->code))  abort(422, 'Invalid verification code.');
         
-        if (!$record)  abort(404, 'No verification code found.');
-    
-        $request->validate(['code' => ['required','digits:6']]);
-            
-        if ($record->expires_at->isPast()) {
-            $record->delete();
-            abort(410, 'Verification code expired.');
-        }
-
-        if (!Hash::check($request->code, $record->code)) abort(422, 'Invalid verification code.');
-        
-
         $user->markEmailAsVerified();
         $record->delete();
-
-        return response()->json([
-            'user' => $user,
-            'message' => 'Email verified successfully.'
-        ]);
+        return response()->json(['message' => 'Email verified successfully.']);
     }
 }

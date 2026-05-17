@@ -1,9 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Controller, type FieldValues } from "react-hook-form";
 import { Field, FieldLabel, FieldError } from "../ui/field";
 import { Textarea } from "../ui/textarea";
-import type { FieldType } from "./CheckBoxController";
+import type { ControllerType } from "@/assets/types";
 
-export default function TextareaController({ control, f }: { f: FieldType }) {
+export default function TextareaController<T extends FieldValues>({
+  control,
+  f,
+}: ControllerType<T>) {
   return (
     <Controller
       name={f?.name}

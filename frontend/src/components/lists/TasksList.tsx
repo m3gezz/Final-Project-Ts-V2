@@ -1,9 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import TaskCard from "../cards/TaskCard";
-import { Skeleton } from "../ui/skeleton";
 import TaskCardSkeleton from "../skeletons/TaskCardSkeleton";
+import type { PopulatedTask } from "@/assets/types";
 
-export default function TasksList({ tasks, isLoading }) {
+export default function TasksList({
+  tasks,
+  isLoading,
+}: {
+  tasks: PopulatedTask[];
+  isLoading: boolean;
+}) {
   return [
     { key: "todo", label: "To do" },
     { key: "doing", label: "In progress" },

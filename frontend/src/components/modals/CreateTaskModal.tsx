@@ -12,66 +12,73 @@ import TextareaController from "../controllers/TextareaController";
 import SelectController from "../controllers/SelectController";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTask } from "@/api/functions/tasks";
+import type { PopulatedWorkspace } from "@/assets/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createTaskSchema, type createTaskSchemaType } from "@/zod/taskSchemas";
+import { handleApiErrors } from "@/api/functions/validation";
 
 export default function CreateTaskModal() {
   const { id } = useParams();
   const queryClient = useQueryClient();
-  const data = queryClient.getQueryData(["workspace", String(id), "tasks"]);
+  const data: PopulatedWorkspace | undefined = queryClient.getQueryData([
+    "workspace",
+    String(id),
+    "tasks",
+  ]);
   const members = data?.memberships?.map((m) => ({
     id: m?.user?.id,
     label: m?.user?.full_name,
   }));
-  const form = useForm({
+  const form = useForm<createTaskSchemaType>({
     defaultValues: {
-      workspace_id: id,
+      workspace_id: String(id),
       title: "",
       description: "",
       user_id: "",
     },
+    resolver: zodResolver(createTaskSchema),
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data) => createTask(data),
-    onMutate: (data) => {
-      const previousProject = queryClient.getQueryData([
-        "workspace",
-        String(id),
-        "tasks",
-      ]);
-      queryClient.setQueryData(["workspace", String(id), "tasks"], (old) => ({
-        ...old,
-        tasks: [
-          ...old.tasks,
-          {
-            id: Date.now(),
-            status: "todo",
-            title: data?.title,
-            description: data?.description,
-            user: old.memberships.find((m) => m?.user?.id == data?.user_id)
-              ?.user,
-          },
-        ],
-      }));
-      return { previousProject };
-    },
-    onError: (err) => {
-      const res = err.response;
-      if (res.status !== 422) return alert("error");
-
-      const errors = res.data.errors;
-      for (const key in errors) {
-        form.setError(key, { message: errors[key] });
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(id), "tasks"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(id), "overview"],
-      });
-    },
-  });
+  const { mutate: createTaskMutation, isPending: isCreateTaskPending } =
+    useMutation({
+      mutationFn: (data: createTaskSchemaType) => createTask(data),
+      onMutate: (data) => {
+        const previousProject = queryClient.getQueryData([
+          "workspace",
+          String(id),
+          "tasks",
+        ]);
+        queryClient.setQueryData(
+          ["workspace", String(id), "tasks"],
+          (old: PopulatedWorkspace) => ({
+            ...old,
+            tasks: [
+              ...old.tasks,
+              {
+                id: Date.now(),
+                status: "todo",
+                title: data?.title,
+                description: data?.description,
+                user: old.memberships.find((m) => m?.user?.id == data?.user_id)
+                  ?.user,
+              },
+            ],
+          }),
+        );
+        return { previousProject };
+      },
+      onError: (err) => {
+        handleApiErrors(err, form);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(id), "tasks"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(id), "overview"],
+        });
+      },
+    });
 
   return (
     <DialogContent aria-describedby="">
@@ -80,7 +87,7 @@ export default function CreateTaskModal() {
       </DialogHeader>
       <form
         className="space-y-3"
-        onSubmit={form.handleSubmit((data) => mutate(data))}
+        onSubmit={form.handleSubmit((data) => createTaskMutation(data))}
       >
         <InputController
           control={form.control}
@@ -107,7 +114,7 @@ export default function CreateTaskModal() {
           options={members}
         />
         <DialogFooter>
-          <Button disabled={isPending}>Create</Button>
+          <Button disabled={isCreateTaskPending}>Create</Button>
         </DialogFooter>
       </form>
     </DialogContent>

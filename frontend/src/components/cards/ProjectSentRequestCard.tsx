@@ -4,25 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getImageUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Request } from "./UserSentRequestCard";
-import { cancelInvitation } from "@/api/functions/inbox";
-import { useSelector } from "react-redux";
+import type { PopulatedWorkspace, RequestType } from "@/assets/types";
+import { destroyInvitation } from "@/api/functions/invitations";
+import { useAppSelector } from "@/redux/store";
 
 export default function ProjectSentRequestCard({
   request,
 }: {
-  request: Request;
+  request: RequestType;
 }) {
   const queryClient = useQueryClient();
-  const { user } = useSelector((state) => state?.auth);
-  const previous = queryClient.getQueryData([
+  const { user } = useAppSelector((state) => state?.auth);
+  const previous: PopulatedWorkspace | undefined = queryClient.getQueryData([
     "workspace",
     String(request?.workspace_id),
     "members",
   ]);
   const isOwner = user?.id === previous?.project?.user_id;
-  const { mutate, isPending } = useMutation({
-    mutationFn: () => cancelInvitation(request?.id),
+  const { mutate: destroyInvitationMutation, isPending } = useMutation({
+    mutationFn: () => destroyInvitation(request?.id),
     onMutate: () => {
       const previous = queryClient.getQueryData([
         "workspace",
@@ -31,7 +31,7 @@ export default function ProjectSentRequestCard({
       ]);
       queryClient.setQueryData(
         ["workspace", String(request?.workspace_id), "members"],
-        (old) => ({
+        (old: PopulatedWorkspace) => ({
           ...old,
           invitations: [...old.invitations.filter((r) => r.id != request?.id)],
         }),
@@ -44,7 +44,7 @@ export default function ProjectSentRequestCard({
         queryKey: ["workspace", String(request?.workspace_id), "members"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["workspace", String(id), "overview"],
+        queryKey: ["workspace", String(request?.workspace_id), "overview"],
       });
     },
   });
@@ -52,14 +52,14 @@ export default function ProjectSentRequestCard({
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4">
       <Avatar>
-        <AvatarImage src={getImageUrl(request?.receiver?.avatar)} />
-        <AvatarFallback>{request?.receiver?.full_name?.[0]}</AvatarFallback>
+        <AvatarImage src={getImageUrl(request?.user?.avatar)} />
+        <AvatarFallback>{request?.user?.full_name?.[0]}</AvatarFallback>
       </Avatar>
       <div className="flex-1">
         <div className="text-sm">
           Requesting{" "}
-          <Link to={`/users/${request?.receiver?.id}`}>
-            <span className="font-medium">{request?.receiver?.full_name}</span>
+          <Link to={`/users/${request?.user?.id}`}>
+            <span className="font-medium">{request?.user?.full_name}</span>
           </Link>{" "}
           to join this workspace
         </div>
@@ -68,7 +68,11 @@ export default function ProjectSentRequestCard({
         </div>
       </div>
       {request?.status === "pending" && isOwner && (
-        <Button size="sm" variant="outline" onClick={() => mutate()}>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => destroyInvitationMutation()}
+        >
           {isPending ? "Canceling" : "Cancel"}
         </Button>
       )}

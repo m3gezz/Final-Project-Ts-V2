@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('workspaces', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['on_hold', 'active']);
+            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

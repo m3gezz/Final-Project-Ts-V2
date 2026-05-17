@@ -4,7 +4,10 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { resetPasswordSchema } from "@/zod/schemas";
+import {
+  resetPasswordSchema,
+  type resetPasswordSchemaType,
+} from "@/zod/authSchemas";
 
 const fields = [
   {
@@ -19,10 +22,10 @@ const fields = [
     label: "Confirm New Password",
     placeholder: "••••••••",
   },
-];
+] as const;
 
 export default function ResetPassword() {
-  const form = useForm({
+  const form = useForm<resetPasswordSchemaType>({
     defaultValues: {
       password: "",
       password_confirmation: "",
@@ -30,7 +33,7 @@ export default function ResetPassword() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: resetPasswordSchemaType) => {
     console.log(data);
   };
 

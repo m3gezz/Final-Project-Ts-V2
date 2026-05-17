@@ -10,10 +10,7 @@ class Badge extends Model
     /** @use HasFactory<\Database\Factories\BadgeFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'description'
-    ];
+    protected $fillable = ['label','description'];
 
     public function users() {
         return $this->belongsToMany(User::class);

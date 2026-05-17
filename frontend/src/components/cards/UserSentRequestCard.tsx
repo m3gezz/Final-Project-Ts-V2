@@ -4,33 +4,29 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getImageUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { cancelRequest } from "@/api/functions/inbox";
-import type { User } from "./UserCard";
-import type { Workspace } from "./WorkspaceCard";
+import { destroyRequest } from "@/api/functions/requests";
+import type { RequestType } from "@/assets/types";
 
-export type Request = {
-  id: number;
-  user: User;
-  workspace: Workspace;
-  type: "enter" | "leave";
-  status: "pending" | "accepted" | "declined";
-};
-
-export default function UserSentRequestCard({ request }: { request: Request }) {
+export default function UserSentRequestCard({
+  request,
+}: {
+  request: RequestType;
+}) {
   const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: () => cancelRequest(request?.id),
-    onMutate: () => {
-      const previous = queryClient.getQueryData(["requests"]);
-      queryClient.setQueryData(["requests"], (old) => [
-        ...old.filter((r) => r.id != request?.id),
-      ]);
-      return { previous };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
-    },
-  });
+  const { mutate: destroyRequestMutation, isPending: isDestroyRequestPending } =
+    useMutation({
+      mutationFn: () => destroyRequest(request?.id),
+      onMutate: () => {
+        const previous = queryClient.getQueryData(["requests"]);
+        queryClient.setQueryData(["requests"], (old: RequestType[]) => [
+          ...old.filter((r) => r.id != request?.id),
+        ]);
+        return { previous };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["requests"] });
+      },
+    });
 
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4">
@@ -64,8 +60,12 @@ export default function UserSentRequestCard({ request }: { request: Request }) {
         </div>
       </div>
       {request?.status === "pending" && (
-        <Button size="sm" variant="outline" onClick={() => mutate()}>
-          {isPending ? "Canceling" : "Cancel"}
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => destroyRequestMutation()}
+        >
+          {isDestroyRequestPending ? "Canceling" : "Cancel"}
         </Button>
       )}
     </div>

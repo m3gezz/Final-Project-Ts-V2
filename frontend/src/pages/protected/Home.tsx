@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Plus, FolderKanban, Briefcase, Inbox } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { getHome } from "@/api/functions/user";
 import ProjectsList from "@/components/lists/ProjectsList";
 import WorkspacesList from "@/components/lists/WorkspacesList";
+import { userDashboard } from "@/api/functions/users";
 
 export default function Home() {
   const { data, isLoading } = useQuery({
     queryKey: ["home"],
-    queryFn: getHome,
+    queryFn: userDashboard,
   });
 
   return (

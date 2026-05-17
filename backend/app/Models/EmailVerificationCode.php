@@ -6,11 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmailVerificationCode extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'code',
-        'expires_at',
-    ];
+    protected $fillable = ['user_id','code','expires_at'];
 
     protected $casts = [
         'expires_at' => 'datetime',

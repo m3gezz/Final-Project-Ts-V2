@@ -18,17 +18,7 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'full_name',
-        'username',
-        'professional_title',
-        'avatar',
-        'bio',
-        'about',
-        'private',
-        'email',
-        'password',
-    ];
+    protected $fillable = ['full_name','username','professional_title','avatar','bio','about','private','email','password'];
 
     public function projects() {
         return $this->hasMany(Project::class);
@@ -40,6 +30,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function requests() {
         return $this->hasMany(Request::class);
+    }
+
+    public function invitations() {
+        return $this->hasMany(Invitation::class);
     }
 
     public function skills() {
@@ -87,14 +81,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function likes() {
         return $this->hasMany(Like::class);
-    }
-
-    public function sentInvitations() {
-        return $this->hasMany(Invitation::class);
-    }
-
-    public function receivedInvitations() {
-        return $this->hasMany(Invitation::class, 'receiver_id');
     }
 
     public function tasks() {

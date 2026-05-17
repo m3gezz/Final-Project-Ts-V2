@@ -1,28 +1,36 @@
 import { Field, FieldLabel, FieldError } from "../ui/field";
-import { Controller } from "react-hook-form";
+import {
+  Controller,
+  type FieldValues,
+  type UseFormReturn,
+} from "react-hook-form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getSkills } from "@/api/functions/data";
-import type { Skill } from "../cards/UserCard";
+import type { DataType } from "@/assets/types";
 
-export default function SkillsController({
+type SkillsControllerProps<T extends FieldValues> = {
+  form: UseFormReturn<T>;
+  skills: DataType[];
+  setSkills: React.Dispatch<React.SetStateAction<DataType[]>>;
+};
+
+export default function SkillsController<T extends FieldValues>({
   form,
   skills,
   setSkills,
-}: {
-  skills: Skill[];
-}) {
+}: SkillsControllerProps<T>) {
   const { data: allowedSkills } = useQuery({
     queryKey: ["skills"],
     queryFn: getSkills,
   });
 
-  const handleSkill = (skill) => {
+  const handleSkill = (skill: string) => {
     const allowed = allowedSkills?.find(
-      (s) => s.label.toLowerCase() === skill.toLowerCase(),
+      (s: DataType) => s.label.toLowerCase() === skill.toLowerCase(),
     );
     if (!allowed) return form.setError("skills", { message: "Invalid skill" });
 
@@ -55,7 +63,7 @@ export default function SkillsController({
               list="skills"
             />
             <datalist id="skills">
-              {allowedSkills?.map((s) => (
+              {allowedSkills?.map((s: DataType) => (
                 <option key={s?.id} value={s?.label} />
               ))}
             </datalist>

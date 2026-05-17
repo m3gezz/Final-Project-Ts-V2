@@ -1,13 +1,14 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import UserCard, { type User } from "../cards/UserCard";
+import UserCard from "../cards/UserCard";
 import UserCardSkeleton from "../skeletons/UserCardSkeleton";
+import type { PopulatedUser } from "@/assets/types";
 
 export default function UsersList({
   users,
   isLoading,
 }: {
-  users: User[];
+  users: PopulatedUser[];
   isLoading: boolean;
 }) {
   return isLoading ? (

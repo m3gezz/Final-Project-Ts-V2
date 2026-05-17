@@ -2,25 +2,27 @@ import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { getWorkspace } from "@/api/functions/workspace";
+import { getWorkspace } from "@/api/functions/workspaces";
 import InvitingModal from "@/components/modals/InvitingModal";
 import WsMembersList from "@/components/lists/WsMembersList";
-import { useSelector } from "react-redux";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import SentRequestsList from "@/components/lists/SentRequestsList";
 import ReceivedRequestsList from "@/components/lists/ReceivedRequestsList";
+import { useAppSelector } from "@/redux/store";
+import type { MembershipType } from "@/assets/types";
 
 export default function WorkspaceMembers() {
   const { id } = useParams();
-  const { user } = useSelector((state) => state?.auth);
+
+  const { user } = useAppSelector((state) => state?.auth);
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "members"],
     queryFn: () => getWorkspace(id, "members"),
   });
 
   const isAdmin = workspace?.memberships?.find(
-    (m) =>
+    (m: MembershipType) =>
       m?.user_id === user?.id && (m?.role === "admin" || m?.role === "owner"),
   );
 

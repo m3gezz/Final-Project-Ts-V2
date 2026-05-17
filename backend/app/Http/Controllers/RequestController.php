@@ -16,40 +16,35 @@ class RequestController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(HttpRequest $rq)
+    public function index(HttpRequest $req)
     {   
-        $data = $rq->user()->requests()->with(['workspace.project' => function ($q) {
-            $q->with('user');
-        },'user'])->get();
-
-        return response()->json($data);
+        $requests = $req->user()->requests()->with(['workspace.project.user'])->get();
+        return response()->json($requests);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(HttpRequest $rq)
+    public function store(HttpRequest $req)
     {
-        $fields = $rq->validate(
+        $fields = $req->validate(
             [
                 'project_id' => ['required','exists:projects,id'],
-                'type' => ['sometimes'],
-                'message' => ['required','string','min:10','max:255']
             ]
         );
 
-        $workspace = Workspace::where('project_id', $fields['project_id'])->first();
-        $fields['workspace_id'] = $workspace->id;
-        $isMember = $rq->user()->memberships()->where('workspace_id', $workspace->id)->exists();
-        $hasRequest = $rq->user()->requests()->where('workspace_id', $workspace->id)->exists();
+        $workspace = Workspace::findOrFail('project_id', $fields['project_id']);
+
+        $isMember = $req->user()->memberships()->where('workspace_id', $workspace->id)->exists();
+        $hasRequest = $req->user()->requests()->where('workspace_id', $workspace->id)->exists();
 
         if ($isMember || $hasRequest) 
             throw ValidationException::withMessages([
                 'message' => ['You either already a member, or you have a request.'],
             ]);
 
-        $rq->user()->requests()->create($fields);
-
+        $fields['workspace_id'] = $workspace->id;
+        $req->user()->requests()->create($fields);
         return response()->json('created');
     }
 
@@ -80,6 +75,10 @@ class RequestController extends Controller
                 'user_id' => $request->user_id,
             ]);
         }
+        
+        if ($fields['status'] !== 'pending') {
+            $request->delete();
+        }
 
         return response()->json('updated');
     }
@@ -89,10 +88,7 @@ class RequestController extends Controller
      */
     public function destroy(Request $request)
     {
-        $this->authorize('delete', $request);
-
         $request->delete();
-
-        return response()->json('deleted');
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

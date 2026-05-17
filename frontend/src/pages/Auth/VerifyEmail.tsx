@@ -4,25 +4,28 @@ import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import InputOTPController from "@/components/controllers/InputOTPController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { verificationCodeSchema } from "@/zod/schemas";
 import { useMutation } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
 import { signOut } from "@/api/functions/auth";
+import {
+  verificationCodeSchema,
+  type verificationCodeSchemaType,
+} from "@/zod/authSchemas";
+import { useAppDispatch } from "@/redux/store";
 
 export default function VerifyEmail() {
-  const disp = useDispatch();
-  const form = useForm({
+  const disp = useAppDispatch();
+  const form = useForm<verificationCodeSchemaType>({
     defaultValues: {
       code: "",
     },
     resolver: zodResolver(verificationCodeSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: verificationCodeSchemaType) => {
     console.log(data);
   };
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: signOutMutation, isPending: isSignOutPending } = useMutation({
     mutationFn: () => signOut(disp),
   });
 
@@ -32,11 +35,11 @@ export default function VerifyEmail() {
       subtitle="We sent a 6-digit code to your inbox."
       footer={
         <button
-          onClick={() => mutate()}
+          onClick={() => signOutMutation()}
           className="text-primary hover:underline"
-          disabled={isPending}
+          disabled={isSignOutPending}
         >
-          {isPending ? "Backing up..." : "Back to sign in"}
+          {isSignOutPending ? "Backing up..." : "Back to sign in"}
         </button>
       }
     >

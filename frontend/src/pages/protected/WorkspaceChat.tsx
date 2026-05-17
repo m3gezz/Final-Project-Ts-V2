@@ -4,20 +4,27 @@ import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import InputController from "@/components/controllers/InputController";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createMessage, getMessages } from "@/api/functions/message";
-import { useSelector } from "react-redux";
+import { createMessage, getMessages } from "@/api/functions/messages";
 import echo from "@/reverb/echo";
 import { useEffect } from "react";
 import MessagesList from "@/components/lists/MessagesList";
+import type { PopulatedMessage } from "@/assets/types";
+import { useAppSelector } from "@/redux/store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createMessageSchema,
+  type createMessageSchemaType,
+} from "@/zod/messagesSchemas";
 
 export default function WorkspaceChat() {
   const { id } = useParams();
-  const { user } = useSelector((state) => state?.auth);
+  const { user } = useAppSelector((state) => state?.auth);
   const form = useForm({
     defaultValues: {
-      workspace_id: id,
+      workspace_id: String(id),
       message: "",
     },
+    resolver: zodResolver(createMessageSchema),
   });
 
   const queryClient = useQueryClient();
@@ -26,14 +33,17 @@ export default function WorkspaceChat() {
     queryFn: () => getMessages(id),
   });
   const { mutate } = useMutation({
-    mutationFn: (data) => createMessage(data),
+    mutationFn: (data: createMessageSchemaType) => createMessage(data),
     onMutate: (data) => {
       form.reset();
       const previous = queryClient.getQueryData(["messages", String(id)]);
-      queryClient.setQueryData(["messages", String(id)], (old) => [
-        ...old,
-        { ...data, id: Date.now, user, created_at: Date() },
-      ]);
+      queryClient.setQueryData(
+        ["messages", String(id)],
+        (old: PopulatedMessage[]) => [
+          ...old,
+          { ...data, id: Date.now, user, created_at: Date() },
+        ],
+      );
       return { previous };
     },
   });
@@ -60,7 +70,7 @@ export default function WorkspaceChat() {
       <MessagesList messages={messages} isLoading={isLoading} />
 
       <form
-        onSubmit={form.handleSubmit(mutate)}
+        onSubmit={form.handleSubmit((data) => mutate(data))}
         className="flex relative items-center justify-between gap-2 border-t p-2 mt-auto"
       >
         <Button variant="ghost" size="icon" type="button">

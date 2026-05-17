@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('invitations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('workspace_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['pending','accepted','declined'])->default('pending');
-            $table->unique(['workspace_id', 'receiver_id']);
+            $table->unique(['workspace_id', 'user_id']);
             $table->timestamps();
         });
     }

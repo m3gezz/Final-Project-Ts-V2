@@ -1,7 +1,16 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { PaginationState } from "@/assets/types";
 
-export default function PageFooter({ pagination, setPagination, isLoading }) {
+export default function PageFooter({
+  pagination,
+  setPagination,
+  isLoading,
+}: {
+  pagination: PaginationState;
+  setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
+  isLoading: boolean;
+}) {
   return (
     <div className="mt-10 flex justify-center gap-2">
       <Button

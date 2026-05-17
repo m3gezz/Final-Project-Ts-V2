@@ -15,10 +15,9 @@ class MessageController extends Controller
      */
     public function index(Request $request)
     {
-        $workspace_id = $request->workspace_id;
-        $workspace = Workspace::findOrFail($workspace_id);
-        $data = $workspace->messages()->with('user')->get();
-        return response()->json($data);
+        $workspace = Workspace::findOrFail($request->workspace_id);
+        $messages = $workspace->messages()->with('user')->get();
+        return response()->json($messages);
     }
 
     /**
@@ -34,9 +33,7 @@ class MessageController extends Controller
         );
 
         $request->user()->messages()->create($fields);
-
         broadcast(new EventsMessage('created',$fields['workspace_id']));
-
         return response()->json('created');
     }
 
@@ -62,9 +59,7 @@ class MessageController extends Controller
         if ($message->isDeleted) return response()->json('deleted');
 
         $message->update($fields);
-
         broadcast(new EventsMessage('updated', $message->workspace_id));
-
         return response()->json('updated');
     }
 
@@ -75,6 +70,6 @@ class MessageController extends Controller
     {
         $message->update(['message' => 'This message has been deleted.', 'isDeleted' => 1]);
         broadcast(new EventsMessage('deleted', $message->workspace_id));
-        return response()->json('deleted');
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

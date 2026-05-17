@@ -24,7 +24,7 @@ export default function FloatingNav() {
     setOpen(() => false);
   }, [pathname]);
 
-  const ActiveIcon = tabs.find(
+  const ActiveIcon: any = tabs.find(
     (t) => pathname === `/workspaces/${id + t?.path}`,
   )?.icon;
 

@@ -45,9 +45,9 @@ class ProjectController extends Controller
             $query->orderByDesc('created_at');
         }
 
-        $data = $query->paginate(8);
+        $projects = $query->paginate(8);
 
-        return response()->json($data);
+        return response()->json($projects);
     }
 
     /**
@@ -62,31 +62,30 @@ class ProjectController extends Controller
                 'category_id' => ['required'],
                 'private'=>['required','boolean'],
                 'manifesto'=>['required'],
-                'image'=>[ 'image'],
-                'skills'=>['sometimes'],
+                'image'=>['image'],
+                'skills'=>['sometimes','array'],
+                'skills/*' => ['exists:skills,id']
             ]
         );
         
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('projectImages', 'public');
-            $fields['image'] = $path;
+            $fields['image'] = $request->file('image')->store('projectImages', 'public');
         }
         
         $project = $request->user()->projects()->create($fields);
         $workspace = $project->workspace()->create();
-        
-        if ($request->has('skills')) {
-            $project->skills()->sync($fields['skills']);
-        }
-        
         $workspace->memberships()->create([
             'user_id' => $project->user_id,
             'role' => "owner",
         ]);
+        
+        if ($request->has('skills')) {
+            $project->skills()->sync($fields['skills']);
+        }
 
-        $data = $project->id;
+        $project = $project->id;
 
-        return response()->json($data);
+        return response()->json($project);
     }
 
     /**
@@ -94,20 +93,13 @@ class ProjectController extends Controller
      */
     public function show(Project $project, Request $request)
     {
-        $this->authorize('view', $project);
-
-        $project->load(['user','workspace.memberships.user','category','skills',
-            'comments'=> function ($q) {
-            $q->latest()->with('user');
-        }])->loadCount(['comments','likes']);
+        $project->load(['user','workspace.memberships.user','category','skills','comments'])->loadCount(['comments','likes']);
 
         $project['isLiked'] = $project->likes()->where('user_id', $request->user()->id)->exists();
-        $project['isRequested'] = $project->workspace->requests()->where('user_id', $request->user()->id)->exists() ||
-        $project->workspace->memberships()->where('user_id', $request->user()->id)->exists();
+        $project['isRequested'] = $project->workspace->requests()->where('user_id', $request->user()->id)->exists() 
+            || $project->workspace->memberships()->where('user_id', $request->user()->id)->exists();
 
-        $data = $project;
-
-        return response()->json($data);
+        return response()->json($project);
     }
 
     /**
@@ -115,8 +107,6 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        $this->authorize('update', $project);
-
         $fields = $request->validate(
             [
                 'title' => ['sometimes','string','min:5','max:255'],
@@ -125,28 +115,24 @@ class ProjectController extends Controller
                 'private'=>['sometimes','boolean'],
                 'manifesto'=>['sometimes'],
                 'image'=>['sometimes'],
-                'skills'=>['sometimes'],
+                'skills'=>['sometimes','array'],
+                'skills/*' => ['exists:skills,id']
             ]
         );
-
-        if ($request->has('skills')) {
-            $project->skills()->sync($fields['skills']);
-        }
 
         if ($request->hasFile('image')) {
             if ($project->image !== null && $project->image !== 'default/default-project-image.jpg') {
                 Storage::disk('public')->delete($project->image);
             }
+            $fields['image'] = $request->file('image')->store('projectImages', 'public');
+        }
 
-            $path = $request->file('image')->store('projectImages', 'public');
-            $fields['image'] = $path;
+        if ($request->has('skills')) {
+            $project->skills()->sync($fields['skills']);
         }
 
         $project->update($fields);
-
-        $data = $project->id;
-
-        return response()->json($data);
+        return response()->json('updated');
     }
 
     /**
@@ -154,20 +140,17 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        $this->authorize('delete', $project);
         
         $project->delete();
-
-        return response()->json(['message' => 'deleted']);
+        return response()->json(['message' => 'Deleted successfully']);
     }
 
-    public function edit(Project $project)
+    /**
+     * Checks if the user can edit this project.
+     */
+    public function canEdit(Project $project)
     {
-        $this->authorize('edit', $project);
-
         $project->load(['category','skills']);
-        $data = $project;
-
-        return response()->json($data);
+        return response()->json($project);
     }
 }

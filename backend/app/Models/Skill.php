@@ -10,9 +10,7 @@ class Skill extends Model
     /** @use HasFactory<\Database\Factories\SkillFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-    ];
+    protected $fillable = ['label'];
 
     public function users() {
         return $this->belongsToMany(User::class);

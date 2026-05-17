@@ -1,17 +1,18 @@
 import { useEffect, useRef } from "react";
 import MessageCard from "../cards/MessageCard";
 import MessageCardSkeleton from "../skeletons/MessageCardSkeleton";
+import type { PopulatedMessage } from "@/assets/types";
 
 export default function MessagesList({
   messages,
   isLoading,
 }: {
-  messages: any[];
+  messages: PopulatedMessage[];
   isLoading: boolean;
 }) {
-  const bottomRef = useRef(null);
+  const bottomRef: any = useRef(null);
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return isLoading ? (
@@ -28,7 +29,7 @@ export default function MessagesList({
       <div ref={bottomRef} />
     </div>
   ) : (
-    <p className="text-sm text-muted-foreground text-center">
+    <p className="text-sm text-muted-foreground text-center my-2">
       No messages yet.
     </p>
   );

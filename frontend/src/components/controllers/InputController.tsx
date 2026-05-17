@@ -1,16 +1,13 @@
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Controller } from "react-hook-form";
+import { Controller, type FieldValues } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Link } from "react-router-dom";
-import type { FieldType } from "./CheckBoxController";
+import type { ControllerType } from "@/assets/types";
 
-export default function InputController({
+export default function InputController<T extends FieldValues>({
   control,
   f,
-}: {
-  control: any;
-  f: FieldType;
-}) {
+}: ControllerType<T>) {
   return (
     <Controller
       control={control}

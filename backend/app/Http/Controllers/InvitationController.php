@@ -4,13 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Invitation;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreInvitationRequest;
-use App\Http\Requests\UpdateInvitationRequest;
 use App\Models\Membership;
 use App\Models\User;
-use App\Models\Workspace;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class InvitationController extends Controller
 {
@@ -19,11 +15,8 @@ class InvitationController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $request->user()->receivedInvitations()->with(['workspace.project' => function ($q) {
-            $q->with('user');
-        },'user'])->get();
-
-        return response()->json($data);
+        $invitations = $request->user()->receivedInvitations()->with(['user','workspace.project.user'])->get();
+        return response()->json($invitations);
     }
 
     /**
@@ -32,23 +25,19 @@ class InvitationController extends Controller
     public function store(Request $request)
     {
         $fields = $request->validate([
-            'workspace_id' => 'required',
-            'receiver_id' => 'required',
+            'workspace_id' => ['required'],
+            'user_id' => ['required','exists:users,id']
         ]);
 
-        $workspace = Workspace::find($fields['workspace_id']);
-        $receiver = User::find($fields['receiver_id']);
-        $isMember = $receiver->memberships()->where('workspace_id', $workspace->id)->exists();
-        $hasInvitation =$receiver->receivedInvitations()->where('workspace_id', $workspace->id)->exists();
-        $hasRequest =$receiver->requests()->where('workspace_id', $workspace->id)->exists();
+        $receiver = User::findOrFail($fields['user_id']);
 
-        if ($isMember || $hasInvitation || $hasRequest) 
-            throw ValidationException::withMessages([
-                'message' => ['You either already a member, or you have a request.'],
-            ]);
+        $isMember = $receiver->memberships()->where('workspace_id', $fields['workspace_id'])->exists();
+        $hasInvitation =$receiver->invitations()->where('workspace_id', $fields['workspace_id'])->exists();
+        $hasRequest =$receiver->requests()->where('workspace_id', $fields['workspace_id'])->exists();
 
-        $request->user()->sentInvitations()->create($fields);
+        if ($isMember || $hasInvitation || $hasRequest) abort(403, 'You either already a member, or you have a request.');
 
+        $receiver->invitations()->create($fields);
         return response()->json('created');
     }
 
@@ -80,6 +69,10 @@ class InvitationController extends Controller
             ]);
         }
 
+        if ($fields['status'] !== 'pending') {
+            $invitation->delete();
+        }
+
         return response()->json('updated');
     }
 
@@ -89,7 +82,6 @@ class InvitationController extends Controller
     public function destroy(Invitation $invitation)
     {
         $invitation->delete();
-
-        return response()->json('deleted');
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

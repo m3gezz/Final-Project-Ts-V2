@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { useMutation } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
-import { signInSchema } from "@/zod/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "@/api/functions/auth";
+import { signInSchema, type signInSchemaType } from "@/zod/authSchemas";
+import { useAppDispatch } from "@/redux/store";
+import { handleApiErrors } from "@/api/functions/validation";
 
 const fields = [
   {
@@ -26,11 +27,11 @@ const fields = [
       path: "/forgot-password",
     },
   },
-];
+] as const;
 
 export default function SignIn() {
-  const disp = useDispatch();
-  const form = useForm({
+  const disp = useAppDispatch();
+  const form = useForm<signInSchemaType>({
     defaultValues: {
       email: "",
       password: "",
@@ -38,16 +39,10 @@ export default function SignIn() {
     resolver: zodResolver(signInSchema),
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data) => signIn(data, disp),
+  const { mutate: signInMutation, isPending: isSignInPending } = useMutation({
+    mutationFn: (data: signInSchemaType) => signIn(data, disp),
     onError: (err) => {
-      const res = err.response;
-      if (res.status !== 422) return alert("error");
-
-      const errors = res.data.errors;
-      for (const key in errors) {
-        form.setError(key, { message: errors[key] });
-      }
+      handleApiErrors(err, form);
     },
   });
 
@@ -65,14 +60,14 @@ export default function SignIn() {
       }
     >
       <form
-        onSubmit={form.handleSubmit((data) => mutate(data))}
+        onSubmit={form.handleSubmit((data) => signInMutation(data))}
         className="space-y-4"
       >
         {fields.map((f, i) => (
           <InputController key={i} control={form.control} f={f} />
         ))}
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Signing in…" : "Sign in"}
+        <Button type="submit" className="w-full" disabled={isSignInPending}>
+          {isSignInPending ? "Signing in…" : "Sign in"}
         </Button>
       </form>
     </AuthCard>

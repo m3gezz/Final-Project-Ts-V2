@@ -1,4 +1,5 @@
-import { getWorkspaces } from "@/api/functions/workspace";
+import { getWorkspaces } from "@/api/functions/workspaces";
+import type { PaginationState } from "@/assets/types";
 import InputController from "@/components/controllers/InputController";
 import SelectController from "@/components/controllers/SelectController";
 import WorkspacesList from "@/components/lists/WorkspacesList";
@@ -9,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function Workspaces() {
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<PaginationState>({
     current_page: 1,
     last_page: 1,
     to: 0,

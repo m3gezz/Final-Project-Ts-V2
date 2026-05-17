@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('manifesto');
             $table->string('private')->default(0);
             $table->text('description');
-            $table->foreignId('category_id');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

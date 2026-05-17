@@ -10,15 +10,7 @@ class Like extends Model
     /** @use HasFactory<\Database\Factories\LikeFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'project_id',
-        'user_id',
-        'owner',
-    ];
-
-    protected $casts = [
-        'owner' => 'array',
-    ];
+    protected $fillable = ['project_id','user_id'];
 
     public function project() {
         return $this->belongsTo(Project::class);

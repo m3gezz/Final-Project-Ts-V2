@@ -49,9 +49,9 @@ class UserController extends Controller
             $query->orderByDesc('created_at');
         }
 
-        $data = $query->paginate(8);
+        $users = $query->paginate(8);
 
-        return response()->json($data);
+        return response()->json($users);
     }
 
     /**
@@ -66,8 +66,6 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $this->authorize('view', $user);
-
         $user->load(['skills', 'badges'])->loadCount([
             'projects as owned_count' => function ($q) {$q->where('private', false);},
             'memberships as worked_count' => function ($q) {$q->where('private', false)->where('role', '!=', 'owner');}
@@ -75,17 +73,14 @@ class UserController extends Controller
 
       
         $owned = Project::where('private', false)->where('user_id', $user->id)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get();
-     
         $worked = Project::where('private', false)->whereHas(
             'workspace.memberships', function ($q) use($user) {$q->where('user_id',$user->id)->where('role','!=','owner');})
             ->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get(); 
    
         $user['owned'] = $owned;
         $user['worked'] = $worked;
-        
-        $data = ['profile' => $user];
 
-        return response()->json($data);
+        return response()->json($user);
     }
 
     /**
@@ -93,8 +88,6 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $this->authorize('update', $user);
-
         $fields = $request->validate([
             'full_name' => ['sometimes','min:5','max:30'],
             'username' => ['sometimes'],
@@ -106,7 +99,8 @@ class UserController extends Controller
             'email' => ['sometimes','email','unique:users,email,' . $user->id],
             'password' => ['sometimes'],
             'new_password' => ['sometimes','confirmed'],
-            'skills' => ['sometimes']
+            'skills'=>['sometimes','array'],
+            'skills/*' => ['exists:skills,id']
         ]);
 
         if ($request->hasFile('avatar')) {
@@ -114,8 +108,7 @@ class UserController extends Controller
                 Storage::disk('public')->delete($user->avatar);
             }
 
-            $path = $request->file('avatar')->store('usersImages', 'public');
-            $fields['avatar'] = $path;
+            $fields['avatar'] = $request->file('avatar')->store('usersImages', 'public');
         }
 
         if ($request->has('skills')) {
@@ -123,18 +116,14 @@ class UserController extends Controller
         }
 
         if ($request->has('password') && $request->has('new_password')) {
-
             if (!Hash::check($fields['password'], $user->password)) {
                 throw ValidationException::withMessages([
                     'password' => ['The provided credentials are incorrect.'],
                 ]);
             }
 
-            $user->password = Hash::make($fields['new_password']);
-            $user->save();
-
-            $data = ['user' => $user->load('skills')];
-            return response()->json($data);
+            $user->update(['password' => Hash::make($fields['new_password'])]);
+            return response()->json('updated');
         }
 
         if ($request->has('email')) {
@@ -143,11 +132,7 @@ class UserController extends Controller
         }
 
         $user->update($fields);
-        $user->save();
-
-        $data = ['user' => $user->load('skills')];
-        
-        return response()->json($data);
+        return response()->json('updated');
     }
 
     /**
@@ -155,8 +140,6 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
-        $this->authorize('delete', $user);
-
         $fields = $request->validate(
             [
                 'password' => ['required','confirmed'],
@@ -171,11 +154,10 @@ class UserController extends Controller
 
         $user->tokens()->delete();
         $user->delete();
-
         return response()->json(['message' => 'Deleted successfully']);
     }
 
-    public function home(Request $request) 
+    public function UserDashboard(Request $request) 
     {
         $user = $request->user()->loadCount(['projects','requests' => function ($q) {
             $q->where('status', 'pending');
@@ -194,10 +176,9 @@ class UserController extends Controller
                 $q->with(['user', 'skills', 'category'])->withCount(['comments','likes'])->orderByDesc('likes_count');
             }])->limit(3)->get();
 
-        $data = [];
-        $data['user'] = $user;
-        $data['workspaces'] = $workspaces;
-        $data['projects'] = $projects;
-        return response()->json($data);
+        $dashboard['user'] = $user;
+        $dashboard['workspaces'] = $workspaces;
+        $dashboard['projects'] = $projects;
+        return response()->json($dashboard);
     }
 }

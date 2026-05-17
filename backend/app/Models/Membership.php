@@ -10,11 +10,7 @@ class Membership extends Model
     /** @use HasFactory<\Database\Factories\MembershipFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'workspace_id',
-        'user_id',
-        'role',
-    ];
+    protected $fillable = ['workspace_id','user_id','role'];
 
     public function project() {
         return $this->belongsTo(Project::class);

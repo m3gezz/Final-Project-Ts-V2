@@ -1,47 +1,57 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSelector } from "react-redux";
 import { formatTime, getImageUrl } from "@/lib/utils";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { Check, Pen, X } from "lucide-react";
-import { deleteMessage, editMessage } from "@/api/functions/message";
 import { useState } from "react";
 import { Input } from "../ui/input";
+import { destroyMessage, updateMessage } from "@/api/functions/messages";
+import type { PopulatedMessage } from "@/assets/types";
+import { useAppSelector } from "@/redux/store";
 
-export default function MessageCard({ message }) {
+export default function MessageCard({
+  message,
+}: {
+  message: PopulatedMessage;
+}) {
   const { id } = useParams();
-  const { user } = useSelector((state) => state?.auth);
-
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: () => deleteMessage(message?.id),
-    onMutate: () => {
-      const previous = queryClient.getQueryData(["messages", String(id)]);
-      queryClient.setQueryData(["messages", String(id)], (old) => [
-        ...old.filter((m) => m?.id != message?.id),
-      ]);
-      return { previous };
-    },
-  });
+  const { user } = useAppSelector((state) => state?.auth);
   const [edit, setEdit] = useState({
     editing: false,
     message: message?.message,
   });
+  const queryClient = useQueryClient();
+  const { mutate: destroyMessageMutation } = useMutation({
+    mutationFn: () => destroyMessage(message?.id),
+    onMutate: () => {
+      const previous = queryClient.getQueryData(["messages", String(id)]);
+      queryClient.setQueryData(
+        ["messages", String(id)],
+        (old: PopulatedMessage[]) => [
+          ...old.filter((m) => m?.id != message?.id),
+        ],
+      );
+      return { previous };
+    },
+  });
 
-  const { mutate: updateMessage } = useMutation({
-    mutationFn: () => editMessage(message?.id, { message: edit?.message }),
+  const { mutate: updateMessageMutation } = useMutation({
+    mutationFn: () => updateMessage(message?.id, { message: edit?.message }),
     onMutate: () => {
       setEdit((prev) => ({ ...prev, editing: false }));
       const previous = queryClient.getQueryData(["messages", String(id)]);
-      queryClient.setQueryData(["messages", String(id)], (old) => [
-        ...old.map((m) => {
-          if (m?.id == message?.id) {
-            return { ...m, message: edit?.message };
-          }
-          return m;
-        }),
-      ]);
+      queryClient.setQueryData(
+        ["messages", String(id)],
+        (old: PopulatedMessage[]) => [
+          ...old.map((m) => {
+            if (m?.id == message?.id) {
+              return { ...m, message: edit?.message };
+            }
+            return m;
+          }),
+        ],
+      );
       return { previous };
     },
   });
@@ -66,7 +76,7 @@ export default function MessageCard({ message }) {
             <Button
               size={"icon-xs"}
               variant={"secondary"}
-              onClick={() => updateMessage()}
+              onClick={() => updateMessageMutation()}
               className="my-auto mx-2"
             >
               <Check />
@@ -84,7 +94,7 @@ export default function MessageCard({ message }) {
             <Button
               size={"icon-xs"}
               variant={"destructive"}
-              onClick={() => mutate()}
+              onClick={() => destroyMessageMutation()}
               className="my-auto mx-2"
             >
               <X />

@@ -15,15 +15,20 @@ import { Checkbox } from "@/components/ui/checkbox";
 import DeleteProjectModal from "@/components/modals/DeleteProjectModal";
 import { Spinner } from "@/components/ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createProjectSchema } from "@/zod/schemas";
 import {
-  checkProject,
+  canEdit,
   createProject,
   updateProject,
-} from "@/api/functions/project";
+} from "@/api/functions/projects";
 import { getCategories } from "@/api/functions/data";
 import { getImageUrl } from "@/lib/utils";
 import ErrorCard from "@/components/cards/ErrorCard";
+import {
+  manipulateProjectSchema,
+  type manipulateProjectSchemaType,
+} from "@/zod/projectsSchemas";
+import type { DataType } from "@/assets/types";
+import { handleApiErrors } from "@/api/functions/validation";
 
 const textareaFields = [
   {
@@ -50,7 +55,7 @@ export default function ProjectManipulator({
     queries: [
       {
         queryKey: ["project-check", id],
-        queryFn: () => checkProject(id),
+        queryFn: () => canEdit(id),
         retry: 0,
       },
       {
@@ -60,9 +65,9 @@ export default function ProjectManipulator({
     ],
   });
 
-  const [skills, setSkills] = useState<[]>([]);
+  const [skills, setSkills] = useState<DataType[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
-  const form = useForm({
+  const form = useForm<manipulateProjectSchemaType>({
     defaultValues: {
       image: null,
       title: "",
@@ -72,7 +77,7 @@ export default function ProjectManipulator({
       manifesto: "",
       private: false,
     },
-    resolver: zodResolver(createProjectSchema),
+    resolver: zodResolver(manipulateProjectSchema),
   });
 
   useEffect(() => {
@@ -92,8 +97,9 @@ export default function ProjectManipulator({
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
-    mutationFn: (data) => {
+    mutationFn: (data: manipulateProjectSchemaType) => {
       const formData = new FormData();
+
       data = { ...data, private: data?.private ? "1" : "0" };
       for (const key in data) {
         if (data[key] !== undefined && data[key] !== null) {
@@ -102,7 +108,7 @@ export default function ProjectManipulator({
       }
 
       skills.forEach((s) => {
-        formData.append("skills[]", s.id);
+        formData.append("skills[]", String(s.id));
       });
 
       if (data.image instanceof File) {
@@ -117,13 +123,7 @@ export default function ProjectManipulator({
       return updateProject(id, formData);
     },
     onError: (err) => {
-      const res = err.response;
-      if (res.status !== 422) return alert("error");
-
-      const errors = res.data.errors;
-      for (const key in errors) {
-        form.setError(key, { message: errors[key] });
-      }
+      handleApiErrors(err, form);
     },
     onSuccess: (data) => {
       if (mode === "edit") {
@@ -275,7 +275,7 @@ export default function ProjectManipulator({
                     </DialogTrigger>
                   </div>
 
-                  <DeleteProjectModal id={id} />
+                  <DeleteProjectModal />
                 </Dialog>
               </div>
             )}

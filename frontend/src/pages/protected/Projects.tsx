@@ -7,13 +7,14 @@ import { useQueries } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import SelectController from "@/components/controllers/SelectController";
-import { getProjects } from "@/api/functions/project";
+import { getProjects } from "@/api/functions/projects";
 import { getCategories } from "@/api/functions/data";
 import ProjectsList from "@/components/lists/ProjectsList";
 import PageFooter from "@/components/slices/PageFooter";
+import type { PaginationState } from "@/assets/types";
 
 export default function Projects() {
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<PaginationState>({
     current_page: 1,
     last_page: 1,
     to: 0,

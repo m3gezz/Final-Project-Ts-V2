@@ -4,17 +4,20 @@ import { Link } from "react-router-dom";
 import InputOTPController from "@/components/controllers/InputOTPController";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { verificationCodeSchema } from "@/zod/schemas";
+import {
+  verificationCodeSchema,
+  type verificationCodeSchemaType,
+} from "@/zod/authSchemas";
 
 export default function VerifyResetCode() {
-  const form = useForm({
+  const form = useForm<verificationCodeSchemaType>({
     defaultValues: {
       code: "",
     },
     resolver: zodResolver(verificationCodeSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: verificationCodeSchemaType) => {
     console.log(data);
   };
 

@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import InputController from "@/components/controllers/InputController";
 import { useForm } from "react-hook-form";
 import CheckBoxController from "@/components/controllers/CheckBoxController";
-import { useDispatch } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
-import { signUpSchema } from "@/zod/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUp } from "@/api/functions/auth";
+import { signUpSchema, type signUpSchemaType } from "@/zod/authSchemas";
+import { useAppDispatch } from "@/redux/store";
+import { handleApiErrors } from "@/api/functions/validation";
 
 const infoFields = [
   {
@@ -23,7 +24,7 @@ const infoFields = [
     label: "Email",
     placeholder: "you@company.com",
   },
-];
+] as const;
 
 const passwordFields = [
   {
@@ -38,11 +39,11 @@ const passwordFields = [
     label: "Confirm Password",
     placeholder: "••••••••",
   },
-];
+] as const;
 
 export default function SignUp() {
-  const disp = useDispatch();
-  const form = useForm({
+  const disp = useAppDispatch();
+  const form = useForm<signUpSchemaType>({
     defaultValues: {
       full_name: "",
       email: "",
@@ -53,16 +54,10 @@ export default function SignUp() {
     resolver: zodResolver(signUpSchema),
   });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data) => signUp(data, disp),
+  const { mutate: signUpMutation, isPending: isSignUpPending } = useMutation({
+    mutationFn: (data: signUpSchemaType) => signUp(data, disp),
     onError: (err) => {
-      const res = err.response;
-      if (res.status !== 422) return alert("error");
-
-      const errors = res.data.errors;
-      for (const key in errors) {
-        form.setError(key, { message: errors[key] });
-      }
+      handleApiErrors(err, form);
     },
   });
 
@@ -80,7 +75,7 @@ export default function SignUp() {
       }
     >
       <form
-        onSubmit={form.handleSubmit((data) => mutate(data))}
+        onSubmit={form.handleSubmit((data) => signUpMutation(data))}
         className="space-y-4"
       >
         {infoFields.map((f, i) => (
@@ -98,8 +93,8 @@ export default function SignUp() {
             name: "terms",
           }}
         />
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Creating account…" : "Create account"}
+        <Button type="submit" className="w-full" disabled={isSignUpPending}>
+          {isSignUpPending ? "Creating account…" : "Create account"}
         </Button>
       </form>
     </AuthCard>

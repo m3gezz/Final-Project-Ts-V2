@@ -4,22 +4,23 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getImageUrl } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import type { Request } from "./UserSentRequestCard";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { modifyInvitation } from "@/api/functions/inbox";
+import type { RequestType } from "@/assets/types";
+import { updateInvitation } from "@/api/functions/invitations";
 
 export default function UserReceivedRequestCard({
   request,
 }: {
-  request: Request;
+  request: RequestType;
 }) {
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: (data: { status: string }) =>
-      modifyInvitation(request?.id, data),
+  const { mutate: updateInvitationMutation } = useMutation({
+    mutationFn: (data: { status: "accepted" | "declined" }) =>
+      updateInvitation(request?.id, data),
     onMutate: () => {
       const previous = queryClient.getQueryData(["invitations"]);
-      queryClient.setQueryData(["invitations"], (old) => [
+      queryClient.setQueryData(["invitations"], (old: RequestType[]) => [
         ...old.filter((r) => r.id != request?.id),
       ]);
 
@@ -60,12 +61,15 @@ export default function UserReceivedRequestCard({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => mutate({ status: "declined" })}
+            onClick={() => updateInvitationMutation({ status: "declined" })}
           >
             <X className="mr-1 h-4 w-4" />
             Decline
           </Button>
-          <Button size="sm" onClick={() => mutate({ status: "accepted" })}>
+          <Button
+            size="sm"
+            onClick={() => updateInvitationMutation({ status: "accepted" })}
+          >
             <Check className="mr-1 h-4 w-4" />
             Accept
           </Button>

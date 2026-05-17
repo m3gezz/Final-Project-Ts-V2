@@ -4,17 +4,20 @@ import AuthCard from "@/components/cards/AuthCard";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotPasswordSchema } from "@/zod/schemas";
+import {
+  forgotPasswordSchema,
+  type forgotPasswordSchemaType,
+} from "@/zod/authSchemas";
 
 export default function ForgotPassword() {
-  const form = useForm({
+  const form = useForm<forgotPasswordSchemaType>({
     defaultValues: {
       email: "",
     },
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: forgotPasswordSchemaType) => {
     console.log(data);
   };
 

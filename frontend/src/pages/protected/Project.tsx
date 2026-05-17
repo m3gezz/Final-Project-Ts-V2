@@ -7,17 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import SendRequestModal from "@/components/modals/SendRequestModal";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { getProject, likeProject } from "@/api/functions/project";
+import { createProjectLike, getProject } from "@/api/functions/projects";
 import { getImageUrl } from "@/lib/utils";
 import ErrorCard from "@/components/cards/ErrorCard";
 import ProjectSkeleton from "@/components/skeletons/ProjectSkeleton";
+import type { DataType, MembershipType, ProjectType } from "@/assets/types";
+import { createRequest } from "@/api/functions/requests";
+import { useAppSelector } from "@/redux/store";
 
 export default function Project() {
   const { id } = useParams();
-  const { user } = useSelector((state) => state?.auth);
+  const { user } = useAppSelector((state) => state?.auth);
   const {
     data: project,
     isLoading,
@@ -29,9 +29,9 @@ export default function Project() {
   });
 
   const queryClient = useQueryClient();
-  const { mutate: like, isPending } = useMutation({
+  const { mutate: like } = useMutation({
     mutationFn: () => {
-      return likeProject(id);
+      return createProjectLike(id);
     },
     onMutate: () => {
       const previousProject = queryClient.getQueryData([
@@ -39,11 +39,14 @@ export default function Project() {
         String(project?.id),
       ]);
 
-      queryClient.setQueryData(["project", String(project?.id)], (old) => ({
-        ...old,
-        isLiked: !old.isLiked,
-        likes_count: old.isLiked ? old.likes_count - 1 : old.likes_count + 1,
-      }));
+      queryClient.setQueryData(
+        ["project", String(project?.id)],
+        (old: ProjectType) => ({
+          ...old,
+          isLiked: !old.isLiked,
+          likes_count: old.isLiked ? old.likes_count - 1 : old.likes_count + 1,
+        }),
+      );
 
       return { previousProject };
     },
@@ -53,9 +56,27 @@ export default function Project() {
       });
     },
   });
+  const { mutate: createRequestMutation, isPending } = useMutation({
+    mutationFn: () => createRequest({ project_id: id }),
+    onMutate: () => {
+      const previousProject = queryClient.getQueryData(["project", String(id)]);
+      queryClient.setQueryData(["project", String(id)], (old: ProjectType) => ({
+        ...old,
+        isRequested: true,
+      }));
+      return { previousProject };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["project", String(id)],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["requests"],
+      });
+    },
+  });
 
   const [comment, setComment] = useState("");
-  console.log(project);
 
   if (isLoading) return <ProjectSkeleton />;
   if (isError) return <ErrorCard />;
@@ -115,17 +136,15 @@ export default function Project() {
                   </Link>
                 </Button>
               ) : (
-                <Dialog>
-                  {!project?.isRequested && (
-                    <DialogTrigger asChild>
-                      <Button disabled={project?.isRequested}>
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Send request
-                      </Button>
-                    </DialogTrigger>
-                  )}
-                  <SendRequestModal project_id={id} />
-                </Dialog>
+                !project?.isRequested && (
+                  <Button
+                    disabled={project?.isRequested}
+                    onClick={() => createRequestMutation()}
+                  >
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Send request
+                  </Button>
+                )
               )}
             </div>
           </div>
@@ -198,7 +217,7 @@ export default function Project() {
               Skills required
             </h3>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {project?.skills?.map((s) => (
+              {project?.skills?.map((s: DataType) => (
                 <Badge key={s?.id} variant="secondary">
                   {s?.label}
                 </Badge>
@@ -210,7 +229,7 @@ export default function Project() {
               Members ({project?.workspace?.memberships?.length})
             </h3>
             <div className="mt-3 space-y-3">
-              {project?.workspace?.memberships?.map((m) => {
+              {project?.workspace?.memberships?.map((m: MembershipType) => {
                 return (
                   <Link
                     key={m?.id}

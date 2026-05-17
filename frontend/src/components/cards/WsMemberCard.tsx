@@ -9,28 +9,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getImageUrl } from "@/lib/utils";
-import type { User } from "./UserCard";
-import { useSelector } from "react-redux";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteMember, updateMemberRole } from "@/api/functions/workspace";
+import type { MembershipType, PopulatedWorkspace } from "@/assets/types";
+import { destroyMember, updateMember } from "@/api/functions/workspaces";
+import { useAppSelector } from "@/redux/store";
 
-export type Member = {
-  user: User;
-  role: string;
-};
-
-export default function WsMemberCard({ member }: { member: Member }) {
-  const { user } = useSelector((state) => state?.auth);
+export default function WsMemberCard({ member }: { member: MembershipType }) {
+  const { user } = useAppSelector((state) => state?.auth);
   const queryClient = useQueryClient();
-  const previous = queryClient.getQueryData([
+  const previous: PopulatedWorkspace | undefined = queryClient.getQueryData([
     "workspace",
     String(member?.workspace_id),
     "members",
   ]);
   const isOwner = user?.id === previous?.project?.user_id;
 
-  const { mutate } = useMutation({
-    mutationFn: () => deleteMember(member?.id),
+  const { mutate: destroyMemberMutation } = useMutation({
+    mutationFn: () => destroyMember(member?.id),
     onMutate: () => {
       const previous = queryClient.getQueryData([
         "workspace",
@@ -40,7 +35,7 @@ export default function WsMemberCard({ member }: { member: Member }) {
 
       queryClient.setQueryData(
         ["workspace", String(member?.workspace_id), "members"],
-        (old) => ({
+        (old: PopulatedWorkspace) => ({
           ...old,
           memberships: [
             ...old?.memberships?.filter((m) => m?.id != member?.id),
@@ -57,20 +52,21 @@ export default function WsMemberCard({ member }: { member: Member }) {
     },
   });
 
-  const { mutate: updateRole, isPending: isPendingUpdate } = useMutation({
-    mutationFn: (data: { role: string }) => updateMemberRole(member?.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(member?.workspace_id), "members"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(member?.workspace_id), "overview"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(member?.workspace_id), "tasks"],
-      });
-    },
-  });
+  const { mutate: updateMemberMutation, isPending: isUpdateMemberPending } =
+    useMutation({
+      mutationFn: (data: { role: string }) => updateMember(member?.id, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(member?.workspace_id), "members"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(member?.workspace_id), "overview"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(member?.workspace_id), "tasks"],
+        });
+      },
+    });
 
   return (
     <div className="flex items-center gap-4 border-b p-4 last:border-b-0">
@@ -86,8 +82,8 @@ export default function WsMemberCard({ member }: { member: Member }) {
       </div>
       <Select
         defaultValue={member?.role}
-        onValueChange={(v) => updateRole({ role: v })}
-        disabled={!isOwner || member?.role === "owner" || isPendingUpdate}
+        onValueChange={(v) => updateMemberMutation({ role: v })}
+        disabled={!isOwner || member?.role === "owner" || isUpdateMemberPending}
       >
         <SelectTrigger className="w-32">
           <SelectValue />
@@ -101,7 +97,11 @@ export default function WsMemberCard({ member }: { member: Member }) {
         </SelectContent>
       </Select>
       {member?.role !== "owner" && isOwner && (
-        <Button variant="ghost" size="icon" onClick={() => mutate()}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => destroyMemberMutation()}
+        >
           <X className="h-4 w-4" />
         </Button>
       )}

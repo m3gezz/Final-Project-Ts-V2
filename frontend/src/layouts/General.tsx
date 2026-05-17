@@ -1,16 +1,16 @@
 import { Spinner } from "@/components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import { router } from "@/router";
-import { refresh } from "@/api/functions/auth";
+import { refreshToken } from "@/api/functions/auth";
+import { useAppDispatch } from "@/redux/store";
 
 export default function General() {
-  const disp = useDispatch();
+  const disp = useAppDispatch();
 
   const { isLoading } = useQuery({
     queryKey: ["refresh"],
-    queryFn: () => refresh(disp),
+    queryFn: () => refreshToken(disp),
     retry: 0,
   });
 

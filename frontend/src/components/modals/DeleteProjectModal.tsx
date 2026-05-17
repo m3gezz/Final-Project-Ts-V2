@@ -1,4 +1,4 @@
-import { deleteProject } from "@/api/functions/project";
+import { destroyProject } from "@/api/functions/projects";
 import { Button } from "@/components/ui/button";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
@@ -7,12 +7,13 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function DeleteProjectModal() {
   const { id } = useParams();
   const nav = useNavigate();
-  const { mutate, isPending } = useMutation({
-    mutationFn: () => deleteProject(id),
-    onSuccess: () => {
-      nav("/projects");
-    },
-  });
+  const { mutate: destroyProjectMutation, isPending: isDestroyProjectPending } =
+    useMutation({
+      mutationFn: () => destroyProject(id),
+      onSuccess: () => {
+        nav("/projects");
+      },
+    });
 
   return (
     <DialogContent
@@ -35,12 +36,12 @@ export default function DeleteProjectModal() {
       <form className="space-y-4">
         <Button
           type="button"
-          onClick={() => mutate()}
+          onClick={() => destroyProjectMutation()}
           variant={"destructive"}
           className="w-full"
-          disabled={isPending}
+          disabled={isDestroyProjectPending}
         >
-          {isPending ? "Deleting..." : "Delete"}
+          {isDestroyProjectPending ? "Deleting..." : "Delete"}
         </Button>
       </form>
     </DialogContent>

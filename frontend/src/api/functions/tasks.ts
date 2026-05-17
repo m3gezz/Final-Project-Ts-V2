@@ -1,3 +1,4 @@
+import type { DefaultFields } from "@/assets/types";
 import { api } from "../axios";
 
 const createTask = async (data) => {
@@ -5,14 +6,14 @@ const createTask = async (data) => {
   return res;
 };
 
-const modifyTask = async (id, data) => {
+const updateTask = async (id: DefaultFields["id"], data) => {
   const res = await api.put(`tasks/${id}`, data);
   return res;
 };
 
-const deleteTask = async (id) => {
+const destroyTask = async (id: DefaultFields["id"]) => {
   const res = await api.delete(`tasks/${id}`);
   return res;
 };
 
-export { createTask, modifyTask, deleteTask };
+export { createTask, updateTask, destroyTask };

@@ -1,35 +1,40 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getImageUrl } from "@/lib/utils";
-import { useSelector } from "react-redux";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { deleteTask, modifyTask } from "@/api/functions/tasks";
 import { X } from "lucide-react";
+import type { PopulatedTask, PopulatedWorkspace } from "@/assets/types";
+import { destroyTask, updateTask } from "@/api/functions/tasks";
+import { useAppSelector } from "@/redux/store";
 
-export default function TaskCard({ task }) {
+export default function TaskCard({ task }: { task: PopulatedTask }) {
   const { id } = useParams();
-  const { user } = useSelector((state) => state?.auth);
+  const { user } = useAppSelector((state) => state?.auth);
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: (data) => modifyTask(task?.id, data),
+  const { mutate: updateTaskMutation } = useMutation({
+    mutationFn: (data: { status: "doing" | "done" }) =>
+      updateTask(task?.id, data),
     onMutate: (data) => {
       const previousProject = queryClient.getQueryData([
         "workspace",
         String(id),
         "tasks",
       ]);
-      queryClient.setQueryData(["workspace", String(id), "tasks"], (old) => ({
-        ...old,
-        tasks: [
-          ...old.tasks.map((t) => {
-            if (t?.id == task?.id) {
-              t = { ...t, ...data };
-            }
-            return t;
-          }),
-        ],
-      }));
+      queryClient.setQueryData(
+        ["workspace", String(id), "tasks"],
+        (old: PopulatedWorkspace) => ({
+          ...old,
+          tasks: [
+            ...old.tasks.map((t) => {
+              if (t?.id == task?.id) {
+                t = { ...t, ...data };
+              }
+              return t;
+            }),
+          ],
+        }),
+      );
       return { previousProject };
     },
     onSuccess: () => {
@@ -43,17 +48,20 @@ export default function TaskCard({ task }) {
   });
 
   const { mutate: removeTask } = useMutation({
-    mutationFn: () => deleteTask(task?.id),
+    mutationFn: () => destroyTask(task?.id),
     onMutate: () => {
       const previousProject = queryClient.getQueryData([
         "workspace",
         String(id),
         "tasks",
       ]);
-      queryClient.setQueryData(["workspace", String(id), "tasks"], (old) => ({
-        ...old,
-        tasks: [...old.tasks.filter((t) => t?.id != task?.id)],
-      }));
+      queryClient.setQueryData(
+        ["workspace", String(id), "tasks"],
+        (old: PopulatedWorkspace) => ({
+          ...old,
+          tasks: [...old.tasks.filter((t) => t?.id != task?.id)],
+        }),
+      );
       return { previousProject };
     },
     onSuccess: () => {
@@ -80,14 +88,14 @@ export default function TaskCard({ task }) {
         {user?.id === task?.user?.id && task?.status === "todo" ? (
           <Button
             variant={"default"}
-            onClick={() => mutate({ status: "doing" })}
+            onClick={() => updateTaskMutation({ status: "doing" })}
           >
             I'll work on it
           </Button>
         ) : task?.status === "doing" ? (
           <Button
             variant={"secondary"}
-            onClick={() => mutate({ status: "done" })}
+            onClick={() => updateTaskMutation({ status: "done" })}
           >
             Done
           </Button>

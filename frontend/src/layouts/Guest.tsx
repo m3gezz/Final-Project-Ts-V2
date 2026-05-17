@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "@/redux/store";
 
 export default function Guest() {
-  const { user, token } = useSelector((state) => state?.auth);
+  const { user, token } = useAppSelector((state) => state?.auth);
   const { pathname } = useLocation();
 
   if (!user?.email_verified_at && token && pathname !== "/verify-email")

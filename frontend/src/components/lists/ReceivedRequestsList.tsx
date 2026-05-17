@@ -1,16 +1,16 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import type { Request } from "../cards/UserSentRequestCard";
 import ReceivedRequestCardSkeleton from "../skeletons/ReceivedRequestCardSkeleton";
 import ProjectReceivedRequestCard from "../cards/ProjectReceivedRequestCard";
 import UserReceivedRequestCard from "../cards/UserReceivedRequestCard";
+import type { RequestType } from "@/assets/types";
 
 export default function ReceivedRequestList({
   requests,
   isLoading,
   type = "user",
 }: {
-  requests: Request[];
+  requests: RequestType[];
   isLoading: boolean;
   type?: string;
 }) {

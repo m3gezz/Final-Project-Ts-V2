@@ -10,12 +10,7 @@ class Message extends Model
     /** @use HasFactory<\Database\Factories\MessageFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'workspace_id',
-        'user_id',
-        'message',
-        'isDeleted'
-    ];
+    protected $fillable = ['workspace_id','user_id','message','isDeleted'];
 
     public function user() {
         return $this->belongsTo(User::class);

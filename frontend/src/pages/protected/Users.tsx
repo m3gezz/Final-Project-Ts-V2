@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getSkills } from "@/api/functions/data";
 import { useQueries } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { getUsers } from "@/api/functions/user";
+import { getUsers } from "@/api/functions/users";
 import UsersList from "@/components/lists/UsersList";
 import PageFooter from "@/components/slices/PageFooter";
 
@@ -20,7 +20,7 @@ export default function Users() {
     defaultValues: {
       search: "",
       skill_id: "0",
-      sort: "1",
+      sort: "likes",
     },
   });
   const [search, skill_id, sort] = form.watch(["search", "skill_id", "sort"]);
@@ -81,11 +81,11 @@ export default function Users() {
               f={{ name: "sort" }}
               options={[
                 {
-                  id: 1,
+                  id: "likes",
                   label: "Most liked",
                 },
                 {
-                  id: 2,
+                  id: "date",
                   label: "Newest",
                 },
               ]}
@@ -95,7 +95,11 @@ export default function Users() {
       </div>
       <UsersList users={users} isLoading={isFetchingUsers} />
       {!isFetchingUsers && (
-        <PageFooter pagination={pagination} setPagination={setPagination} />
+        <PageFooter
+          pagination={pagination}
+          setPagination={setPagination}
+          isLoading={isFetchingUsers}
+        />
       )}
     </div>
   );

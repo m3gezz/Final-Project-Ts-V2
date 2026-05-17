@@ -42,7 +42,6 @@ class MembershipController extends Controller
         ]);
 
         $membership->update($fields);
-
         return response()->json('updated');
     }
 
@@ -52,6 +51,6 @@ class MembershipController extends Controller
     public function destroy(Membership $membership)
     {
         $membership->delete();
-        return response()->json('deleted');
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

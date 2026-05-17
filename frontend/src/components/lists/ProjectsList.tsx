@@ -1,13 +1,14 @@
-import ProjectCard, { type Project } from "../cards/ProjectCard";
+import ProjectCard from "../cards/ProjectCard";
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
 import ProjectCardSkeleton from "../skeletons/ProjectCardSkeleton";
+import type { ProjectType } from "@/assets/types";
 
 export default function ProjectsList({
   projects,
   isLoading,
 }: {
-  projects: Project[];
+  projects: ProjectType[];
   isLoading: boolean;
 }) {
   return isLoading ? (

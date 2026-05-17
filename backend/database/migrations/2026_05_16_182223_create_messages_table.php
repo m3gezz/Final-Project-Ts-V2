@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->text('message');
             $table->boolean('isDeleted')->default(0);
-            $table->foreignId('workspace_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -2,11 +2,15 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { deleteAccountSchema } from "@/zod/schemas";
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteAccount } from "@/api/functions/user";
+import { destroyUser } from "@/api/functions/users";
+import {
+  destroyUserSchema,
+  type destroyUserSchemaType,
+} from "@/zod/usersSchemas";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { handleApiErrors } from "@/api/functions/validation";
 
 const fields = [
   {
@@ -21,31 +25,27 @@ const fields = [
     label: "Confirm Your Password",
     placeholder: "••••••••",
   },
-];
+] as const;
 
 export default function DeleteAccModal() {
-  const { id } = useSelector((state) => state?.auth?.user);
-  const form = useForm({
+  const { user } = useAppSelector((state) => state?.auth);
+  const form = useForm<destroyUserSchemaType>({
     defaultValues: {
       password: "",
       password_confirmation: "",
     },
-    resolver: zodResolver(deleteAccountSchema),
+    resolver: zodResolver(destroyUserSchema),
   });
-  const disp = useDispatch();
+  const disp = useAppDispatch();
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data) => deleteAccount(id, data, disp),
-    onError: (err) => {
-      const res = err.response;
-      if (res.status !== 422) return alert("error");
-
-      const errors = res.data.errors;
-      for (const key in errors) {
-        form.setError(key, { message: errors[key] });
-      }
-    },
-  });
+  const { mutate: destroyUserMutation, isPending: isDestroyUserPending } =
+    useMutation({
+      mutationFn: (data: destroyUserSchemaType) =>
+        destroyUser(user?.id, data, disp),
+      onError: (err) => {
+        handleApiErrors(err, form);
+      },
+    });
 
   return (
     <DialogContent
@@ -70,12 +70,12 @@ export default function DeleteAccModal() {
         ))}
         <Button
           type="button"
-          onClick={form.handleSubmit((data) => mutate(data))}
+          onClick={form.handleSubmit((data) => destroyUserMutation(data))}
           variant={"destructive"}
           className="w-full"
-          disabled={isPending}
+          disabled={isDestroyUserPending}
         >
-          {isPending ? "Deleting..." : "Delete"}
+          {isDestroyUserPending ? "Deleting..." : "Delete"}
         </Button>
       </form>
     </DialogContent>

@@ -5,20 +5,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Lock, TriangleAlert } from "lucide-react";
 import Header from "@/components/slices/Header";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
 import InputController from "@/components/controllers/InputController";
 import TextareaController from "@/components/controllers/TextareaController";
 import SkillsController from "@/components/controllers/SkillsController";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userEditSchema } from "@/zod/schemas";
 import { Checkbox } from "@/components/ui/checkbox";
 import DeleteAccModal from "@/components/modals/DeleteAccModal";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ModifyPassModal from "@/components/modals/ModifyPassModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { me } from "@/api/functions/auth";
-import { updateUser } from "@/api/functions/user";
+import { updateUser } from "@/api/functions/users";
 import { getImageUrl } from "@/lib/utils";
+import { updateUserSchema } from "@/zod/usersSchemas";
+import type { DataType } from "@/assets/types";
+import { getMe } from "@/api/functions/auth";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { handleApiErrors } from "@/api/functions/validation";
 
 const fields = [
   {
@@ -49,8 +51,8 @@ const fields = [
 
 export default function UserEdit() {
   const avatarRef = useRef("");
-  const { user } = useSelector((state) => state?.auth);
-  const [skills, setSkills] = useState<[]>(user?.skills ?? []);
+  const { user } = useAppSelector((state) => state?.auth);
+  const [skills, setSkills] = useState<DataType[]>(user?.skills ?? []);
   const [preview, setPreview] = useState(getImageUrl(user?.avatar));
   const form = useForm({
     defaultValues: {
@@ -64,20 +66,20 @@ export default function UserEdit() {
       skills: "",
       private: !!Number(user?.private),
     },
-    resolver: zodResolver(userEditSchema),
+    resolver: zodResolver(updateUserSchema),
   });
 
   const nav = useNavigate();
-  const disp = useDispatch();
+  const disp = useAppDispatch();
   const queryClient = useQueryClient();
   const isDirty = form.formState.isDirty;
   const dirtyFields = form.formState.dirtyFields;
   const { mutate, isPending } = useMutation({
-    mutationFn: (args) => {
+    mutationFn: (args: { id: number | string; data: any }) => {
       let data = args.data;
       data = { ...data, private: data?.private ? "1" : "0" };
       const skillsIds = skills.map((s) => s?.id);
-      const userSkillsIds = user?.skills.map((s) => s?.id) || [];
+      const userSkillsIds = user?.skills.map((s: DataType) => s?.id) || [];
       const skillsChanged = !(
         skillsIds.length === userSkillsIds.length &&
         skillsIds.every((id) => userSkillsIds.includes(id))
@@ -96,7 +98,7 @@ export default function UserEdit() {
 
       if (skillsChanged) {
         skillsIds?.forEach((s) => {
-          formData.append("skills[]", s);
+          formData.append("skills[]", String(s));
         });
       }
 
@@ -105,20 +107,16 @@ export default function UserEdit() {
       }
 
       formData.append("_method", "PATCH");
-      return updateUser(args.id, formData);
+      return updateUser(user?.id, formData);
     },
     onError: (err) => {
-      const res = err.response;
-      if (res.status !== 422) return alert("error");
-
-      const errors = res.data.errors;
-      for (const key in errors) {
-        form.setError(key, { message: errors[key] });
-      }
+      handleApiErrors(err, form);
     },
     onSuccess: (data) => {
-      queryClient.fetchQuery({ queryKey: ["me"], queryFn: () => me(disp) });
-      queryClient.invalidateQueries({ queryKey: ["profile", String(user.id)] });
+      queryClient.fetchQuery({ queryKey: ["me"], queryFn: () => getMe(disp) });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", String(user?.id)],
+      });
       if (data) {
         nav(-1);
       }
@@ -243,7 +241,7 @@ export default function UserEdit() {
                     </Button>
                   </DialogTrigger>
                 </div>
-                <ModifyPassModal id={user?.id} />
+                <ModifyPassModal />
               </Dialog>
             </div>
             <div className="rounded-xl border border-destructive bg-destructive/20 p-4">
@@ -268,7 +266,7 @@ export default function UserEdit() {
                   </DialogTrigger>
                 </div>
 
-                <DeleteAccModal id={user?.id} />
+                <DeleteAccModal />
               </Dialog>
             </div>
           </div>

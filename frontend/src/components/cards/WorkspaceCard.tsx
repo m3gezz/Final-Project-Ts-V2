@@ -1,19 +1,13 @@
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getImageUrl } from "@/lib/utils";
-import { Badge } from "../ui/badge";
-import type { Member } from "./WsMemberCard";
-import type { Project } from "./ProjectCard";
+import type { PopulatedWorkspace } from "@/assets/types";
 
-export type Workspace = {
-  id: number;
-  project_id: number;
-  memberships: Member[];
-  status: string;
-  project: Project;
-};
-
-export default function WorkspaceCard({ workspace }: { workspace: Workspace }) {
+export default function WorkspaceCard({
+  workspace,
+}: {
+  workspace: PopulatedWorkspace;
+}) {
   return (
     <Link
       to={`/workspaces/${workspace?.id}`}
@@ -22,11 +16,6 @@ export default function WorkspaceCard({ workspace }: { workspace: Workspace }) {
     >
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <Badge
-            variant={workspace?.status === "on_hold" ? "secondary" : "default"}
-          >
-            {workspace?.status === "on_hold" ? "On Hold" : "Active"}
-          </Badge>
           <div className="text-xs text-muted-foreground">
             {workspace?.project?.category?.label}
           </div>

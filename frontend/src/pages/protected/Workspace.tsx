@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
 import { Progress } from "@/components/ui/progress";
 import { useQuery } from "@tanstack/react-query";
-import { getWorkspace } from "@/api/functions/workspace";
+import { getWorkspace } from "@/api/functions/workspaces";
 import { Link } from "react-router-dom";
 import WorkspaceSkeleton from "@/components/skeletons/WorkspaceSkeleton";
 import { formatTime } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import type { PopulatedTask } from "@/assets/types";
 
 export default function Workspace() {
   const [percentage, setPercentage] = useState(0);
@@ -64,7 +65,7 @@ export default function Workspace() {
       <div className="rounded-xl border bg-card p-6">
         <h2 className="text-lg font-semibold">Recent activity</h2>
         <ul className="mt-4 space-y-3 text-sm">
-          {workspace?.tasks?.map((t) => (
+          {workspace?.tasks?.map((t: PopulatedTask) => (
             <li key={t?.id} className="flex items-center gap-3">
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               Task <i>"{t?.title}"</i> is

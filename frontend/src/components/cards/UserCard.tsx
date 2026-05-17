@@ -2,25 +2,9 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getImageUrl } from "@/lib/utils";
+import type { PopulatedUser } from "@/assets/types";
 
-export type Skill = {
-  id: number | string;
-  label: string;
-};
-
-export type User = {
-  id: string;
-  username: string;
-  full_name: string;
-  email: string;
-  avatar: string;
-  bio: string;
-  about: string;
-  skills: Skill[];
-  badges: Skill[];
-};
-
-export default function UserCard({ user }: { user: User }) {
+export default function UserCard({ user }: { user: PopulatedUser }) {
   return (
     <Link
       to={`/users/${user?.id}`}

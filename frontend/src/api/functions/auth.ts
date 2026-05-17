@@ -1,34 +1,36 @@
 import { setAuth, unsetAuth } from "@/redux/authSlice";
 import { api } from "../axios";
+import type { AppDispatch } from "@/redux/store";
+import type { signInSchemaType, signUpSchemaType } from "@/zod/authSchemas";
 
-const refresh = async (disp) => {
-  const res = await api.post("refresh");
+const refreshToken = async (disp: AppDispatch) => {
+  const res = await api.post("refreshToken");
   disp(setAuth(res?.data));
   return res;
 };
 
-const me = async (disp) => {
-  const res = await api.post("me");
+const getMe = async (disp: AppDispatch) => {
+  const res = await api.post("getMe");
   disp(setAuth(res?.data));
   return res;
 };
 
-const signIn = async (data, disp) => {
-  const res = await api.post("sign-in", data);
-  disp(setAuth(res?.data));
-  return res;
-};
-
-const signUp = async (data, disp) => {
+const signUp = async (data: signUpSchemaType, disp: AppDispatch) => {
   const res = await api.post("sign-up", data);
   disp(setAuth(res?.data));
   return res;
 };
 
-const signOut = async (disp) => {
+const signIn = async (data: signInSchemaType, disp: AppDispatch) => {
+  const res = await api.post("sign-in", data);
+  disp(setAuth(res?.data));
+  return res;
+};
+
+const signOut = async (disp: AppDispatch) => {
   const res = await api.post("sign-out");
   disp(unsetAuth());
   return res;
 };
 
-export { refresh, me, signIn, signUp, signOut };
+export { refreshToken, getMe, signUp, signIn, signOut };

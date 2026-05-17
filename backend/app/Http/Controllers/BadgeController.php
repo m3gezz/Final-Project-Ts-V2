@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Badge;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class BadgeController extends Controller
 {
@@ -13,8 +12,7 @@ class BadgeController extends Controller
      */
     public function index()
     {
-        $badges = Badge::all();
-        return response()->json($badges);
+        //
     }
 
     /**
@@ -22,18 +20,7 @@ class BadgeController extends Controller
      */
     public function store(Request $request)
     {
-        Gate::authorize('create', [Badge::class]);
-
-        $fields = $request->validate(
-            [
-                'name' => ['required','string','min:5'],
-                'description' => ['required','string','min:5'],
-            ]
-        );
-
-        $badge = Badge::create($fields);
-
-        return response()->json($badge);
+        //
     }
 
     /**
@@ -49,16 +36,7 @@ class BadgeController extends Controller
      */
     public function update(Request $request, Badge $badge)
     {
-        $fields = $request->validate(
-            [
-                'name' => ['sometimes','string','min:5'],
-                'description' => ['sometimes','string','min:5'],
-            ]
-        );
-
-        $badge->update($fields);
-
-        return response()->json($badge);
+        //
     }
 
     /**
@@ -66,10 +44,6 @@ class BadgeController extends Controller
      */
     public function destroy(Badge $badge)
     {
-        Gate::authorize('delete', $badge);
-
-        $badge->delete();
-
-        return response()->json(['message' => 'Deleted successfully']);
+        //
     }
 }

@@ -10,16 +10,7 @@ class Invitation extends Model
     /** @use HasFactory<\Database\Factories\InvitationFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'workspace_id',
-        'user_id',
-        'receiver_id',
-        'status',
-    ];
-
-    public function receiver() {
-        return $this->belongsTo(User::class, 'receiver_id');
-    }
+    protected $fillable = ['workspace_id','user_id','status'];
 
     public function workspace() {
         return $this->belongsTo(Workspace::class);

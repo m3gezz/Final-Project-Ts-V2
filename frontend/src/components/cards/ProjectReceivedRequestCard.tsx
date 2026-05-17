@@ -4,26 +4,26 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getImageUrl } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import type { Request } from "./UserSentRequestCard";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { modifyRequest } from "@/api/functions/inbox";
-import { useSelector } from "react-redux";
+import type { PopulatedWorkspace, RequestType } from "@/assets/types";
+import { updateRequest } from "@/api/functions/requests";
+import { useAppSelector } from "@/redux/store";
 
 export default function ProjectReceivedRequestCard({
   request,
 }: {
-  request: Request;
+  request: RequestType;
 }) {
   const queryClient = useQueryClient();
-  const { user } = useSelector((state) => state?.auth);
-  const previous = queryClient.getQueryData([
+  const { user } = useAppSelector((state) => state?.auth);
+  const previous: PopulatedWorkspace | undefined = queryClient.getQueryData([
     "workspace",
     String(request?.workspace_id),
     "members",
   ]);
   const isOwner = user?.id === previous?.project?.user_id;
-  const { mutate } = useMutation({
-    mutationFn: (data: { status: string }) => modifyRequest(request?.id, data),
+  const { mutate: updateRequestMutation } = useMutation({
+    mutationFn: (data: { status: string }) => updateRequest(request?.id, data),
     onMutate: () => {
       const previous = queryClient.getQueryData([
         "workspace",
@@ -32,7 +32,7 @@ export default function ProjectReceivedRequestCard({
       ]);
       queryClient.setQueryData(
         ["workspace", String(request?.workspace_id), "members"],
-        (old) => ({
+        (old: PopulatedWorkspace) => ({
           ...old,
           memberships: [
             ...old.memberships,
@@ -55,7 +55,7 @@ export default function ProjectReceivedRequestCard({
         queryKey: ["workspace", String(request?.workspace_id), "members"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["workspace", String(id), "overview"],
+        queryKey: ["workspace", String(request?.workspace_id), "overview"],
       });
     },
   });
@@ -71,7 +71,7 @@ export default function ProjectReceivedRequestCard({
           <Link to={`/users/${request?.user?.id}`} className="font-medium">
             {request?.user?.full_name}
           </Link>{" "}
-          {request?.type === "enter" ? `Wants to join` : "wants to leave"}{" "}
+          Wants to join
         </div>
         <div className="mt-1">
           <Badge variant="outline">{request?.status}</Badge>
@@ -82,12 +82,15 @@ export default function ProjectReceivedRequestCard({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => mutate({ status: "declined" })}
+            onClick={() => updateRequestMutation({ status: "declined" })}
           >
             <X className="mr-1 h-4 w-4" />
             Decline
           </Button>
-          <Button size="sm" onClick={() => mutate({ status: "accepted" })}>
+          <Button
+            size="sm"
+            onClick={() => updateRequestMutation({ status: "accepted" })}
+          >
             <Check className="mr-1 h-4 w-4" />
             Accept
           </Button>

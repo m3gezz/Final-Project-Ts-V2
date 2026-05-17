@@ -1,13 +1,16 @@
-import { Controller } from "react-hook-form";
+import { Controller, type FieldValues } from "react-hook-form";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { FieldError } from "../ui/field";
-import type { FieldType } from "./CheckBoxController";
+import type { ControllerType } from "@/assets/types";
 
-export default function InputOTPController({ control, f }: { f: FieldType }) {
+export default function InputOTPController<T extends FieldValues>({
+  control,
+  f,
+}: ControllerType<T>) {
   return (
     <Controller
       control={control}

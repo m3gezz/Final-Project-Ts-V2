@@ -10,13 +10,7 @@ class Request extends Model
     /** @use HasFactory<\Database\Factories\RequestFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'workspace_id',
-        'user_id',
-        'message',
-        'type',
-        'status',
-    ];
+    protected $fillable = ['workspace_id','user_id','status'];
 
     public function user() {
         return $this->belongsTo(User::class);

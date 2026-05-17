@@ -1,13 +1,14 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
-import WorkspaceCard, { type Workspace } from "../cards/WorkspaceCard";
+import WorkspaceCard from "../cards/WorkspaceCard";
 import WorkspaceCardSkeleton from "../skeletons/WorkspaceCardSkeleton";
+import type { PopulatedWorkspace } from "@/assets/types";
 
 export default function WorkspacesList({
   workspaces,
   isLoading,
 }: {
-  workspaces: Workspace[];
+  workspaces: PopulatedWorkspace[];
   isLoading: boolean;
 }) {
   return isLoading ? (

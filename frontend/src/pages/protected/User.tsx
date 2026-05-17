@@ -5,16 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import { getUser } from "@/api/functions/user";
+import { getUser } from "@/api/functions/users";
 import { getImageUrl } from "@/lib/utils";
 import ProjectsList from "@/components/lists/ProjectsList";
 import ErrorCard from "@/components/cards/ErrorCard";
 import UserSkeleton from "@/components/skeletons/UserSkeleton";
+import type { DataType } from "@/assets/types";
+import { useAppSelector } from "@/redux/store";
 
 export default function User() {
   const { id } = useParams();
-  const { user } = useSelector((state) => state?.auth);
+  const { user } = useAppSelector((state) => state?.auth);
 
   const {
     data: profile,
@@ -46,7 +47,7 @@ export default function User() {
             <p className="text-muted-foreground">@{profile?.username}</p>
             <p className="mt-3 max-w-2xl">{profile?.bio}</p>
             <div className="mt-4 flex flex-wrap gap-1.5">
-              {profile?.skills?.map((s) => (
+              {profile?.skills?.map((s: DataType) => (
                 <Badge key={s?.id} variant="secondary">
                   {s?.label}
                 </Badge>
@@ -75,13 +76,13 @@ export default function User() {
             {profile?.badges?.length === 0 && (
               <p className="text-sm text-muted-foreground">No badges yet.</p>
             )}
-            {profile?.badges?.map((b) => (
+            {profile?.badges?.map((b: DataType) => (
               <div
-                key={b.name}
+                key={b.id}
                 className="flex items-center gap-3 rounded-lg border bg-muted/30 p-3"
               >
-                <span className="text-xl">{b.emoji}</span>
-                <span className="text-sm font-medium">{b.name}</span>
+                <span className="text-xl">{b.label}</span>
+                <span className="text-sm font-medium">{b.description}</span>
               </div>
             ))}
           </div>

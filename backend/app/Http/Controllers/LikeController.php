@@ -19,18 +19,17 @@ class LikeController extends Controller
      */
     public function store(Request $request)
     {
-        $fields = $request->validate(['project_id' => ['required','exists:projects,id']]);
+        $fields = $request->validate([
+            'project_id' => ['required','exists:projects,id']
+        ]);
 
         $like = Like::where('project_id', $fields['project_id'])->where('user_id', $request->user()->id);
 
         if ($like->exists()) return $like->delete();
         
+        $request->user()->likes()->create($fields);
 
-        $fields['owner'] = $request->user()->only(['id', 'full_name', 'username', 'avatar_url']);
-        
-        $newLike = $request->user()->likes()->create($fields);
-
-        return response()->json($newLike);
+        return response()->json('created');
     }
 
     /**

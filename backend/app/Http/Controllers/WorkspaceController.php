@@ -57,9 +57,9 @@ class WorkspaceController extends Controller
             });
         }
 
-        $data = $query->paginate(8);
+        $workspaces = $query->paginate(8);
 
-        return response()->json($data);
+        return response()->json($workspaces);
     }
 
     /**
@@ -92,10 +92,8 @@ class WorkspaceController extends Controller
         if ($request->dataType === 'tasks') {
             $workspace->load(['project','memberships.user', 'tasks.user']);
         }
-
-        $data = $workspace;
         
-        return response()->json($data);
+        return response()->json($workspace);
     }
 
     /**

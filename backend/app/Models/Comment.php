@@ -10,16 +10,7 @@ class Comment extends Model
     /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory;
 
-    protected $fillable = [
-        'project_id',
-        'user_id',
-        'owner',
-        'content',
-    ];
-
-    protected $casts = [
-        'owner' => 'array',
-    ];
+    protected $fillable = ['project_id','user_id','content'];
 
     public function project() {
         return $this->belongsTo(Project::class);

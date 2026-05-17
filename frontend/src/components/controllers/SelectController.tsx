@@ -6,18 +6,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Controller } from "react-hook-form";
-import type { FieldType } from "./CheckBoxController";
-import type { Skill } from "../cards/UserCard";
+import {
+  Controller,
+  type Control,
+  type FieldValues,
+  type Path,
+} from "react-hook-form";
+import type { FieldType } from "@/assets/types";
+import type { DataType } from "@/assets/types";
 
-export default function SelectController({
+type SelectControllerType<T extends FieldValues> = {
+  control: Control<T>;
+  f: Omit<FieldType, "name"> & { name: Path<T> };
+  options: Pick<DataType, "id" | "label">[] | undefined;
+};
+
+export default function SelectController<T extends FieldValues>({
   control,
   f,
   options,
-}: {
-  f: FieldType;
-  options: Skill[];
-}) {
+}: SelectControllerType<T>) {
   return (
     <Controller
       name={f?.name}

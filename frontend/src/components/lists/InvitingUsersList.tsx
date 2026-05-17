@@ -1,14 +1,14 @@
 import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
 import InvitingUserCard from "../cards/InvitingUserCard";
-import type { User } from "../cards/UserCard";
 import InvitingUserCardSkeleton from "../skeletons/InvitingUserCardSkeleton";
+import type { UserType } from "@/assets/types";
 
 export default function InvitingUsersList({
   users,
   isLoading,
 }: {
-  users: User[];
+  users: UserType[];
   isLoading: boolean;
 }) {
   return isLoading ? (

@@ -1,9 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/slices/Header";
 import { useQueries } from "@tanstack/react-query";
-import { getInvitations, getRequests } from "@/api/functions/inbox";
 import SentRequestsList from "@/components/lists/SentRequestsList";
 import ReceivedRequestsList from "@/components/lists/ReceivedRequestsList";
+import { getRequests } from "@/api/functions/requests";
+import { getInvitations } from "@/api/functions/invitations";
 
 export default function Inbox() {
   const [

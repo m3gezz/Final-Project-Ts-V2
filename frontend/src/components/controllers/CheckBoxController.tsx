@@ -1,16 +1,12 @@
-import { Controller } from "react-hook-form";
+import { Controller, type FieldValues } from "react-hook-form";
 import { Checkbox } from "../ui/checkbox";
 import { Field, FieldError } from "../ui/field";
+import type { ControllerType } from "@/assets/types";
 
-export type FieldType = {
-  name: string;
-  label?: string;
-  type?: string;
-  placeholder?: string;
-  link?: { name: string; label: string; path: string };
-};
-
-export default function CheckBoxController({ control, f }: { f: FieldType }) {
+export default function CheckBoxController<T extends FieldValues>({
+  control,
+  f,
+}: ControllerType<T>) {
   return (
     <Controller
       name={f?.name}

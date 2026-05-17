@@ -14,12 +14,12 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
 import { cn, getImageUrl } from "@/lib/utils";
 import { signOut } from "@/api/functions/auth";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 
 const items = [
   { to: "/", label: "Home", icon: Home, end: true },
@@ -44,14 +44,14 @@ type SidebarProps = {
 export default function AppSidebar() {
   const { isOpen, isMobile } = useSidebar();
   const nav = useNavigate();
-  const disp = useDispatch();
+  const disp = useAppDispatch();
   const onMobile = `fixed top-0 ${isOpen ? "left-0" : "-left-64"}`;
   const onPc = `sticky top-0`;
 
   const defaultStyles = `h-screen z-20 flex ${isOpen ? "w-64" : "w-16"} shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground transition-all ${isMobile ? onMobile : onPc}`;
 
-  const { user } = useSelector((state) => state?.auth);
-  const { mutate, isPending } = useMutation({
+  const { user } = useAppSelector((state) => state?.auth);
+  const { mutate: signOutMutation, isPending: isSignOutPending } = useMutation({
     mutationFn: () => signOut(disp),
   });
 
@@ -90,7 +90,7 @@ export default function AppSidebar() {
             <span className={`min-w-0 truncate`}>{it.label}</span>
           </NavLink>
         ))}
-        {user?.isAdmin && (
+        {user?.admin && (
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
@@ -129,12 +129,12 @@ export default function AppSidebar() {
           variant="ghost"
           size="sm"
           className="mt-2 w-full justify-start"
-          onClick={() => mutate()}
-          disabled={isPending}
+          onClick={() => signOutMutation()}
+          disabled={isSignOutPending}
         >
-          {isPending ? <Spinner /> : <LogOut className="mr-2 h-4 w-4" />}
+          {isSignOutPending ? <Spinner /> : <LogOut className="mr-2 h-4 w-4" />}
           <span className={`min-w-0 truncate`}>
-            {isPending ? "Signing out..." : "Sign out"}
+            {isSignOutPending ? "Signing out..." : "Sign out"}
           </span>
         </Button>
       </div>

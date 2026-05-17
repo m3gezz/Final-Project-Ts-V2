@@ -18,7 +18,7 @@ class AuthController extends Controller
         $fields = $request->validate([
             'full_name' => ['required','min:5','max:30'],
             'email' => ['required','email','unique:users'],
-            'password' => ['required'],
+            'password' => ['required','confirmed'],
             'terms' => ['required'],
         ]);
         $fields['username'] = str_replace(" ", "_", $fields['full_name']);
@@ -30,7 +30,7 @@ class AuthController extends Controller
         }
         
         $user = User::create($fields);
-        $user->markEmailAsVerified();
+        $user->markEmailAsVerified();//just for now
         $access_token = $user->createToken('access-token')->plainTextToken;
         $refresh_token = $user->createToken('refresh-token')->plainTextToken;
 
@@ -54,7 +54,7 @@ class AuthController extends Controller
 
     public function sign_in(Request $request) {
         $fields = $request->validate([
-            'email' => ['required','email'],
+            'email' => ['required','email','exists:users,email'],
             'password' => ['required'],
         ]);
 
@@ -80,22 +80,17 @@ class AuthController extends Controller
     public function sign_out(Request $request)
     {
         $request->user()->tokens()->delete();
-        $data = ['message' => 'Signed out successfully.'];
-
-        return response()->json($data)->cookie('refresh_token', '', -1);;
+        return response()->json(['message' => 'Signed out successfully.'])->cookie('refresh_token', '', -1);;
     }
 
-    public function refresh(Request $request) {
+    public function refreshToken(Request $request) {
         $cookie = $request->cookie('refresh_token');
-
         if (!$cookie) abort(401, 'No refresh token');
         
         $token = PersonalAccessToken::findToken($cookie);
-
         if (!$token || $token->tokenable_id === null) abort(401, 'Invalid refresh token');
 
         $user = $token->tokenable;
-
         $access_token = $user->createToken('access-token')->plainTextToken;
 
         $data = [
@@ -106,9 +101,9 @@ class AuthController extends Controller
         return response()->json($data);
     }
 
-    public function me(Request $request) {
-        $data = ['user' => $request->user()->load(['skills'])];
-
-        return response()->json($data);
+    public function getMe(Request $request) 
+    {
+        $user = $request->user()->load(['skills']);
+        return response()->json($user);
     }
 }

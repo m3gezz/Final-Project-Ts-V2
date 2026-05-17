@@ -3,21 +3,22 @@ import { Plus } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import CreateTaskModal from "@/components/modals/CreateTaskModal";
 import { useQuery } from "@tanstack/react-query";
-import { getWorkspace } from "@/api/functions/workspace";
+import { getWorkspace } from "@/api/functions/workspaces";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import TasksList from "@/components/lists/TasksList";
+import { useAppSelector } from "@/redux/store";
+import type { MembershipType } from "@/assets/types";
 
 export default function WorkspaceTasks() {
   const { id } = useParams();
-  const { user } = useSelector((state) => state?.auth);
+  const { user } = useAppSelector((state) => state?.auth);
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "tasks"],
     queryFn: () => getWorkspace(id, "tasks"),
   });
 
   const isAdmin = workspace?.memberships?.find(
-    (m) =>
+    (m: MembershipType) =>
       m?.user_id === user?.id && (m?.role === "admin" || m?.role === "owner"),
   );
 
