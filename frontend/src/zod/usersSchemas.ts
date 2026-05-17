@@ -8,7 +8,7 @@ const updateUserSchema = z.object({
   bio: z.string(),
   about: z.string(),
   email: z.string(),
-  private: z.boolean(),
+  private: z.union([z.boolean(), z.string()]),
   skills: z.string(),
 });
 

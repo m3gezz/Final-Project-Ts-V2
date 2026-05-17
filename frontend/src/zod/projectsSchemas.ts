@@ -6,7 +6,7 @@ const manipulateProjectSchema = z.object({
   description: z.string(),
   category_id: z.string(),
   skills: z.string(),
-  private: z.boolean(),
+  private: z.union([z.boolean(), z.string()]),
   manifesto: z.string(),
 });
 export type manipulateProjectSchemaType = z.infer<

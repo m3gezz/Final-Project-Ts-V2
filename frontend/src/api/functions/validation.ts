@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { UseFormReturn, FieldValues, Path } from "react-hook-form";
+import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 interface LaravelValidationErrorResponse {
   errors: Record<string, string[] | string>;

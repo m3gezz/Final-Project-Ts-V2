@@ -16,7 +16,10 @@ import ModifyPassModal from "@/components/modals/ModifyPassModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUser } from "@/api/functions/users";
 import { getImageUrl } from "@/lib/utils";
-import { updateUserSchema } from "@/zod/usersSchemas";
+import {
+  updateUserSchema,
+  type updateUserSchemaType,
+} from "@/zod/usersSchemas";
 import type { DataType } from "@/assets/types";
 import { getMe } from "@/api/functions/auth";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -47,14 +50,14 @@ const fields = [
     label: "Email",
     placeholder: "you@company.com",
   },
-];
+] as const;
 
 export default function UserEdit() {
-  const avatarRef = useRef("");
+  const avatarRef: any = useRef("");
   const { user } = useAppSelector((state) => state?.auth);
   const [skills, setSkills] = useState<DataType[]>(user?.skills ?? []);
   const [preview, setPreview] = useState(getImageUrl(user?.avatar));
-  const form = useForm({
+  const form = useForm<updateUserSchemaType>({
     defaultValues: {
       avatar: null,
       full_name: user?.full_name ?? "",
@@ -74,54 +77,58 @@ export default function UserEdit() {
   const queryClient = useQueryClient();
   const isDirty = form.formState.isDirty;
   const dirtyFields = form.formState.dirtyFields;
-  const { mutate, isPending } = useMutation({
-    mutationFn: (args: { id: number | string; data: any }) => {
-      let data = args.data;
-      data = { ...data, private: data?.private ? "1" : "0" };
-      const skillsIds = skills.map((s) => s?.id);
-      const userSkillsIds = user?.skills.map((s: DataType) => s?.id) || [];
-      const skillsChanged = !(
-        skillsIds.length === userSkillsIds.length &&
-        skillsIds.every((id) => userSkillsIds.includes(id))
-      );
+  const { mutate: updateUserMutation, isPending: isUpdateUserPending } =
+    useMutation({
+      mutationFn: (data: updateUserSchemaType) => {
+        data = { ...data, private: data?.private ? "1" : "0" };
+        const skillsIds = skills.map((s) => s?.id);
+        const userSkillsIds = user?.skills.map((s: DataType) => s?.id) || [];
+        const skillsChanged = !(
+          skillsIds.length === userSkillsIds.length &&
+          skillsIds.every((id) => userSkillsIds.includes(id))
+        );
 
-      if (!isDirty && !skillsChanged && !(data.avatar instanceof File)) {
-        return alert("No changes detected!");
-      }
-
-      const formData = new FormData();
-      for (const key in dirtyFields) {
-        if (data[key] !== undefined && data[key] !== null) {
-          formData.append(key, data[key]);
+        if (!isDirty && !skillsChanged && !(data.avatar instanceof File)) {
+          return alert("No changes detected!");
         }
-      }
 
-      if (skillsChanged) {
-        skillsIds?.forEach((s) => {
-          formData.append("skills[]", String(s));
+        const formData = new FormData();
+        for (const key in dirtyFields) {
+          const typedKey = key as keyof updateUserSchemaType;
+          if (data[typedKey] !== undefined && data[typedKey] !== null) {
+            formData.append(typedKey, String(data[typedKey]));
+          }
+        }
+
+        if (skillsChanged) {
+          skillsIds?.forEach((s) => {
+            formData.append("skills[]", String(s));
+          });
+        }
+
+        if (data?.avatar instanceof File) {
+          formData.append("avatar", data.avatar);
+        }
+
+        formData.append("_method", "PATCH");
+        return updateUser(user?.id, formData);
+      },
+      onError: (err) => {
+        handleApiErrors(err, form);
+      },
+      onSuccess: (data) => {
+        queryClient.fetchQuery({
+          queryKey: ["me"],
+          queryFn: () => getMe(disp),
         });
-      }
-
-      if (data?.avatar instanceof File) {
-        formData.append("avatar", data.avatar);
-      }
-
-      formData.append("_method", "PATCH");
-      return updateUser(user?.id, formData);
-    },
-    onError: (err) => {
-      handleApiErrors(err, form);
-    },
-    onSuccess: (data) => {
-      queryClient.fetchQuery({ queryKey: ["me"], queryFn: () => getMe(disp) });
-      queryClient.invalidateQueries({
-        queryKey: ["profile", String(user?.id)],
-      });
-      if (data) {
-        nav(-1);
-      }
-    },
-  });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", String(user?.id)],
+        });
+        if (data) {
+          nav(-1);
+        }
+      },
+    });
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -130,7 +137,7 @@ export default function UserEdit() {
         description="Keep your profile fresh and discoverable."
       />
       <form
-        onSubmit={form.handleSubmit((data) => mutate({ id: user.id, data }))}
+        onSubmit={form.handleSubmit((data) => updateUserMutation(data))}
         className="space-y-6 rounded-xl border bg-card p-6"
         style={{ boxShadow: "var(--shadow-soft)" }}
       >
@@ -211,7 +218,7 @@ export default function UserEdit() {
                         <Checkbox
                           id="private"
                           onCheckedChange={field.onChange}
-                          checked={field.value}
+                          checked={!!field.value}
                           className="mt-0.5"
                         />
                       </div>
@@ -275,8 +282,8 @@ export default function UserEdit() {
           <Button type="button" variant="ghost" onClick={() => nav(-1)}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Saving..." : "Save changes"}
+          <Button type="submit" disabled={isUpdateUserPending}>
+            {isUpdateUserPending ? "Saving..." : "Save changes"}
           </Button>
         </div>
       </form>

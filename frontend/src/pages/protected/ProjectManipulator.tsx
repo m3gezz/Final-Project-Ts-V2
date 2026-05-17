@@ -39,7 +39,7 @@ const textareaFields = [
     name: "manifesto",
     label: "Manifesto",
   },
-];
+] as const;
 
 export default function ProjectManipulator({
   mode,
@@ -66,7 +66,7 @@ export default function ProjectManipulator({
   });
 
   const [skills, setSkills] = useState<DataType[]>([]);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | undefined>(undefined);
   const form = useForm<manipulateProjectSchemaType>({
     defaultValues: {
       image: null,
@@ -96,14 +96,18 @@ export default function ProjectManipulator({
   }, [isSuccess]);
 
   const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutation({
+  const {
+    mutate: manipulateProjectMutation,
+    isPending: isManipulateProjectPending,
+  } = useMutation({
     mutationFn: (data: manipulateProjectSchemaType) => {
       const formData = new FormData();
 
       data = { ...data, private: data?.private ? "1" : "0" };
       for (const key in data) {
-        if (data[key] !== undefined && data[key] !== null) {
-          formData.append(key, data[key]);
+        const typedKey = key as keyof manipulateProjectSchemaType;
+        if (data[typedKey] !== undefined && data[typedKey] !== null) {
+          formData.append(typedKey, String(data[typedKey]));
         }
       }
 
@@ -157,7 +161,7 @@ export default function ProjectManipulator({
         description="Tell the community what you're building and the team you need."
       />
       <form
-        onSubmit={form.handleSubmit((data) => mutate(data))}
+        onSubmit={form.handleSubmit((data) => manipulateProjectMutation(data))}
         className="space-y-6 rounded-xl border bg-card p-6"
         style={{ boxShadow: "var(--shadow-soft)" }}
       >
@@ -237,7 +241,7 @@ export default function ProjectManipulator({
                         <Checkbox
                           id="private"
                           onCheckedChange={field.onChange}
-                          checked={field.value}
+                          checked={!!field.value}
                           className="mt-0.5"
                         />
                       </div>
@@ -286,12 +290,12 @@ export default function ProjectManipulator({
           <Button type="button" variant="ghost" onClick={() => nav(-1)}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isManipulateProjectPending}>
             {mode === "create"
-              ? isPending
+              ? isManipulateProjectPending
                 ? "Creating..."
                 : "Create project"
-              : isPending
+              : isManipulateProjectPending
                 ? "Saving..."
                 : "Save changes"}
           </Button>
