@@ -1,5 +1,4 @@
 import Header from "@/components/slices/Header";
-import { users, projects, workspaces } from "@/data/exp";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,17 +10,17 @@ import {
 
 export default function Dashboard() {
   const stats = [
-    { icon: UsersIcon, label: "Users", value: users.length, change: "+12%" },
+    { icon: UsersIcon, label: "Users", value: [].length, change: "+12%" },
     {
       icon: FolderKanban,
       label: "Projects",
-      value: projects.length,
+      value: [].length,
       change: "+4%",
     },
     {
       icon: Briefcase,
       label: "Workspaces",
-      value: workspaces.length,
+      value: [].length,
       change: "+8%",
     },
     { icon: TrendingUp, label: "Active today", value: 124, change: "+22%" },
@@ -57,7 +56,7 @@ export default function Dashboard() {
           <h2 className="font-semibold">Recent users</h2>
         </div>
         <div>
-          {users.map((u) => (
+          {[].map((u) => (
             <div
               key={u.id}
               className="flex items-center gap-3 border-b p-4 last:border-b-0"

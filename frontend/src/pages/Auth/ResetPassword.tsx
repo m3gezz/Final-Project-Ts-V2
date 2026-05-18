@@ -14,13 +14,13 @@ const fields = [
     name: "password",
     type: "password",
     label: "New Password",
-    placeholder: "••••••••",
+    placeholder: "Minimum 6 characters",
   },
   {
     name: "password_confirmation",
     type: "password",
-    label: "Confirm New Password",
-    placeholder: "••••••••",
+    label: "Confirm Password",
+    placeholder: "Re-enter new password",
   },
 ] as const;
 

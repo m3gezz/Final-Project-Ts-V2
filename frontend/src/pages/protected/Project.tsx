@@ -5,30 +5,49 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createProjectLike, getProject } from "@/api/functions/projects";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import {
+  createComment,
+  createProjectLike,
+  getProject,
+  getProjectComments,
+} from "@/api/functions/projects";
 import { getImageUrl } from "@/lib/utils";
 import ErrorCard from "@/components/cards/ErrorCard";
 import ProjectSkeleton from "@/components/skeletons/ProjectSkeleton";
-import type { DataType, MembershipType, ProjectType } from "@/assets/types";
+import type {
+  CommentType,
+  DataType,
+  MembershipType,
+  ProjectType,
+} from "@/assets/types";
 import { createRequest } from "@/api/functions/requests";
 import { useAppSelector } from "@/redux/store";
+import CommentsList from "@/components/lists/CommentsList";
 
 export default function Project() {
   const { id } = useParams();
+  const queryClient = useQueryClient();
+  const [comment, setComment] = useState("");
   const { user } = useAppSelector((state) => state?.auth);
-  const {
-    data: project,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["project", id],
-    queryFn: () => getProject(id),
-    retry: 0,
+  const [
+    { data: project, isLoading: isProjectLoading, isError: isProjectError },
+    { data: comments, isLoading: isCommentsLoading },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ["project", id],
+        queryFn: () => getProject(id),
+        retry: 0,
+      },
+      {
+        queryKey: ["project-comments", id],
+        queryFn: () => getProjectComments(id),
+        retry: 0,
+      },
+    ],
   });
 
-  const queryClient = useQueryClient();
   const {
     mutate: createProjectLikeMutation,
     isPending: isCreateProjectLikePending,
@@ -87,11 +106,32 @@ export default function Project() {
         });
       },
     });
+  const { mutate: createCommentMutation, isPending: isCreateCommentPending } =
+    useMutation({
+      mutationFn: () => createComment({ project_id: id, content: comment }),
+      onMutate: () => {
+        const previousProject = queryClient.getQueryData([
+          "project-comments",
+          String(id),
+        ]);
+        queryClient.setQueryData(
+          ["project-comments", String(id)],
+          (old: CommentType[]) => [
+            ...old,
+            { id: Date.now(), content: comment, user },
+          ],
+        );
+        return { previousProject };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["project-comments", String(id)],
+        });
+      },
+    });
 
-  const [comment, setComment] = useState("");
-
-  if (isLoading) return <ProjectSkeleton />;
-  if (isError) return <ErrorCard />;
+  if (isProjectLoading) return <ProjectSkeleton />;
+  if (isProjectError) return <ErrorCard />;
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <div
@@ -183,29 +223,7 @@ export default function Project() {
               <MessageCircle className="h-4 w-4" />
               Comments ({project?.comments_count})
             </h2>
-            <div className="mt-4 space-y-4">
-              {project?.comments?.map((c) => {
-                return (
-                  <div key={c.id} className="flex gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={c?.user?.avatar} />
-                      <AvatarFallback>{c?.user?.full_name?.[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 rounded-lg bg-muted/50 p-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">
-                          {c?.user?.full_name}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {c?.id}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-sm">{c?.content}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <CommentsList comments={comments} isLoading={isCommentsLoading} />
             <div className="mt-4 flex gap-2">
               <Textarea
                 placeholder="Leave a comment…"
@@ -215,9 +233,8 @@ export default function Project() {
               />
               <Button
                 onClick={() => {
-                  if (!comment.trim()) return;
-                  toast.success("Comment posted");
-                  setComment("");
+                  if (!comment.trim() || isCreateCommentPending) return;
+                  createCommentMutation();
                 }}
               >
                 <Send className="h-4 w-4" />

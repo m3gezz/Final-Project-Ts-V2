@@ -5,12 +5,15 @@ import { useQuery } from "@tanstack/react-query";
 import ProjectsList from "@/components/lists/ProjectsList";
 import WorkspacesList from "@/components/lists/WorkspacesList";
 import { userDashboard } from "@/api/functions/users";
+import { useAppSelector } from "@/redux/store";
 
 export default function Home() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["home"],
-    queryFn: userDashboard,
-  });
+  const { user } = useAppSelector((state) => state?.auth);
+  const { data: userDashboardData, isLoading: isUserDashboardLoading } =
+    useQuery({
+      queryKey: ["userDashboard"],
+      queryFn: userDashboard,
+    });
 
   return (
     <div className="space-y-10">
@@ -19,7 +22,7 @@ export default function Home() {
           <div>
             <p className="text-sm text-muted-foreground">Welcome back,</p>
             <h1 className="text-3xl font-semibold tracking-tight">
-              {data?.user?.full_name?.split(" ")?.[0]}
+              {user?.full_name?.split(" ")?.[0]}
             </h1>
             <p className="mt-1 text-muted-foreground">
               Here's what's happening across your projects today.
@@ -42,19 +45,19 @@ export default function Home() {
             {
               icon: FolderKanban,
               label: "Projects",
-              value: data?.user?.projects_count ?? 0,
+              value: userDashboardData?.user?.projects_count ?? 0,
               to: "/projects",
             },
             {
               icon: Briefcase,
               label: "Workspaces",
-              value: data?.user?.workspaces_count ?? 0,
+              value: userDashboardData?.user?.workspaces_count ?? 0,
               to: "/workspaces",
             },
             {
               icon: Inbox,
               label: "Pending invites",
-              value: data?.user?.requests_count ?? 0,
+              value: userDashboardData?.user?.requests_count ?? 0,
               to: "/inbox",
             },
           ].map((s) => (
@@ -84,7 +87,10 @@ export default function Home() {
             </Link>
           </Button>
         </div>
-        <WorkspacesList workspaces={data?.workspaces} isLoading={isLoading} />
+        <WorkspacesList
+          workspaces={userDashboardData?.workspaces}
+          isLoading={isUserDashboardLoading}
+        />
       </section>
 
       <section>
@@ -96,7 +102,10 @@ export default function Home() {
             </Link>
           </Button>
         </div>
-        <ProjectsList projects={data?.projects} isLoading={isLoading} />
+        <ProjectsList
+          projects={userDashboardData?.projects}
+          isLoading={isUserDashboardLoading}
+        />
       </section>
     </div>
   );

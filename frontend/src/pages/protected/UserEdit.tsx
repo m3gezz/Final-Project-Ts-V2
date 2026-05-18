@@ -29,26 +29,26 @@ const fields = [
   {
     name: "full_name",
     type: "text",
-    label: "Full Name",
-    placeholder: "",
+    label: "Display Name",
+    placeholder: "Alex Johnson",
   },
   {
     name: "username",
     type: "text",
     label: "Username",
-    placeholder: "",
+    placeholder: "alex_j",
   },
   {
     name: "bio",
     type: "text",
-    label: "Bio",
-    placeholder: "",
+    label: "Short Bio",
+    placeholder: "Product designer & open-source builder based in NYC",
   },
   {
     name: "email",
     type: "text",
-    label: "Email",
-    placeholder: "you@company.com",
+    label: "Email Address",
+    placeholder: "alex@example.com",
   },
 ] as const;
 

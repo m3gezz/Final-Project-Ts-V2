@@ -13,13 +13,7 @@ class CommentController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('project_id')) {
-            $request->validate(['project_id' => ['required','exists:projects,id']]);
-            $comments = Comment::where('project_id', $request->project_id)->paginate(20);
-            return response()->json($comments);
-        }
-
-        $comments = $request->user()->comments()->paginate(20);
+        $comments = Comment::where('project_id', $request->project_id)->with('user')->get();
         return response()->json($comments);
     }
 
@@ -34,11 +28,8 @@ class CommentController extends Controller
                 'content' => ['required','string','min:1']
             ]
         );
-
-        $fields['owner'] = $request->user()->only(['id', 'full_name', 'username', 'avatar_url']);
-        $comment = $request->user()->comments()->create($fields);
-        
-        return response()->json($comment);
+        $request->user()->comments()->create($fields);
+        return response()->json('created');
     }
 
     /**
@@ -46,7 +37,7 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        return response()->json($comment);
+        //
     }
 
     /**
@@ -54,13 +45,9 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        $this->authorize('update', $comment);
-
         $fields = $request->validate(['content' => ['required','string','min:1']]);
-
         $comment->update($fields);
-
-        return response()->json($comment);
+        return response()->json('updated');
     }
 
     /**

@@ -16,13 +16,13 @@ const infoFields = [
     name: "full_name",
     type: "text",
     label: "Full Name",
-    placeholder: "",
+    placeholder: "Alex Johnson",
   },
   {
     name: "email",
     type: "text",
-    label: "Email",
-    placeholder: "you@company.com",
+    label: "Email Address",
+    placeholder: "alex@example.com",
   },
 ] as const;
 
@@ -30,14 +30,14 @@ const passwordFields = [
   {
     name: "password",
     type: "password",
-    label: "Password",
-    placeholder: "••••••••",
+    label: "New Password",
+    placeholder: "Minimum 6 characters",
   },
   {
     name: "password_confirmation",
     type: "password",
     label: "Confirm Password",
-    placeholder: "••••••••",
+    placeholder: "Re-enter new password",
   },
 ] as const;
 

@@ -141,3 +141,8 @@ export type PopulatedTask = TaskType & {
   user: UserType;
   workspace?: WorkspaceType;
 };
+
+export type CommentType = DefaultFields & {
+  user: UserType;
+  content: string;
+};

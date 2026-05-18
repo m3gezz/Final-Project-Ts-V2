@@ -33,11 +33,14 @@ import { handleApiErrors } from "@/api/functions/validation";
 const textareaFields = [
   {
     name: "description",
-    label: "Description",
+    label: "Project Description",
+    placeholder: "What are you building? Briefly describe the goals...",
   },
   {
     name: "manifesto",
-    label: "Manifesto",
+    label: "Project Manifesto",
+    placeholder:
+      "What drives this project? Share your vision, and why this space matters to you...",
   },
 ] as const;
 

@@ -44,6 +44,32 @@ const createProjectLike = async (id: DefaultFields["id"]) => {
   return res;
 };
 
+const getProjectComments = async (id: DefaultFields["id"]) => {
+  const res = await api.get(`comments?project_id=${id}`);
+  return res.data;
+};
+
+const createComment = async (data: {
+  project_id: DefaultFields["id"];
+  content: string;
+}) => {
+  const res = await api.post("comments", data);
+  return res;
+};
+
+const updateComment = async (
+  id: DefaultFields["id"],
+  data: { content: string },
+) => {
+  const res = await api.post(`comments/${id}`, data);
+  return res;
+};
+
+const destroyComment = async (id: DefaultFields["id"]) => {
+  const res = await api.delete(`comments/${id}`);
+  return res;
+};
+
 export {
   getProjects,
   getProject,
@@ -52,4 +78,8 @@ export {
   updateProject,
   destroyProject,
   createProjectLike,
+  getProjectComments,
+  createComment,
+  updateComment,
+  destroyComment,
 };

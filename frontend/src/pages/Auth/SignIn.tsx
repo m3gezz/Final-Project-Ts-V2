@@ -14,16 +14,16 @@ const fields = [
   {
     name: "email",
     type: "text",
-    label: "Email",
-    placeholder: "you@company.com",
+    label: "Email Address",
+    placeholder: "name@example.com",
   },
   {
     name: "password",
     type: "password",
     label: "Password",
-    placeholder: "••••••••",
+    placeholder: "Enter your password",
     link: {
-      label: "Forgot?",
+      label: "Forgot password?",
       path: "/forgot-password",
     },
   },
