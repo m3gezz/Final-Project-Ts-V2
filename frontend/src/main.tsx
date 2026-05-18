@@ -7,7 +7,7 @@ import { store } from "@/redux/store";
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { gcTime: 1000 * 60 * 2, staleTime: 1000 * 60 },
+    queries: { gcTime: 1000 * 60 * 2, staleTime: 1000 },
   },
 });
 
