@@ -5,12 +5,17 @@ import { useForm } from "react-hook-form";
 import InputOTPController from "@/components/controllers/InputOTPController";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { signOut } from "@/api/functions/auth";
+import {
+  resendEmailVerificationCode,
+  signOut,
+  verifyEmailCode,
+} from "@/api/functions/auth";
 import {
   verificationCodeSchema,
   type verificationCodeSchemaType,
 } from "@/zod/authSchemas";
 import { useAppDispatch } from "@/redux/store";
+import { handleApiErrors } from "@/api/functions/validation";
 
 export default function VerifyEmail() {
   const disp = useAppDispatch();
@@ -21,12 +26,26 @@ export default function VerifyEmail() {
     resolver: zodResolver(verificationCodeSchema),
   });
 
-  const onSubmit = (data: verificationCodeSchemaType) => {
-    console.log(data);
-  };
-
   const { mutate: signOutMutation, isPending: isSignOutPending } = useMutation({
     mutationFn: () => signOut(disp),
+  });
+
+  const {
+    mutate: verifyEmailCodeMutation,
+    isPending: isVerifyEmailCodePending,
+  } = useMutation({
+    mutationFn: (data: verificationCodeSchemaType) =>
+      verifyEmailCode(data, disp),
+    onError: (err) => {
+      handleApiErrors(err, form);
+    },
+  });
+
+  const {
+    mutate: resendEmailVerificationCodeMutation,
+    isPending: isResendEmailVerificationCodePending,
+  } = useMutation({
+    mutationFn: () => resendEmailVerificationCode(disp),
   });
 
   return (
@@ -48,20 +67,32 @@ export default function VerifyEmail() {
           <Mail className="h-6 w-6" />
         </div>
       </div>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit((data) => verifyEmailCodeMutation(data))}
+        className="space-y-6"
+      >
         <InputOTPController
           control={form.control}
           f={{
             name: "code",
           }}
         />
-        <Button type="submit" className="w-full">
-          Verify and continue
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isVerifyEmailCodePending}
+        >
+          {isVerifyEmailCodePending ? "Verifying..." : "Verify and continue"}
         </Button>
         <p className="text-center text-xs text-muted-foreground">
           Didn't get the email?{" "}
-          <button type="button" className="text-primary hover:underline">
-            Resend
+          <button
+            type="button"
+            className="text-primary hover:underline"
+            disabled={isResendEmailVerificationCodePending}
+            onClick={() => resendEmailVerificationCodeMutation()}
+          >
+            {isResendEmailVerificationCodePending ? "Resending..." : "Resend"}
           </button>
         </p>
       </form>

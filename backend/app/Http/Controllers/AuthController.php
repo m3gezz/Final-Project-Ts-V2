@@ -61,7 +61,7 @@ class AuthController extends Controller
         $refresh_token = $user->createToken('refresh-token')->plainTextToken;
 
         $data = [
-            'user' => $user->load(['skills']),
+            'user' => $user,
             'token' => $access_token,
             'message' => 'Signed in successfully.'
         ];
@@ -86,7 +86,7 @@ class AuthController extends Controller
         $access_token = $user->createToken('access-token')->plainTextToken;
 
         $data = [
-            'user' => $user->load(['skills']),
+            'user' => $user,
             'token' => $access_token
         ];
 

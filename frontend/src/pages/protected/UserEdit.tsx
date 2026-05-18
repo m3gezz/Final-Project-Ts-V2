@@ -167,7 +167,7 @@ export default function UserEdit() {
               name: "professional_title",
               type: "text",
               label: "Professional Title",
-              placeholder: "",
+              placeholder: "Professional Title",
             }}
           />
           <SkillsController form={form} skills={skills} setSkills={setSkills} />
@@ -178,7 +178,7 @@ export default function UserEdit() {
           f={{
             name: "about",
             label: "About",
-            placeholder: "",
+            placeholder: "Say something about yourself.",
           }}
         />
 

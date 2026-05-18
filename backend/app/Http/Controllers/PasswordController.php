@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordResetCodeMail;
+use Illuminate\Validation\ValidationException;
 
 class PasswordController extends Controller
 {
@@ -17,7 +18,7 @@ class PasswordController extends Controller
 
         $code = random_int(100000, 999999);
         $user->passwordResetCode()->updateOrCreate(
-            // ['user_id' => $user->id],
+            ['user_id' => $user->id],
             ['code' => Hash::make($code),
             'expires_at' => now()->addMinutes(10),]
         );
@@ -37,7 +38,9 @@ class PasswordController extends Controller
         $user = User::where('email', $request->email)->first();
 
         $record = $user->passwordResetCode;
-        if (!$record || $record->expires_at->isPast() || !Hash::check($request->code, $record->code))  abort(422, 'Invalid verification code.');
+        if (!$record || $record->expires_at->isPast() || !Hash::check($request->code, $record->code))  throw ValidationException::withMessages([
+                'code' => ['Invalid verification code.'],
+            ]);
 
         return response()->json(['message' => 'Valid reset code.']);
     }
@@ -52,7 +55,9 @@ class PasswordController extends Controller
         $user = User::where('email', $fields['email'])->first();
         
         $record = $user->passwordResetCode;
-        if (!$record || $record->expires_at->isPast() || !Hash::check($request->code, $record->code))  abort(422, 'Invalid verification code.');
+        if (!$record || $record->expires_at->isPast() || !Hash::check($request->code, $record->code))  throw ValidationException::withMessages([
+                'code' => ['Invalid verification code.'],
+            ]);
 
         $user->update(['password' => Hash::make($fields['password'])]);
         $record->delete();

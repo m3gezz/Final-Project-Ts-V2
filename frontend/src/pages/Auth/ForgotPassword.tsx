@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import AuthCard from "@/components/cards/AuthCard";
 import { useForm } from "react-hook-form";
@@ -8,8 +8,12 @@ import {
   forgotPasswordSchema,
   type forgotPasswordSchemaType,
 } from "@/zod/authSchemas";
+import { useMutation } from "@tanstack/react-query";
+import { sendPasswordResetCode } from "@/api/functions/auth";
+import { handleApiErrors } from "@/api/functions/validation";
 
 export default function ForgotPassword() {
+  const nav = useNavigate();
   const form = useForm<forgotPasswordSchemaType>({
     defaultValues: {
       email: "",
@@ -17,9 +21,21 @@ export default function ForgotPassword() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = (data: forgotPasswordSchemaType) => {
-    console.log(data);
-  };
+  const {
+    mutate: sendPasswordResetCodeMutation,
+    isPending: isSendPasswordResetCodePending,
+  } = useMutation({
+    mutationFn: (data: forgotPasswordSchemaType) => sendPasswordResetCode(data),
+    onMutate: (data) => {
+      localStorage.setItem("user-email", String(data?.email));
+    },
+    onError: (err) => {
+      handleApiErrors(err, form);
+    },
+    onSuccess: () => {
+      nav("/verify-reset-code");
+    },
+  });
 
   return (
     <AuthCard
@@ -31,7 +47,12 @@ export default function ForgotPassword() {
         </Link>
       }
     >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit((data) =>
+          sendPasswordResetCodeMutation(data),
+        )}
+        className="space-y-4"
+      >
         <InputController
           control={form.control}
           f={{
@@ -41,8 +62,12 @@ export default function ForgotPassword() {
             placeholder: "you@company.com",
           }}
         />
-        <Button type="submit" className="w-full">
-          Send reset code
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isSendPasswordResetCodePending}
+        >
+          {isSendPasswordResetCodePending ? "Sending..." : "Send reset code"}
         </Button>
       </form>
     </AuthCard>

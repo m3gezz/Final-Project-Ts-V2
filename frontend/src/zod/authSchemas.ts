@@ -33,7 +33,7 @@ const verificationCodeSchema = z.object({
 export type verificationCodeSchemaType = z.infer<typeof verificationCodeSchema>;
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Invalid email address").nullable(),
 });
 
 export type forgotPasswordSchemaType = z.infer<typeof forgotPasswordSchema>;
