@@ -37,7 +37,7 @@ class InvitationPolicy
      */
     public function update(User $user, Invitation $invitation): bool
     {
-        return false;
+        return $user->id === $invitation->user_id;
     }
 
     /**

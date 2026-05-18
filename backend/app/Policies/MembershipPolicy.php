@@ -37,7 +37,7 @@ class MembershipPolicy
      */
     public function update(User $user, Membership $membership): bool
     {
-        return false;
+        return $user->id === $membership->workspace->project->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class MembershipPolicy
      */
     public function delete(User $user, Membership $membership): bool
     {
-        return false;
+        return $user->id === $membership->workspace->project->user_id;
     }
 
     /**

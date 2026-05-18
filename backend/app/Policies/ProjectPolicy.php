@@ -21,7 +21,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return !$project->private || $user->id === $project->user_id || $user->admin;
+        return !$project->private || $user->id === $project->user_id;
     }
 
     /**
@@ -37,12 +37,12 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return $user->id === $project->user_id || $user->admin;
+        return $user->id === $project->user_id;
     }
 
-    public function edit(User $user, Project $project): bool
+    public function canEdit(User $user, Project $project): bool
     {
-        return $user->id === $project->user_id || $user->admin;
+        return $user->id === $project->user_id;
     }
 
     /**
@@ -50,7 +50,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return $user->id === $project->user_id || $user->admin;
+        return $user->id === $project->user_id;
     }
 
     /**

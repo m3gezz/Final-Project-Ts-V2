@@ -23,7 +23,7 @@ class UserController extends Controller
         $skill_id = $request->skill_id;
         $sort = $request->sort;
 
-        $query = User::with(['skills','badges']);
+        $query = User::with(['skills','badges'])->orderByDesc('created_at');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -43,14 +43,7 @@ class UserController extends Controller
             });
         }
 
-        if ($sort == 1) {
-            // $query->orderByDesc('likes_count'); needs work
-        } else {   
-            $query->orderByDesc('created_at');
-        }
-
         $users = $query->paginate(8);
-
         return response()->json($users);
     }
 
@@ -66,6 +59,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $this->authorize('view', $user);
+
         $user->load(['skills', 'badges'])->loadCount([
             'projects as owned_count' => function ($q) {$q->where('private', false);},
             'memberships as worked_count' => function ($q) {$q->where('private', false)->where('role', '!=', 'owner');}
@@ -88,6 +83,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $this->authorize('update', $user);
         $fields = $request->validate([
             'avatar' => ['nullable', 'image', 'max:2048'],
             'full_name' => ['nullable', 'string', 'min:3', 'max:255'],
@@ -141,6 +137,7 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
+        $this->authorize('delete', $user);
         $fields = $request->validate(
             [
                 'password' => ['required', 'string', 'confirmed'],

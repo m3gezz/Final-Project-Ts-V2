@@ -26,15 +26,14 @@ class AuthController extends Controller
         $access_token = $user->createToken('access-token')->plainTextToken;
         $refresh_token = $user->createToken('refresh-token')->plainTextToken;
 
-        // $code = random_int(100000, 999999);
-        // $user->emailVerificationCode()->create([
-        //     'code' => Hash::make($code),
-        //     'expires_at' => now()->addMinutes(10),
-        // ]);
-        // Mail::to($user->email)->send(
-        //     new EmailVerificationCodeMail($user, $code)
-        // );
-        $user->markEmailAsVerified();
+        $code = random_int(100000, 999999);
+        $user->emailVerificationCode()->create([
+            'code' => Hash::make($code),
+            'expires_at' => now()->addMinutes(10),
+        ]);
+        Mail::to($user->email)->send(
+            new EmailVerificationCodeMail($user, $code)
+        );
 
         $data = [
             'user' => $user->load(['skills']),

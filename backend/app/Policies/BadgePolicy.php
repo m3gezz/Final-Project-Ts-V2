@@ -29,7 +29,7 @@ class BadgePolicy
      */
     public function create(User $user): bool
     {
-        return $user->admin;
+        return false;
     }
 
     /**
@@ -37,7 +37,7 @@ class BadgePolicy
      */
     public function update(User $user, Badge $badge): bool
     {
-        return $user->admin;
+        return false;
     }
 
     /**
@@ -45,7 +45,7 @@ class BadgePolicy
      */
     public function delete(User $user, Badge $badge): bool
     {
-        return $user->admin;
+        return false;
     }
 
     /**

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -47,6 +49,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
+        $this->authorize('update', $task);
         $fields = $request->validate(
             [
                 'status' => ['required', 'string', 'in:todo,doing,done'],
@@ -62,6 +65,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $this->authorize('delete', $task);
         $task->delete();
         return response()->json(['message' => 'Deleted successfully']);
     }

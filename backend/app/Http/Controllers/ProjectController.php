@@ -92,6 +92,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project, Request $request)
     {
+        $this->authorize('view', $project);
         $project->load(['user','workspace.memberships.user','category','skills','comments'])->loadCount(['comments','likes']);
 
         $project['isLiked'] = $project->likes()->where('user_id', $request->user()->id)->exists();
@@ -106,6 +107,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
+        $this->authorize('update', $project);
         $fields = $request->validate(
             [
                 'image' => ['sometimes', 'image', 'max:2048'],
@@ -139,7 +141,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        
+        $this->authorize('delete', $project);
         $project->delete();
         return response()->json(['message' => 'Deleted successfully']);
     }
@@ -149,6 +151,7 @@ class ProjectController extends Controller
      */
     public function canEdit(Project $project)
     {
+        $this->authorize('canEdit', $project);
         $project->load(['category','skills']);
         return response()->json($project);
     }

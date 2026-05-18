@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Skill;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class SkillController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */

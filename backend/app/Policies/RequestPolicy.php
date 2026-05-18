@@ -37,7 +37,7 @@ class RequestPolicy
      */
     public function update(User $user, Request $request): bool
     {
-        return false;
+        return $user->id === $request->user_id;
     }
 
     /**

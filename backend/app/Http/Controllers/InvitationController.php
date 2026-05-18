@@ -6,10 +6,12 @@ use App\Models\Invitation;
 use App\Http\Controllers\Controller;
 use App\Models\Membership;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class InvitationController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -54,7 +56,8 @@ class InvitationController extends Controller
      */
     public function update(Request $request, Invitation $invitation)
     {
-         $fields = $request->validate(
+        $this->authorize('update', $invitation);
+        $fields = $request->validate(
             [
                 'status' => ['required','string'],
             ]

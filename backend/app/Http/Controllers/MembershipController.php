@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Membership;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class MembershipController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -63,6 +65,7 @@ class MembershipController extends Controller
      */
     public function update(Request $request, Membership $membership)
     {
+        $this->authorize('update', $membership);
         $fields = $request->validate([
             'role' => 'string'
         ]);
@@ -76,6 +79,7 @@ class MembershipController extends Controller
      */
     public function destroy(Membership $membership)
     {
+        $this->authorize('delete', $membership);
         $membership->delete();
         return response()->json(['message' => 'Deleted successfully']);
     }

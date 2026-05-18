@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Workspace;
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class WorkspaceController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -70,6 +72,8 @@ class WorkspaceController extends Controller
      */
     public function show(Workspace $workspace, Request $request)
     {
+        $this->authorize('view', $workspace);
+        
         if ($request->dataType === 'overview') {
             $workspace
                 ->load(['project', 'tasks.user'])

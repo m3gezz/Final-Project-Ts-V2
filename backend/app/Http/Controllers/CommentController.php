@@ -45,6 +45,7 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
+        $this->authorize('update', $comment);
         $fields = $request->validate(['content' => ['required','string','min:1']]);
         $comment->update($fields);
         return response()->json('updated');
@@ -55,6 +56,7 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
+        $this->authorize('delete', $comment);
         $comment->delete();
         return response()->json(['message' => 'Deleted successfully']);
     }

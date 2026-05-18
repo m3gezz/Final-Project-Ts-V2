@@ -45,7 +45,7 @@ class LikePolicy
      */
     public function delete(User $user, Like $like): bool
     {
-        return $user->id === $like->user_id || $user->admin;
+        return false;
     }
 
     /**

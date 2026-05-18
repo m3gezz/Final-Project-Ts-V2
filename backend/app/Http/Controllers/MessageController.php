@@ -6,10 +6,12 @@ use App\Events\Message as EventsMessage;
 use App\Models\Message;
 use App\Http\Controllers\Controller;
 use App\Models\Workspace;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -50,6 +52,7 @@ class MessageController extends Controller
      */
     public function update(Request $request, Message $message)
     {
+        $this->authorize('update',$message);
         $fields = $request->validate(
             [
                 'message' => ['required', 'string', 'min:1'],
@@ -68,6 +71,7 @@ class MessageController extends Controller
      */
     public function destroy(Message $message)
     {
+        $this->authorize('delete',$message);
         $message->update(['message' => 'This message has been deleted.', 'isDeleted' => 1]);
         broadcast(new EventsMessage('deleted', $message->workspace_id));
         return response()->json(['message' => 'Deleted successfully']);

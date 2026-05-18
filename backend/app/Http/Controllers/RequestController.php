@@ -61,6 +61,7 @@ class RequestController extends Controller
      */
     public function update(HttpRequest $rq, Request $request)
     {
+        $this->authorize('update', $request);
         $fields = $rq->validate(
             [
                 'status' => ['required','string'],
