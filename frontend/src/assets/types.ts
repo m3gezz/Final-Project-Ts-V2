@@ -1,23 +1,13 @@
 import type { Control, FieldValues, Path } from "react-hook-form";
 
+//Tip: mat9is walo hna a ahmed
+
+//App
 export type PaginationState = {
   current_page: number;
   last_page: number;
   to: number;
   total: number;
-};
-
-export type FieldType = {
-  name: string;
-  label?: string;
-  type?: string;
-  placeholder?: string;
-  link?: { label: string; path: string };
-};
-
-export type ControllerType<T extends FieldValues> = {
-  control: Control<T>;
-  f: Omit<FieldType, "name"> & { name: Path<T> };
 };
 
 export type SearcherType = {
@@ -31,6 +21,21 @@ export type SearcherType = {
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
 };
 
+//Fields
+export type FieldType = {
+  name: string;
+  label?: string;
+  type?: string;
+  placeholder?: string;
+  link?: { label: string; path: string };
+};
+
+export type ControllerType<T extends FieldValues> = {
+  control: Control<T>;
+  f: Omit<FieldType, "name"> & { name: Path<T> };
+};
+
+//Default
 export type DefaultFields = {
   id: number | string | undefined;
   created_at: string;
@@ -42,6 +47,7 @@ export type DataType = DefaultFields & {
   description?: string;
 };
 
+//User
 export type UserType = DefaultFields & {
   full_name: string;
   username: string;
@@ -62,6 +68,7 @@ export type PopulatedUser = UserType & {
   badges: DataType[];
 };
 
+//Project
 export type ProjectType = DefaultFields & {
   title: string;
   description: string;
@@ -78,6 +85,7 @@ export type ProjectType = DefaultFields & {
   isRequested: boolean;
 };
 
+//Workspace
 export type WorkspaceType = DefaultFields & {
   project_id: ProjectType["id"];
 };
@@ -91,6 +99,7 @@ export type PopulatedWorkspace = WorkspaceType & {
   messages: PopulatedMessage[];
 };
 
+//Membership
 export type MembershipType = DefaultFields & {
   role: string;
   workspace_id: WorkspaceType["id"];
@@ -98,6 +107,7 @@ export type MembershipType = DefaultFields & {
   user: UserType;
 };
 
+//request
 export type RequestType = DefaultFields & {
   status: "pending" | "accepted" | "declined";
   workspace_id: WorkspaceType["id"];
@@ -106,6 +116,7 @@ export type RequestType = DefaultFields & {
   user: UserType;
 };
 
+//Message
 export type MessageType = DefaultFields & {
   message: string;
   isDeleted: boolean;
@@ -118,6 +129,7 @@ export type PopulatedMessage = MessageType & {
   workspace?: WorkspaceType;
 };
 
+//Task
 export type TaskType = DefaultFields & {
   title: string;
   description: string;

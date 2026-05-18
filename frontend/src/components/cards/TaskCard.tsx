@@ -12,42 +12,43 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
   const { id } = useParams();
   const { user } = useAppSelector((state) => state?.auth);
   const queryClient = useQueryClient();
-  const { mutate: updateTaskMutation } = useMutation({
-    mutationFn: (data: { status: "doing" | "done" }) =>
-      updateTask(task?.id, data),
-    onMutate: (data) => {
-      const previousProject = queryClient.getQueryData([
-        "workspace",
-        String(id),
-        "tasks",
-      ]);
-      queryClient.setQueryData(
-        ["workspace", String(id), "tasks"],
-        (old: PopulatedWorkspace) => ({
-          ...old,
-          tasks: [
-            ...old.tasks.map((t) => {
-              if (t?.id == task?.id) {
-                t = { ...t, ...data };
-              }
-              return t;
-            }),
-          ],
-        }),
-      );
-      return { previousProject };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(id), "tasks"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(id), "overview"],
-      });
-    },
-  });
+  const { mutate: updateTaskMutation, isPending: isUpdateTaskPending } =
+    useMutation({
+      mutationFn: (data: { status: "doing" | "done" }) =>
+        updateTask(task?.id, data),
+      onMutate: (data) => {
+        const previousProject = queryClient.getQueryData([
+          "workspace",
+          String(id),
+          "tasks",
+        ]);
+        queryClient.setQueryData(
+          ["workspace", String(id), "tasks"],
+          (old: PopulatedWorkspace) => ({
+            ...old,
+            tasks: [
+              ...old?.tasks?.map((t) => {
+                if (t?.id == task?.id) {
+                  t = { ...t, ...data };
+                }
+                return t;
+              }),
+            ],
+          }),
+        );
+        return { previousProject };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(id), "tasks"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(id), "overview"],
+        });
+      },
+    });
 
-  const { mutate: removeTask } = useMutation({
+  const { mutate: removeTask, isPending: isRemoveTaskPending } = useMutation({
     mutationFn: () => destroyTask(task?.id),
     onMutate: () => {
       const previousProject = queryClient.getQueryData([
@@ -59,7 +60,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
         ["workspace", String(id), "tasks"],
         (old: PopulatedWorkspace) => ({
           ...old,
-          tasks: [...old.tasks.filter((t) => t?.id != task?.id)],
+          tasks: [...old?.tasks?.filter((t) => t?.id != task?.id)],
         }),
       );
       return { previousProject };
@@ -88,21 +89,30 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
         {user?.id === task?.user?.id && task?.status === "todo" ? (
           <Button
             variant={"default"}
+            disabled={isUpdateTaskPending}
             onClick={() => updateTaskMutation({ status: "doing" })}
           >
             I'll work on it
           </Button>
-        ) : task?.status === "doing" ? (
+        ) : user?.id === task?.user?.id && task?.status === "doing" ? (
           <Button
             variant={"secondary"}
+            disabled={isUpdateTaskPending}
             onClick={() => updateTaskMutation({ status: "done" })}
           >
             Done
           </Button>
         ) : (
-          <Button variant={"destructive"} onClick={() => removeTask()}>
-            <X />
-          </Button>
+          user?.id === task?.user?.id &&
+          task?.status === "done" && (
+            <Button
+              variant={"destructive"}
+              disabled={isRemoveTaskPending}
+              onClick={() => removeTask()}
+            >
+              <X />
+            </Button>
+          )
         )}
       </div>
       <div className="mt-2 flex items-center justify-between">

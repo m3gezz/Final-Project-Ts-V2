@@ -24,33 +24,34 @@ export default function WsMemberCard({ member }: { member: MembershipType }) {
   ]);
   const isOwner = user?.id === previous?.project?.user_id;
 
-  const { mutate: destroyMemberMutation } = useMutation({
-    mutationFn: () => destroyMember(member?.id),
-    onMutate: () => {
-      const previous = queryClient.getQueryData([
-        "workspace",
-        String(member?.workspace_id),
-        "members",
-      ]);
+  const { mutate: destroyMemberMutation, isPending: isDestroyMemberPending } =
+    useMutation({
+      mutationFn: () => destroyMember(member?.id),
+      onMutate: () => {
+        const previous = queryClient.getQueryData([
+          "workspace",
+          String(member?.workspace_id),
+          "members",
+        ]);
 
-      queryClient.setQueryData(
-        ["workspace", String(member?.workspace_id), "members"],
-        (old: PopulatedWorkspace) => ({
-          ...old,
-          memberships: [
-            ...old?.memberships?.filter((m) => m?.id != member?.id),
-          ],
-        }),
-      );
+        queryClient.setQueryData(
+          ["workspace", String(member?.workspace_id), "members"],
+          (old: PopulatedWorkspace) => ({
+            ...old,
+            memberships: [
+              ...old?.memberships?.filter((m) => m?.id != member?.id),
+            ],
+          }),
+        );
 
-      return { previous };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(member?.workspace_id), "members"],
-      });
-    },
-  });
+        return { previous };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(member?.workspace_id), "members"],
+        });
+      },
+    });
 
   const { mutate: updateMemberMutation, isPending: isUpdateMemberPending } =
     useMutation({
@@ -100,6 +101,7 @@ export default function WsMemberCard({ member }: { member: MembershipType }) {
         <Button
           variant="ghost"
           size="icon"
+          disabled={isDestroyMemberPending}
           onClick={() => destroyMemberMutation()}
         >
           <X className="h-4 w-4" />

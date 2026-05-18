@@ -15,13 +15,16 @@ export default function UserReceivedRequestCard({
   request: RequestType;
 }) {
   const queryClient = useQueryClient();
-  const { mutate: updateInvitationMutation } = useMutation({
+  const {
+    mutate: updateInvitationMutation,
+    isPending: isUpdateInvitationPending,
+  } = useMutation({
     mutationFn: (data: { status: "accepted" | "declined" }) =>
       updateInvitation(request?.id, data),
     onMutate: () => {
       const previous = queryClient.getQueryData(["invitations"]);
       queryClient.setQueryData(["invitations"], (old: RequestType[]) => [
-        ...old.filter((r) => r.id != request?.id),
+        ...old?.filter((r) => r?.id != request?.id),
       ]);
 
       return { previous };
@@ -41,16 +44,14 @@ export default function UserReceivedRequestCard({
       </Avatar>
       <div className="flex-1">
         <div className="text-sm">
-          <Link to={`/users/${request?.user?.id}`} className="font-medium">
-            {request?.user?.full_name}
-          </Link>{" "}
-          Wants you to join{" "}
+          Invitation from
           <Link
             to={`/projects/${request?.workspace?.project?.id}`}
             className="font-medium"
           >
             {request?.workspace?.project?.title}
           </Link>
+          to join their workspace.
         </div>
         <div className="mt-1">
           <Badge variant="outline">{request?.status}</Badge>
@@ -61,6 +62,7 @@ export default function UserReceivedRequestCard({
           <Button
             size="sm"
             variant="outline"
+            disabled={isUpdateInvitationPending}
             onClick={() => updateInvitationMutation({ status: "declined" })}
           >
             <X className="mr-1 h-4 w-4" />
@@ -68,6 +70,7 @@ export default function UserReceivedRequestCard({
           </Button>
           <Button
             size="sm"
+            disabled={isUpdateInvitationPending}
             onClick={() => updateInvitationMutation({ status: "accepted" })}
           >
             <Check className="mr-1 h-4 w-4" />

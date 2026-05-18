@@ -19,7 +19,7 @@ export default function UserSentRequestCard({
       onMutate: () => {
         const previous = queryClient.getQueryData(["requests"]);
         queryClient.setQueryData(["requests"], (old: RequestType[]) => [
-          ...old.filter((r) => r.id != request?.id),
+          ...old?.filter((r) => r?.id != request?.id),
         ]);
         return { previous };
       },
@@ -63,6 +63,7 @@ export default function UserSentRequestCard({
         <Button
           size="sm"
           variant="outline"
+          disabled={isDestroyRequestPending}
           onClick={() => destroyRequestMutation()}
         >
           {isDestroyRequestPending ? "Canceling" : "Cancel"}

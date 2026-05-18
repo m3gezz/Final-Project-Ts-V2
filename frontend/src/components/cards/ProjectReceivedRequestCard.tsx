@@ -22,43 +22,45 @@ export default function ProjectReceivedRequestCard({
     "members",
   ]);
   const isOwner = user?.id === previous?.project?.user_id;
-  const { mutate: updateRequestMutation } = useMutation({
-    mutationFn: (data: { status: string }) => updateRequest(request?.id, data),
-    onMutate: () => {
-      const previous = queryClient.getQueryData([
-        "workspace",
-        String(request?.workspace_id),
-        "members",
-      ]);
-      queryClient.setQueryData(
-        ["workspace", String(request?.workspace_id), "members"],
-        (old: PopulatedWorkspace) => ({
-          ...old,
-          memberships: [
-            ...old.memberships,
-            {
-              id: Date.now(),
-              role: "member",
-              user: request?.user,
-              user_id: request?.user?.id,
-              workspace_id: request?.workspace?.id,
-            },
-          ],
-          requests: [...old.requests.filter((r) => r.id != request?.id)],
-        }),
-      );
+  const { mutate: updateRequestMutation, isPending: isUpdateRequestPending } =
+    useMutation({
+      mutationFn: (data: { status: "accepted" | "declined" }) =>
+        updateRequest(request?.id, data),
+      onMutate: () => {
+        const previous = queryClient.getQueryData([
+          "workspace",
+          String(request?.workspace_id),
+          "members",
+        ]);
+        queryClient.setQueryData(
+          ["workspace", String(request?.workspace_id), "members"],
+          (old: PopulatedWorkspace) => ({
+            ...old,
+            memberships: [
+              ...old?.memberships,
+              {
+                id: Date.now(),
+                role: "member",
+                user: request?.user,
+                user_id: request?.user?.id,
+                workspace_id: request?.workspace?.id,
+              },
+            ],
+            requests: [...old?.requests?.filter((r) => r?.id != request?.id)],
+          }),
+        );
 
-      return { previous };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(request?.workspace_id), "members"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(request?.workspace_id), "overview"],
-      });
-    },
-  });
+        return { previous };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(request?.workspace_id), "members"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(request?.workspace_id), "overview"],
+        });
+      },
+    });
 
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4">
@@ -82,6 +84,7 @@ export default function ProjectReceivedRequestCard({
           <Button
             size="sm"
             variant="outline"
+            disabled={isUpdateRequestPending}
             onClick={() => updateRequestMutation({ status: "declined" })}
           >
             <X className="mr-1 h-4 w-4" />
@@ -89,6 +92,7 @@ export default function ProjectReceivedRequestCard({
           </Button>
           <Button
             size="sm"
+            disabled={isUpdateRequestPending}
             onClick={() => updateRequestMutation({ status: "accepted" })}
           >
             <Check className="mr-1 h-4 w-4" />

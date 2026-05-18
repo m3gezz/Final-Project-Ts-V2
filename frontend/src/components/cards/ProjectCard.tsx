@@ -35,7 +35,7 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6">
               <AvatarImage src={getImageUrl(project?.user?.avatar)} />
-              <AvatarFallback>{project?.user?.full_name[0]}</AvatarFallback>
+              <AvatarFallback>{project?.user?.full_name?.[0]}</AvatarFallback>
             </Avatar>
             <span className="text-xs text-muted-foreground">
               {project?.user?.full_name}

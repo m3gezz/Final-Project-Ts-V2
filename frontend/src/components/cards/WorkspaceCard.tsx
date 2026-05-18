@@ -12,7 +12,6 @@ export default function WorkspaceCard({
     <Link
       to={`/workspaces/${workspace?.id}`}
       className="group flex flex-col gap-4 rounded-xl border bg-card p-5 transition-all hover:-translate-y-0.5"
-      style={{ boxShadow: "var(--shadow-soft)" }}
     >
       <div className="flex items-start justify-between">
         <div className="space-y-1">

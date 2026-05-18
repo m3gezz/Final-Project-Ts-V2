@@ -9,7 +9,10 @@ import type { PopulatedWorkspace, UserType } from "@/assets/types";
 export default function InvitingUserCard({ user }: { user: UserType }) {
   const { id } = useParams();
   const queryClient = useQueryClient();
-  const { mutate: createInvitationMutation, isPending } = useMutation({
+  const {
+    mutate: createInvitationMutation,
+    isPending: isCreateInvitationLoading,
+  } = useMutation({
     mutationFn: () =>
       createInvitation({
         workspace_id: id,
@@ -25,7 +28,9 @@ export default function InvitingUserCard({ user }: { user: UserType }) {
         ["workspace", String(id), "members"],
         (old: PopulatedWorkspace) => ({
           ...old,
-          memberships: old.memberships.filter((m) => m.user.id !== user?.id),
+          memberships: old?.memberships?.filter(
+            (m) => m?.user?.id !== user?.id,
+          ),
         }),
       );
 
@@ -55,7 +60,7 @@ export default function InvitingUserCard({ user }: { user: UserType }) {
         size="sm"
         variant="outline"
         onClick={() => createInvitationMutation()}
-        disabled={isPending}
+        disabled={isCreateInvitationLoading}
       >
         Invite
       </Button>

@@ -21,7 +21,10 @@ export default function ProjectSentRequestCard({
     "members",
   ]);
   const isOwner = user?.id === previous?.project?.user_id;
-  const { mutate: destroyInvitationMutation, isPending } = useMutation({
+  const {
+    mutate: destroyInvitationMutation,
+    isPending: isDestroyInvitationPending,
+  } = useMutation({
     mutationFn: () => destroyInvitation(request?.id),
     onMutate: () => {
       const previous = queryClient.getQueryData([
@@ -33,7 +36,9 @@ export default function ProjectSentRequestCard({
         ["workspace", String(request?.workspace_id), "members"],
         (old: PopulatedWorkspace) => ({
           ...old,
-          invitations: [...old.invitations.filter((r) => r.id != request?.id)],
+          invitations: [
+            ...old?.invitations?.filter((r) => r?.id != request?.id),
+          ],
         }),
       );
 
@@ -71,9 +76,10 @@ export default function ProjectSentRequestCard({
         <Button
           size="sm"
           variant="outline"
+          disabled={isDestroyInvitationPending}
           onClick={() => destroyInvitationMutation()}
         >
-          {isPending ? "Canceling" : "Cancel"}
+          {isDestroyInvitationPending ? "Canceling" : "Cancel"}
         </Button>
       )}
     </div>

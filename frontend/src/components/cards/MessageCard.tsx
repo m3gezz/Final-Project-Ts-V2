@@ -22,39 +22,41 @@ export default function MessageCard({
     message: message?.message,
   });
   const queryClient = useQueryClient();
-  const { mutate: destroyMessageMutation } = useMutation({
-    mutationFn: () => destroyMessage(message?.id),
-    onMutate: () => {
-      const previous = queryClient.getQueryData(["messages", String(id)]);
-      queryClient.setQueryData(
-        ["messages", String(id)],
-        (old: PopulatedMessage[]) => [
-          ...old.filter((m) => m?.id != message?.id),
-        ],
-      );
-      return { previous };
-    },
-  });
+  const { mutate: destroyMessageMutation, isPending: isDestroyMessagePending } =
+    useMutation({
+      mutationFn: () => destroyMessage(message?.id),
+      onMutate: () => {
+        const previous = queryClient.getQueryData(["messages", String(id)]);
+        queryClient.setQueryData(
+          ["messages", String(id)],
+          (old: PopulatedMessage[]) => [
+            ...old?.filter((m) => m?.id != message?.id),
+          ],
+        );
+        return { previous };
+      },
+    });
 
-  const { mutate: updateMessageMutation } = useMutation({
-    mutationFn: () => updateMessage(message?.id, { message: edit?.message }),
-    onMutate: () => {
-      setEdit((prev) => ({ ...prev, editing: false }));
-      const previous = queryClient.getQueryData(["messages", String(id)]);
-      queryClient.setQueryData(
-        ["messages", String(id)],
-        (old: PopulatedMessage[]) => [
-          ...old.map((m) => {
-            if (m?.id == message?.id) {
-              return { ...m, message: edit?.message };
-            }
-            return m;
-          }),
-        ],
-      );
-      return { previous };
-    },
-  });
+  const { mutate: updateMessageMutation, isPending: isUpdateMessagePending } =
+    useMutation({
+      mutationFn: () => updateMessage(message?.id, { message: edit?.message }),
+      onMutate: () => {
+        setEdit((prev) => ({ ...prev, editing: false }));
+        const previous = queryClient.getQueryData(["messages", String(id)]);
+        queryClient.setQueryData(
+          ["messages", String(id)],
+          (old: PopulatedMessage[]) => [
+            ...old?.map((m) => {
+              if (m?.id == message?.id) {
+                return { ...m, message: edit?.message };
+              }
+              return m;
+            }),
+          ],
+        );
+        return { previous };
+      },
+    });
 
   return user?.id === message?.user?.id ? (
     <div className="flex justify-end gap-2 items-start text-end">
@@ -76,6 +78,7 @@ export default function MessageCard({
             <Button
               size={"icon-xs"}
               variant={"secondary"}
+              disabled={isUpdateMessagePending}
               onClick={() => updateMessageMutation()}
               className="my-auto mx-2"
             >
@@ -94,6 +97,7 @@ export default function MessageCard({
             <Button
               size={"icon-xs"}
               variant={"destructive"}
+              disabled={isDestroyMessagePending}
               onClick={() => destroyMessageMutation()}
               className="my-auto mx-2"
             >
