@@ -9,4 +9,10 @@ const createTaskSchema = z.object({
 
 export type createTaskSchemaType = z.infer<typeof createTaskSchema>;
 
-export { createTaskSchema };
+const updateTaskSchema = z.object({
+  status: z.string(),
+});
+
+export type updateTaskSchemaType = z.infer<typeof updateTaskSchema>;
+
+export { createTaskSchema, updateTaskSchema };

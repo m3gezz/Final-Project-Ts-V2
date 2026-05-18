@@ -11,9 +11,5 @@ export default function Guest() {
     return <Navigate to={"/sign-up"} replace />;
   if (user?.email_verified_at && token) return <Navigate to={"/"} replace />;
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 }

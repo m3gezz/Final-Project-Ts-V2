@@ -14,8 +14,8 @@ const getImageUrl = (path: string | undefined) => {
 function formatTime(created_at: string) {
   if (!created_at) return "";
 
-  const createdDate = new Date(created_at);
-  const now = new Date();
+  const createdDate: any = new Date(created_at);
+  const now: any = new Date();
   const diffInMs = now - createdDate;
 
   const diffInMins = Math.floor(diffInMs / (1000 * 60));

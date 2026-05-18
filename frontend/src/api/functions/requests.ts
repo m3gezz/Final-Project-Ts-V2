@@ -6,12 +6,15 @@ const getRequests = async () => {
   return res.data;
 };
 
-const createRequest = async (data) => {
+const createRequest = async (data: { project_id: DefaultFields["id"] }) => {
   const res = await api.post("requests", data);
   return res;
 };
 
-const updateRequest = async (id: DefaultFields["id"], data) => {
+const updateRequest = async (
+  id: DefaultFields["id"],
+  data: { status: "accepted" | "declined" },
+) => {
   const res = await api.put(`requests/${id}`, data);
   return res.data;
 };

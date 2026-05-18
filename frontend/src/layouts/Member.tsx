@@ -5,9 +5,5 @@ export default function Member() {
   const { user } = useAppSelector((state) => state?.auth);
   if (user?.admin) return <Navigate to={"/dashboard"} replace />;
 
-  return (
-    <>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 }

@@ -6,12 +6,18 @@ const getInvitations = async () => {
   return res.data;
 };
 
-const createInvitation = async (data) => {
+const createInvitation = async (data: {
+  workspace_id: DefaultFields["id"];
+  user_id: DefaultFields["id"];
+}) => {
   const res = await api.post("invitations", data);
   return res;
 };
 
-const updateInvitation = async (id: DefaultFields["id"], data) => {
+const updateInvitation = async (
+  id: DefaultFields["id"],
+  data: { status: "accepted" | "declined" },
+) => {
   const res = await api.put(`invitations/${id}`, data);
   return res.data;
 };

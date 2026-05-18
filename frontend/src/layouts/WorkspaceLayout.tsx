@@ -3,9 +3,9 @@ import { Outlet } from "react-router-dom";
 
 export default function WorkspaceLayout() {
   return (
-    <div>
+    <main>
       <FloatingNav />
       <Outlet />
-    </div>
+    </main>
   );
 }
