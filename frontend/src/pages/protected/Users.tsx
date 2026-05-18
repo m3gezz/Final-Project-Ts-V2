@@ -30,7 +30,6 @@ export default function Users() {
       queries: [
         {
           queryKey: ["users", pagination.current_page, search, skill_id, sort],
-
           queryFn: () =>
             getUsers({
               pagination,
@@ -40,7 +39,6 @@ export default function Users() {
               sort,
             }),
         },
-
         {
           queryKey: ["skills"],
           queryFn: getSkills,

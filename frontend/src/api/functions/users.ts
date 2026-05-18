@@ -5,12 +5,11 @@ import type { DefaultFields, SearcherType } from "@/assets/types";
 import type {
   destroyUserSchemaType,
   updatePasswordSchemaType,
-  updateUserSchemaType,
 } from "@/zod/usersSchemas";
 
 const getUsers = async (searcher: SearcherType) => {
   const res = await api.get(
-    `users?page=${searcher?.pagination?.current_page}&search=${searcher?.search}&skill_id=${searcher?.skill_id}&sort=${searcher?.sort}`,
+    `users?page=${searcher?.pagination?.current_page}&search=${searcher?.search}&skill_id=${searcher?.skill_id ?? ""}&sort=${searcher?.sort ?? ""}`,
   );
   searcher?.setPagination((prev) => ({
     ...prev,
@@ -26,10 +25,7 @@ const getUser = async (id: DefaultFields["id"]) => {
   return res?.data;
 };
 
-const updateUser = async (
-  id: DefaultFields["id"],
-  data: updateUserSchemaType,
-) => {
+const updateUser = async (id: DefaultFields["id"], data: any) => {
   const res = await api.post(`users/${id}`, data);
   return res;
 };

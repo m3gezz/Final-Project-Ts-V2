@@ -23,10 +23,10 @@ class TaskController extends Controller
     {
         $fields = $request->validate(
             [
-                'workspace_id' => ['required','exists:workspaces,id'],
-                'title' => ['required','string','min:10','max:255'],
-                'description' => ['nullable','string','min:10','max:255'],
-                'user_id' => ['required','exists:memberships,user_id']
+                'workspace_id' => ['required', 'exists:workspaces,id'],
+                'title' => ['required', 'string', 'min:1', 'max:255'],
+                'description' => ['nullable', 'string'],
+                'user_id' => ['required', 'exists:users,id'],
             ]
         );
 
@@ -49,7 +49,7 @@ class TaskController extends Controller
     {
         $fields = $request->validate(
             [
-                'status' => ['required'],
+                'status' => ['required', 'string', 'in:todo,doing,done'],
             ]
         );
 

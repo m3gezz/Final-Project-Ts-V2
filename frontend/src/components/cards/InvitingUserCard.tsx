@@ -4,7 +4,7 @@ import { getImageUrl } from "@/lib/utils";
 import { Link, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createInvitation } from "@/api/functions/invitations";
-import type { PopulatedWorkspace, UserType } from "@/assets/types";
+import type { UserType } from "@/assets/types";
 
 export default function InvitingUserCard({ user }: { user: UserType }) {
   const { id } = useParams();
@@ -18,24 +18,6 @@ export default function InvitingUserCard({ user }: { user: UserType }) {
         workspace_id: id,
         user_id: user?.id,
       }),
-    onMutate: () => {
-      const previous = queryClient.getQueryData([
-        "workspace",
-        String(id),
-        "members",
-      ]);
-      queryClient.setQueryData(
-        ["workspace", String(id), "members"],
-        (old: PopulatedWorkspace) => ({
-          ...old,
-          memberships: old?.memberships?.filter(
-            (m) => m?.user?.id !== user?.id,
-          ),
-        }),
-      );
-
-      return { previous };
-    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["workspace", String(id), "members"],

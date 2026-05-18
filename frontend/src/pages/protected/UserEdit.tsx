@@ -53,6 +53,9 @@ const fields = [
 ] as const;
 
 export default function UserEdit() {
+  const nav = useNavigate();
+  const disp = useAppDispatch();
+  const queryClient = useQueryClient();
   const avatarRef: any = useRef("");
   const { user } = useAppSelector((state) => state?.auth);
   const [skills, setSkills] = useState<DataType[]>(user?.skills ?? []);
@@ -72,41 +75,23 @@ export default function UserEdit() {
     resolver: zodResolver(updateUserSchema),
   });
 
-  const nav = useNavigate();
-  const disp = useAppDispatch();
-  const queryClient = useQueryClient();
-  const isDirty = form.formState.isDirty;
-  const dirtyFields = form.formState.dirtyFields;
   const { mutate: updateUserMutation, isPending: isUpdateUserPending } =
     useMutation({
       mutationFn: (data: updateUserSchemaType) => {
-        data = { ...data, private: data?.private ? "1" : "0" };
-        const skillsIds = skills.map((s) => s?.id);
-        const userSkillsIds = user?.skills.map((s: DataType) => s?.id) || [];
-        const skillsChanged = !(
-          skillsIds.length === userSkillsIds.length &&
-          skillsIds.every((id) => userSkillsIds.includes(id))
-        );
-
-        if (!isDirty && !skillsChanged && !(data.avatar instanceof File)) {
-          return alert("No changes detected!");
-        }
-
         const formData = new FormData();
-        for (const key in dirtyFields) {
-          const typedKey = key as keyof updateUserSchemaType;
-          if (data[typedKey] !== undefined && data[typedKey] !== null) {
-            formData.append(typedKey, String(data[typedKey]));
-          }
-        }
+        formData.append("full_name", data.full_name);
+        formData.append("username", data.username);
+        formData.append("email", data.email);
+        formData.append("bio", data.bio ?? "");
+        formData.append("about", data.about ?? "");
+        formData.append("professional_title", data.professional_title ?? "");
+        formData.append("private", data.private ? "1" : "0");
 
-        if (skillsChanged) {
-          skillsIds?.forEach((s) => {
-            formData.append("skills[]", String(s));
-          });
-        }
+        skills.forEach((s) => {
+          formData.append("skills[]", String(s.id));
+        });
 
-        if (data?.avatar instanceof File) {
+        if (data.avatar instanceof File) {
           formData.append("avatar", data.avatar);
         }
 
@@ -118,7 +103,7 @@ export default function UserEdit() {
       },
       onSuccess: (data) => {
         queryClient.fetchQuery({
-          queryKey: ["me"],
+          queryKey: ["getMe"],
           queryFn: () => getMe(disp),
         });
         queryClient.invalidateQueries({

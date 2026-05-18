@@ -48,8 +48,16 @@ export default function ProjectManipulator({
 }) {
   const nav = useNavigate();
   const { id } = useParams();
+  const queryClient = useQueryClient();
+  const [skills, setSkills] = useState<DataType[]>([]);
+  const [preview, setPreview] = useState<string | undefined>(undefined);
   const [
-    { data: project, isError, isLoading, isSuccess },
+    {
+      data: project,
+      isError: isProjectError,
+      isLoading: isProjectLoading,
+      isSuccess: isProjectSuccess,
+    },
     { data: categories },
   ] = useQueries({
     queries: [
@@ -57,6 +65,7 @@ export default function ProjectManipulator({
         queryKey: ["project-check", id],
         queryFn: () => canEdit(id),
         retry: 0,
+        enabled: mode === "edit",
       },
       {
         queryKey: ["categories"],
@@ -65,8 +74,6 @@ export default function ProjectManipulator({
     ],
   });
 
-  const [skills, setSkills] = useState<DataType[]>([]);
-  const [preview, setPreview] = useState<string | undefined>(undefined);
   const form = useForm<manipulateProjectSchemaType>({
     defaultValues: {
       image: null,
@@ -81,10 +88,10 @@ export default function ProjectManipulator({
   });
 
   useEffect(() => {
-    if (!isSuccess) return;
-    setSkills(project?.skills);
+    if (!isProjectSuccess || !project) return;
+    setSkills(project?.skills ?? []);
     setPreview(getImageUrl(project?.image));
-    form.setValues({
+    form.reset({
       image: null,
       title: project?.title ?? "",
       description: project?.description ?? "",
@@ -93,9 +100,8 @@ export default function ProjectManipulator({
       manifesto: project?.manifesto ?? "",
       private: !!Number(project?.private),
     });
-  }, [isSuccess]);
+  }, [isProjectSuccess, mode]);
 
-  const queryClient = useQueryClient();
   const {
     mutate: manipulateProjectMutation,
     isPending: isManipulateProjectPending,
@@ -103,13 +109,11 @@ export default function ProjectManipulator({
     mutationFn: (data: manipulateProjectSchemaType) => {
       const formData = new FormData();
 
-      data = { ...data, private: data?.private ? "1" : "0" };
-      for (const key in data) {
-        const typedKey = key as keyof manipulateProjectSchemaType;
-        if (data[typedKey] !== undefined && data[typedKey] !== null) {
-          formData.append(typedKey, String(data[typedKey]));
-        }
-      }
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("manifesto", data.manifesto);
+      formData.append("category_id", String(data.category_id));
+      formData.append("private", data.private ? "1" : "0");
 
       skills.forEach((s) => {
         formData.append("skills[]", String(s.id));
@@ -119,12 +123,11 @@ export default function ProjectManipulator({
         formData.append("image", data.image);
       }
 
-      if (mode !== "edit") {
-        return createProject(formData);
+      if (mode === "edit") {
+        formData.append("_method", "PATCH");
+        return updateProject(id, formData);
       }
-
-      formData.append("_method", "PATCH");
-      return updateProject(id, formData);
+      return createProject(formData);
     },
     onError: (err) => {
       handleApiErrors(err, form);
@@ -137,22 +140,21 @@ export default function ProjectManipulator({
         queryClient.invalidateQueries({
           queryKey: ["project-check", String(id)],
         });
+        nav(-1);
+        return;
       }
       nav(`/projects/${data?.data}`);
     },
   });
 
-  if (isLoading && mode === "edit") {
+  if (isProjectLoading && mode === "edit")
     return (
       <div className="w-fit mx-auto my-40">
         <Spinner />
       </div>
     );
-  }
 
-  if (isError && mode === "edit") {
-    return <ErrorCard />;
-  }
+  if (isProjectError && mode === "edit") return <ErrorCard />;
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -168,7 +170,13 @@ export default function ProjectManipulator({
         <div className="space-y-2">
           <Label>Cover image</Label>
           <label className="relative aspect-video flex  w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed ">
-            <img src={preview} alt="" className="h-full w-full object-cover" />
+            {preview && (
+              <img
+                src={preview}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            )}
 
             <div
               className={`absolute z-10 flex flex-col items-center justify-center gap-2  ${preview ? "hover:bg-muted/80 hover:text-muted-foreground text-transparent bg-transparent" : "bg-muted/80 text-muted-foreground"} w-full h-full transition-all`}

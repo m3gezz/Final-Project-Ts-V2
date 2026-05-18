@@ -2,9 +2,9 @@ import z from "zod";
 
 const signUpSchema = z
   .object({
-    full_name: z.string(),
-    email: z.email(),
-    password: z.string(),
+    full_name: z.string().min(3, "Name must be at least 3 characters"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
     password_confirmation: z.string(),
     terms: z.boolean(),
   })
@@ -20,27 +20,27 @@ const signUpSchema = z
 export type signUpSchemaType = z.infer<typeof signUpSchema>;
 
 const signInSchema = z.object({
-  email: z.email(),
-  password: z.string(),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export type signInSchemaType = z.infer<typeof signInSchema>;
 
 const verificationCodeSchema = z.object({
-  code: z.string().length(6),
+  code: z.string().length(6, "Code must be exactly 6 digits"),
 });
 
 export type verificationCodeSchemaType = z.infer<typeof verificationCodeSchema>;
 
 const forgotPasswordSchema = z.object({
-  email: z.email(),
+  email: z.string().email("Invalid email address"),
 });
 
 export type forgotPasswordSchemaType = z.infer<typeof forgotPasswordSchema>;
 
 const resetPasswordSchema = z
   .object({
-    password: z.string(),
+    password: z.string().min(6, "Password must be at least 6 characters"),
     password_confirmation: z.string(),
   })
   .refine((data) => data.password === data.password_confirmation, {

@@ -27,11 +27,17 @@ export default function UserCard({ user }: { user: PopulatedUser }) {
               {user?.bio}
             </p>
             <div className="mt-2 flex flex-wrap gap-1">
-              {user?.skills?.slice(0, 3).map((s) => (
-                <Badge key={s?.id} variant="secondary" className="text-xs">
-                  {s?.label}
-                </Badge>
-              ))}
+              {user?.skills?.length ? (
+                user?.skills?.slice(0, 3).map((s) => (
+                  <Badge key={s?.id} variant="secondary" className="text-xs">
+                    {s?.label}
+                  </Badge>
+                ))
+              ) : (
+                <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
+                  No skills yet.
+                </p>
+              )}
             </div>
           </>
         )}

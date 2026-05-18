@@ -72,6 +72,7 @@ export default function CreateTaskModal() {
         handleApiErrors(err, form);
       },
       onSuccess: () => {
+        form.reset();
         queryClient.invalidateQueries({
           queryKey: ["workspace", String(id), "tasks"],
         });
@@ -113,6 +114,7 @@ export default function CreateTaskModal() {
           control={form.control}
           f={{
             name: "user_id",
+            label: "Assign to",
           }}
           options={members}
         />

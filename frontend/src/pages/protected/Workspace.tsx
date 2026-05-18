@@ -17,14 +17,12 @@ export default function Workspace() {
   });
 
   useEffect(() => {
-    if (!workspace) return;
+    if (!workspace || !workspace?.tasks_count) return;
     setPercentage(
       ((workspace?.tasks_count - workspace?.open_tasks_count) * 100) /
         workspace?.tasks_count,
     );
   }, [workspace]);
-
-  console.log(workspace);
 
   if (isLoading) return <WorkspaceSkeleton />;
   return (
@@ -65,22 +63,29 @@ export default function Workspace() {
       <div className="rounded-xl border bg-card p-6">
         <h2 className="text-lg font-semibold">Recent activity</h2>
         <ul className="mt-4 space-y-3 text-sm">
-          {workspace?.tasks?.map((t: PopulatedTask) => (
-            <li key={t?.id} className="flex items-center gap-3">
+          {workspace?.tasks?.length ? (
+            workspace?.tasks?.map((t: PopulatedTask) => (
+              <li key={t?.id} className="flex items-center gap-3">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                Task <i>"{t?.title}"</i> is{" "}
+                {t?.status === "todo"
+                  ? "created"
+                  : t?.status === "doing"
+                    ? "advancing"
+                    : "done"}{" "}
+                by
+                <b>{t?.user?.full_name}</b>
+                <span className="ml-auto text-xs text-muted-foreground">
+                  {formatTime(t?.created_at)}
+                </span>
+              </li>
+            ))
+          ) : (
+            <li className="flex items-center gap-3">
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              Task <i>"{t?.title}"</i> is
-              {t?.status === "todo"
-                ? "created"
-                : t?.status === "doing"
-                  ? "advancing"
-                  : "done"}
-              by
-              <b>{t?.user?.full_name}</b>
-              <span className="ml-auto text-xs text-muted-foreground">
-                {formatTime(t?.created_at)}
-              </span>
+              No tasks history for now.
             </li>
-          ))}
+          )}
         </ul>
       </div>
     </div>

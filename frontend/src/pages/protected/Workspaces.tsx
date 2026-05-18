@@ -19,28 +19,26 @@ export default function Workspaces() {
   const form = useForm({
     defaultValues: {
       search: "",
-      status: "on_hold",
       type: "owned",
     },
   });
 
-  const [search, status, type] = form.watch(["search", "status", "type"]);
+  const [search, type] = form.watch(["search", "type"]);
 
   const { data: workspaces, isFetching } = useQuery({
-    queryKey: ["workspaces", pagination.current_page, search, status, type],
+    queryKey: ["workspaces", pagination.current_page, search, type],
     queryFn: () =>
       getWorkspaces({
         pagination,
         setPagination,
         search,
-        status,
         type,
       }),
   });
 
   useEffect(() => {
     setPagination((prev) => ({ ...prev, current_page: 1 }));
-  }, [status, type]);
+  }, [type]);
 
   return (
     <div>
@@ -58,20 +56,6 @@ export default function Workspaces() {
           }}
         />
         <div className="flex gap-2">
-          <SelectController
-            control={form.control}
-            f={{ name: "status" }}
-            options={[
-              {
-                id: "on_hold",
-                label: "On Hold",
-              },
-              {
-                id: "active",
-                label: "Active",
-              },
-            ]}
-          />
           <SelectController
             control={form.control}
             f={{ name: "type" }}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Membership;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class MembershipController extends Controller
@@ -11,9 +12,34 @@ class MembershipController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $search = $request->search;
+        $workspace_id = $request->workspace_id;
+
+        $query = User::whereDoesntHave('memberships',function ($q) use($workspace_id) {
+                $q->where('workspace_id', $workspace_id);
+            })
+            ->whereDoesntHave('requests',function ($q) use($workspace_id) {
+                $q->where('workspace_id', $workspace_id);
+            })->whereDoesntHave('invitations',function ($q) use($workspace_id) {
+                $q->where('workspace_id', $workspace_id);
+            });
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('full_name', 'like', "%$search%");
+                $q->orWhere('username', 'like', "%$search%");
+                $q->orWhere('bio', 'like', "%$search%");
+
+                $q->orWhereHas('skills', function ($q) use ($search) {
+                    $q->where('label','like', "%$search%");
+                });
+            });
+        }
+
+        $non_members = $query->paginate(8);
+        return response()->json($non_members);
     }
 
     /**

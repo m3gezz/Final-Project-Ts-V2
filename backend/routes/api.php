@@ -10,7 +10,6 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MessageController;
@@ -54,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::apiResource('requests', RequestController::class)->except(['show']);
     Route::apiResource('invitations', InvitationController::class)->except(['show']);
-    Route::apiResource('memberships', MembershipController::class)->only(['destroy','update']);
+    Route::apiResource('memberships', MembershipController::class)->only(['index','destroy','update']);
     Route::apiResource('messages', MessageController::class)->except(['show']);
     Route::apiResource('tasks', TaskController::class)->except(['index', 'show']);
     

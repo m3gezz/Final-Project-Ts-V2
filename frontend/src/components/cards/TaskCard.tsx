@@ -12,6 +12,13 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
   const { id } = useParams();
   const { user } = useAppSelector((state) => state?.auth);
   const queryClient = useQueryClient();
+  const previous: PopulatedWorkspace | undefined = queryClient.getQueryData([
+    "workspace",
+    String(id),
+    "members",
+  ]);
+  const isOwner = user?.id === previous?.project?.user_id;
+
   const { mutate: updateTaskMutation, isPending: isUpdateTaskPending } =
     useMutation({
       mutationFn: (data: { status: "doing" | "done" }) =>
@@ -86,7 +93,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
           <h1 className="font-medium">{task?.title}</h1>
           {task?.description && <p>{task?.description}</p>}
         </div>
-        {user?.id === task?.user?.id && task?.status === "todo" ? (
+        {(user?.id === task?.user?.id || isOwner) && task?.status === "todo" ? (
           <Button
             variant={"default"}
             disabled={isUpdateTaskPending}
@@ -94,7 +101,8 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
           >
             I'll work on it
           </Button>
-        ) : user?.id === task?.user?.id && task?.status === "doing" ? (
+        ) : (user?.id === task?.user?.id || isOwner) &&
+          task?.status === "doing" ? (
           <Button
             variant={"secondary"}
             disabled={isUpdateTaskPending}
@@ -103,7 +111,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
             Done
           </Button>
         ) : (
-          user?.id === task?.user?.id &&
+          (user?.id === task?.user?.id || isOwner) &&
           task?.status === "done" && (
             <Button
               variant={"destructive"}

@@ -57,14 +57,14 @@ class ProjectController extends Controller
     {
         $fields = $request->validate(
             [
-                'title' => ['required'],
-                'description' => ['required'],
-                'category_id' => ['required'],
-                'private'=>['required','boolean'],
-                'manifesto'=>['required'],
-                'image'=>['image'],
+                'image' => ['sometimes', 'image', 'max:2048'],
+                'title' => ['required', 'string', 'min:3', 'max:255'],
+                'description' => ['required', 'string', 'min:10'],
+                'category_id' => ['required', 'exists:categories,id'],
+                'private' => ['required', 'boolean'],
+                'manifesto' => ['required', 'string', 'min:20'],
                 'skills'=>['sometimes','array'],
-                'skills/*' => ['exists:skills,id']
+                'skills.*' => ['sometimes', 'exists:skills,id'],
             ]
         );
         
@@ -84,7 +84,6 @@ class ProjectController extends Controller
         }
 
         $project = $project->id;
-
         return response()->json($project);
     }
 
@@ -109,14 +108,14 @@ class ProjectController extends Controller
     {
         $fields = $request->validate(
             [
-                'title' => ['sometimes','string','min:5','max:255'],
-                'description' => ['sometimes','string','min:10'],
-                'category_id' => ['sometimes','exists:categories,id'],
-                'private'=>['sometimes','boolean'],
-                'manifesto'=>['sometimes'],
-                'image'=>['sometimes'],
+                'image' => ['sometimes', 'image', 'max:2048'],
+                'title' => ['required', 'string', 'min:3', 'max:255'],
+                'description' => ['required', 'string', 'min:10'],
+                'category_id' => ['required', 'exists:categories,id'],
+                'private' => ['required', 'boolean'],
+                'manifesto' => ['required', 'string', 'min:20'],
                 'skills'=>['sometimes','array'],
-                'skills/*' => ['exists:skills,id']
+                'skills.*' => ['sometimes', 'exists:skills,id'],
             ]
         );
 

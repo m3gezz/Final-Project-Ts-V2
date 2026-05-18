@@ -11,7 +11,7 @@ use App\Mail\PasswordResetCodeMail;
 class PasswordController extends Controller
 {
     public function send_reset_code(Request $request) {
-        $request->validate(['email' => ['required','email','exists:users,email']]);
+        $request->validate(['email' => ['required', 'string', 'email', 'exists:users,email'],]);
 
         $user = User::where('email', $request->email)->first();
 
@@ -30,8 +30,8 @@ class PasswordController extends Controller
 
     public function verify_reset_code(Request $request) {
         $request->validate([
-            'email' => ['required','exists:users,email'],
-            'code' => ['required','digits:6']
+            'email' => ['required', 'string', 'email', 'exists:users,email'],
+            'code' => ['required', 'string', 'size:6'],
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -44,9 +44,9 @@ class PasswordController extends Controller
 
     public function reset_password(Request $request) {
         $fields = $request->validate([
-            'email' => ['required','email','exists:users,email'],
-            'code' => ['required','digits:6'],
-            'password' => ['required','string','confirmed']
+            'email' => ['required', 'string', 'email', 'exists:users,email'],
+            'code' => ['required', 'string', 'size:6'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         $user = User::where('email', $fields['email'])->first();

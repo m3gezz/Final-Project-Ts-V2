@@ -23,7 +23,7 @@ class UserController extends Controller
         $skill_id = $request->skill_id;
         $sort = $request->sort;
 
-        $query = User::with(['skills','badges'])->latest();
+        $query = User::with(['skills','badges']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -89,18 +89,18 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $fields = $request->validate([
-            'full_name' => ['sometimes','min:5','max:30'],
-            'username' => ['sometimes'],
-            'professional_title' => ['sometimes'],
-            'avatar' => ['sometimes'],
-            'bio' => ['sometimes'],
-            'about' => ['sometimes'],
-            'private' => ['sometimes'],
-            'email' => ['sometimes','email','unique:users,email,' . $user->id],
-            'password' => ['sometimes'],
-            'new_password' => ['sometimes','confirmed'],
-            'skills'=>['sometimes','array'],
-            'skills/*' => ['exists:skills,id']
+            'avatar' => ['nullable', 'image', 'max:2048'],
+            'full_name' => ['nullable', 'string', 'min:3', 'max:255'],
+            'username' => ['nullable', 'string', 'min:3', 'max:50','unique:users,username,' . $user->id],
+            'professional_title' => ['nullable', 'string', 'max:100'],
+            'bio' => ['nullable', 'string', 'max:160'],
+            'about' => ['nullable','string'],
+            'email' => ['nullable','string','email','unique:users,email,' . $user->id],
+            'password' => ['nullable','string'],
+            'new_password' => ['nullable', 'string', 'min:6', 'confirmed'],
+            'private' => ['nullable','boolean'],
+            'skills'=>['nullable','array'],
+            'skills.*' => ['nullable', 'exists:skills,id'],
         ]);
 
         if ($request->hasFile('avatar')) {
@@ -126,11 +126,12 @@ class UserController extends Controller
             return response()->json('updated');
         }
 
-        if ($request->has('email')) {
+        if ($fields['email'] !== $user->email) {
             $user->update(['email' => $fields['email']]);
             $user->email_verified_at = null;
         }
 
+        unset($fields['email']);
         $user->update($fields);
         return response()->json('updated');
     }
@@ -142,7 +143,7 @@ class UserController extends Controller
     {
         $fields = $request->validate(
             [
-                'password' => ['required','confirmed'],
+                'password' => ['required', 'string', 'confirmed'],
             ]
         );
 

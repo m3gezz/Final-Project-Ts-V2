@@ -30,7 +30,16 @@ export default function MessageCard({
         queryClient.setQueryData(
           ["messages", String(id)],
           (old: PopulatedMessage[]) => [
-            ...old?.filter((m) => m?.id != message?.id),
+            ...old?.map((m) => {
+              if (m?.id == message?.id) {
+                return {
+                  ...m,
+                  isDeleted: true,
+                  message: "This message has been deleted.",
+                };
+              }
+              return m;
+            }),
           ],
         );
         return { previous };

@@ -27,8 +27,8 @@ class MessageController extends Controller
     {
         $fields = $request->validate(
             [
-                'workspace_id' => ['required','exists:workspaces,id'],
-                'message' => ['required','string','min:1','max:255']
+                'workspace_id' => ['required', 'exists:workspaces,id'],
+                'message' => ['required', 'string', 'min:1'],
             ]
         );
 
@@ -52,7 +52,7 @@ class MessageController extends Controller
     {
         $fields = $request->validate(
             [
-                'message' => ['required','string','min:1','max:255']
+                'message' => ['required', 'string', 'min:1'],
             ]
         );
 

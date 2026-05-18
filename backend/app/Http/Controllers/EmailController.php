@@ -29,7 +29,7 @@ class EmailController extends Controller
     }
 
     public function verify_email_code(Request $request) {
-        $request->validate(['code' => ['required','digits:6']]);
+        $request->validate(['code' => ['required', 'string', 'size:6']]);
         
         $user = $request->user();
         if ($user->hasVerifiedEmail()) return response()->json(['message' => 'Email already verified.']);

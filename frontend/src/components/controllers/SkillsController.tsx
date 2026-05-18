@@ -1,9 +1,5 @@
 import { Field, FieldLabel, FieldError } from "../ui/field";
-import {
-  Controller,
-  type FieldValues,
-  type UseFormReturn,
-} from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -12,17 +8,15 @@ import { useQuery } from "@tanstack/react-query";
 import { getSkills } from "@/api/functions/data";
 import type { DataType } from "@/assets/types";
 
-type SkillsControllerProps<T extends FieldValues> = {
-  form: UseFormReturn<T>;
-  skills: DataType[];
-  setSkills: React.Dispatch<React.SetStateAction<DataType[]>>;
-};
-
-export default function SkillsController<T extends FieldValues>({
+export default function SkillsController({
   form,
   skills,
   setSkills,
-}: SkillsControllerProps<T>) {
+}: {
+  form: any;
+  skills: DataType[];
+  setSkills: React.Dispatch<React.SetStateAction<DataType[]>>;
+}) {
   const { data: allowedSkills } = useQuery({
     queryKey: ["skills"],
     queryFn: getSkills,

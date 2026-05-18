@@ -15,7 +15,7 @@ class InvitationController extends Controller
      */
     public function index(Request $request)
     {
-        $invitations = $request->user()->receivedInvitations()->with(['user','workspace.project.user'])->get();
+        $invitations = $request->user()->invitations()->with(['user','workspace.project.user'])->get();
         return response()->json($invitations);
     }
 
@@ -65,7 +65,7 @@ class InvitationController extends Controller
         if ($fields['status'] === 'accepted') {
             Membership::create([
                 'workspace_id' => $invitation->workspace_id,
-                'user_id' => $invitation->receiver_id,
+                'user_id' => $invitation->user_id,
             ]);
         }
 

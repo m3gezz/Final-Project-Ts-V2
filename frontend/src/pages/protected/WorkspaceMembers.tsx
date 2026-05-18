@@ -14,7 +14,6 @@ import type { MembershipType } from "@/assets/types";
 
 export default function WorkspaceMembers() {
   const { id } = useParams();
-
   const { user } = useAppSelector((state) => state?.auth);
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "members"],

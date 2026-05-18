@@ -11,6 +11,7 @@ export default function General() {
     queryKey: ["refreshToken"],
     queryFn: () => refreshToken(disp),
     retry: 0,
+    staleTime: Infinity,
   });
 
   return isRefreshTokenLoading ? (

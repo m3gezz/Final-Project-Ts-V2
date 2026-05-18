@@ -29,7 +29,10 @@ export default function Project() {
   });
 
   const queryClient = useQueryClient();
-  const { mutate: like } = useMutation({
+  const {
+    mutate: createProjectLikeMutation,
+    isPending: isCreateProjectLikePending,
+  } = useMutation({
     mutationFn: () => {
       return createProjectLike(id);
     },
@@ -43,8 +46,10 @@ export default function Project() {
         ["project", String(project?.id)],
         (old: ProjectType) => ({
           ...old,
-          isLiked: !old.isLiked,
-          likes_count: old.isLiked ? old.likes_count - 1 : old.likes_count + 1,
+          isLiked: !old?.isLiked,
+          likes_count: old?.isLiked
+            ? old?.likes_count - 1
+            : old?.likes_count + 1,
         }),
       );
 
@@ -56,25 +61,32 @@ export default function Project() {
       });
     },
   });
-  const { mutate: createRequestMutation, isPending } = useMutation({
-    mutationFn: () => createRequest({ project_id: id }),
-    onMutate: () => {
-      const previousProject = queryClient.getQueryData(["project", String(id)]);
-      queryClient.setQueryData(["project", String(id)], (old: ProjectType) => ({
-        ...old,
-        isRequested: true,
-      }));
-      return { previousProject };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["project", String(id)],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["requests"],
-      });
-    },
-  });
+  const { mutate: createRequestMutation, isPending: isCreateRequestPending } =
+    useMutation({
+      mutationFn: () => createRequest({ project_id: id }),
+      onMutate: () => {
+        const previousProject = queryClient.getQueryData([
+          "project",
+          String(id),
+        ]);
+        queryClient.setQueryData(
+          ["project", String(id)],
+          (old: ProjectType) => ({
+            ...old,
+            isRequested: true,
+          }),
+        );
+        return { previousProject };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["project", String(id)],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["requests"],
+        });
+      },
+    });
 
   const [comment, setComment] = useState("");
 
@@ -119,8 +131,8 @@ export default function Project() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  if (isPending) return;
-                  like();
+                  if (isCreateProjectLikePending) return;
+                  createProjectLikeMutation();
                 }}
               >
                 <Heart
@@ -138,8 +150,11 @@ export default function Project() {
               ) : (
                 !project?.isRequested && (
                   <Button
-                    disabled={project?.isRequested}
-                    onClick={() => createRequestMutation()}
+                    disabled={project?.isRequested || isCreateRequestPending}
+                    onClick={() => {
+                      if (isCreateRequestPending) return;
+                      createRequestMutation();
+                    }}
                   >
                     <UserPlus className="mr-2 h-4 w-4" />
                     Send request

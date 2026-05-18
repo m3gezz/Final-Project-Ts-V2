@@ -14,7 +14,6 @@ class WorkspaceController extends Controller
     public function index(Request $request)
     {
         $search = $request->search;
-        $status = $request->status;
         $type = $request->type;
 
         $query = Workspace::with(['memberships.user',
@@ -41,10 +40,6 @@ class WorkspaceController extends Controller
                                 $q->where('full_name','like', "%$search%")->orWhere('username','like', "%$search%");
                             });
                 });
-        }
-
-        if ($status) {
-            $query->where('status', $status);
         }
 
         if ($type == 'owned') {
@@ -86,7 +81,7 @@ class WorkspaceController extends Controller
         }
 
         if ($request->dataType === 'members') {
-            $workspace->load(['project','memberships.user', 'requests.user', 'invitations.receiver']);
+            $workspace->load(['project','memberships.user', 'requests.user', 'invitations.user']);
         }
 
         if ($request->dataType === 'tasks') {

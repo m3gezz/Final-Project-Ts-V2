@@ -33,7 +33,7 @@ class RequestController extends Controller
             ]
         );
 
-        $workspace = Workspace::findOrFail('project_id', $fields['project_id']);
+        $workspace = Workspace::where('project_id', $fields['project_id'])->first();
 
         $isMember = $req->user()->memberships()->where('workspace_id', $workspace->id)->exists();
         $hasRequest = $req->user()->requests()->where('workspace_id', $workspace->id)->exists();

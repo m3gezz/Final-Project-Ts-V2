@@ -16,7 +16,6 @@ export type SearcherType = {
   category_id?: string;
   skill_id?: string;
   sort?: string;
-  status?: string;
   type?: string;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
 };

@@ -14,7 +14,12 @@ export default function TextareaController<T extends FieldValues>({
       render={({ field, fieldState }) => (
         <Field className="space-y-2" data-invalid={fieldState.invalid}>
           <FieldLabel>{f?.label}</FieldLabel>
-          <Textarea {...field} rows={5} aria-invalid={fieldState.invalid} />
+          <Textarea
+            {...field}
+            rows={5}
+            aria-invalid={fieldState.invalid}
+            placeholder={f?.placeholder}
+          />
           {fieldState.error && (
             <FieldError>{fieldState.error.message}</FieldError>
           )}

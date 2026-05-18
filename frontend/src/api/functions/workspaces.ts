@@ -3,7 +3,7 @@ import { api } from "../axios";
 
 const getWorkspaces = async (searcher: SearcherType) => {
   const res = await api.get(
-    `workspaces?page=${searcher?.pagination?.current_page}&search=${searcher?.search}&status=${searcher?.status}&type=${searcher?.type}`,
+    `workspaces?page=${searcher?.pagination?.current_page}&search=${searcher?.search}&type=${searcher?.type ?? ""}`,
   );
   searcher?.setPagination((prev) => ({
     ...prev,
@@ -19,6 +19,16 @@ const getWorkspace = async (id: DefaultFields["id"], dataType: string) => {
   return res.data;
 };
 
+const getNonMembers = async (searcher: {
+  search: string;
+  workspace_id: DefaultFields["id"];
+}) => {
+  const res = await api.get(
+    `memberships?page=1&search=${searcher?.search}&workspace_id=${searcher?.workspace_id}`,
+  );
+  return res?.data?.data;
+};
+
 const updateMember = async (
   id: DefaultFields["id"],
   data: { role: string },
@@ -32,4 +42,10 @@ const destroyMember = async (id: DefaultFields["id"]) => {
   return res.data;
 };
 
-export { getWorkspaces, getWorkspace, updateMember, destroyMember };
+export {
+  getWorkspaces,
+  getWorkspace,
+  getNonMembers,
+  updateMember,
+  destroyMember,
+};
