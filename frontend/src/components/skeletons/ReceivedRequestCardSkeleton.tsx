@@ -7,7 +7,7 @@ export default function ReceivedRequestCardSkeleton() {
       <div className="flex justify-between w-full">
         <div className="space-y-2">
           <Skeleton className="h-2.5 w-30" />
-          <Skeleton className="h-10 w-80" />
+          <Skeleton className="h-3 w-12" />
         </div>
         <div className="flex gap-2 items-center">
           <Skeleton className="h-6 w-20" />

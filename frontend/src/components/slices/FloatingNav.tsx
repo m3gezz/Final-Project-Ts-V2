@@ -4,6 +4,7 @@ import {
   MessageSquare,
   UsersIcon,
   X,
+  type LucideIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -24,9 +25,12 @@ export default function FloatingNav() {
     setOpen(() => false);
   }, [pathname]);
 
-  const ActiveIcon: any = tabs.find(
-    (t) => pathname === `/workspaces/${id + t?.path}`,
-  )?.icon;
+  const matchedTab = tabs.find(
+    (t) => pathname === `/workspaces/${id}${t?.path}`,
+  );
+  const MainButtonIcon: LucideIcon = matchedTab
+    ? matchedTab.icon
+    : LayoutDashboard;
 
   return (
     <div
@@ -70,7 +74,7 @@ export default function FloatingNav() {
           {open ? (
             <X className="h-6 w-6" />
           ) : (
-            <ActiveIcon className="h-6 w-6" />
+            <MainButtonIcon className="h-6 w-6" />
           )}
         </span>
       </button>

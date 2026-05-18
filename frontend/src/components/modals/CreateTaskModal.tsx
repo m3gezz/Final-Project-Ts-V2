@@ -4,6 +4,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogHeader,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -53,7 +54,7 @@ export default function CreateTaskModal() {
           (old: PopulatedWorkspace) => ({
             ...old,
             tasks: [
-              ...old.tasks,
+              ...old?.tasks,
               {
                 id: Date.now(),
                 status: "todo",
@@ -84,6 +85,9 @@ export default function CreateTaskModal() {
     <DialogContent aria-describedby="">
       <DialogHeader>
         <DialogTitle>Create task</DialogTitle>
+        <DialogDescription>
+          Fill the bottom fields to create a new task.
+        </DialogDescription>
       </DialogHeader>
       <form
         className="space-y-3"
@@ -109,12 +113,13 @@ export default function CreateTaskModal() {
           control={form.control}
           f={{
             name: "user_id",
-            placeholder: "Task title",
           }}
           options={members}
         />
         <DialogFooter>
-          <Button disabled={isCreateTaskPending}>Create</Button>
+          <Button disabled={isCreateTaskPending}>
+            {isCreateTaskPending ? "Creating..." : "Create"}
+          </Button>
         </DialogFooter>
       </form>
     </DialogContent>

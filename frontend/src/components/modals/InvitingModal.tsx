@@ -1,5 +1,6 @@
 import {
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -30,7 +31,7 @@ export default function InvitingModal() {
     },
   });
   const search = form.watch("search");
-  const { data: users, isFetching } = useQuery({
+  const { data: users, isFetching: isUsersFetching } = useQuery({
     queryKey: ["users", pagination.current_page, search],
     queryFn: () =>
       getUsers({
@@ -52,16 +53,20 @@ export default function InvitingModal() {
     <DialogContent aria-describedby="">
       <DialogHeader>
         <DialogTitle>Invite to workspace</DialogTitle>
+        <DialogDescription>
+          Invite new members to this workspace.
+        </DialogDescription>
       </DialogHeader>
+
       <div className="space-y-3">
         <InputController control={form.control} f={{ name: "search" }} />
         <InvitingUsersList
           users={[
             ...(users ?? []).filter(
-              (u: UserType) => !membersIds?.includes(u.id),
+              (u: UserType) => !membersIds?.includes(u?.id),
             ),
           ]}
-          isLoading={isFetching}
+          isLoading={isUsersFetching}
         />
       </div>
     </DialogContent>
