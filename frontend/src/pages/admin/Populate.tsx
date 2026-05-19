@@ -45,8 +45,10 @@ export default function Populate() {
     ],
   });
 
-  if (!user?.admin) return;
-  <ErrorCard description="Only admins can access the populate page." />;
+  if (!user?.admin)
+    return (
+      <ErrorCard description="Only admins can access the populate page." />
+    );
 
   return (
     <div className="space-y-8">
