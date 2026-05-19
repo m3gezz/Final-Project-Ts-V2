@@ -1,34 +1,13 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  Home,
-  FolderKanban,
-  Users,
-  Inbox,
-  Briefcase,
-  Plus,
-  Shield,
-  LogOut,
-  Sparkles,
-  SidebarClose,
-  SidebarOpen,
-} from "lucide-react";
+import { LogOut, Sparkles, SidebarClose, SidebarOpen } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
-import { cn, getImageUrl } from "@/lib/utils";
+import { cn, getImageUrl, getPages } from "@/lib/utils";
 import { signOut } from "@/api/functions/auth";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-
-const items = [
-  { to: "/", label: "Home", icon: Home, end: true },
-  { to: "/projects", label: "Projects", icon: FolderKanban },
-  { to: "/users", label: "Users", icon: Users },
-  { to: "/workspaces", label: "Workspaces", icon: Briefcase },
-  { to: "/inbox", label: "Inbox", icon: Inbox },
-  { to: "/create-project", label: "Create Project", icon: Plus },
-];
 
 type SidebarContextType = {
   isOpen: boolean;
@@ -51,6 +30,7 @@ export default function AppSidebar() {
   const defaultStyles = `h-screen z-20 flex ${isOpen ? "w-64" : "w-16"} shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground transition-all ${isMobile ? onMobile : onPc}`;
 
   const { user } = useAppSelector((state) => state?.auth);
+  const pages = getPages(user?.admin);
   const { mutate: signOutMutation, isPending: isSignOutPending } = useMutation({
     mutationFn: () => signOut(disp),
   });
@@ -72,11 +52,10 @@ export default function AppSidebar() {
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
-        {items.map((it) => (
+        {pages.map((page) => (
           <NavLink
-            key={it.to}
-            to={it.to}
-            end={it.end}
+            key={page?.to}
+            to={page?.to}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                 isActive
@@ -85,26 +64,11 @@ export default function AppSidebar() {
               }`
             }
           >
-            <it.icon className="min-h-4 min-w-4 max-h-4 max-w-4" />
+            <page.icon className="min-h-4 min-w-4 max-h-4 max-w-4" />
 
-            <span className={`min-w-0 truncate`}>{it.label}</span>
+            <span className={`min-w-0 truncate`}>{page?.label}</span>
           </NavLink>
         ))}
-        {user?.admin && (
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                  : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60"
-              }`
-            }
-          >
-            <Shield className="min-h-4 min-w-4 max-h-4 max-w-4" />
-            <span className={`min-w-0 truncate`}>Dashboard</span>
-          </NavLink>
-        )}
       </nav>
 
       <div className="border-t p-3">

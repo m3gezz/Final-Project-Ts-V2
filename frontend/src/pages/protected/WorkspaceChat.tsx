@@ -35,6 +35,7 @@ export default function WorkspaceChat() {
   const { mutate } = useMutation({
     mutationFn: (data: createMessageSchemaType) => createMessage(data),
     onMutate: (data) => {
+      queryClient.cancelQueries();
       form.reset();
       const previous = queryClient.getQueryData(["messages", String(id)]);
       queryClient.setQueryData(

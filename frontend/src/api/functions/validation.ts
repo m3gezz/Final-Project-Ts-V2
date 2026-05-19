@@ -10,16 +10,10 @@ export function handleApiErrors<T extends FieldValues>(
   err: unknown,
   form: UseFormReturn<T>,
 ): boolean {
-  if (!(err instanceof AxiosError) || !err.response) {
-    alert("An unexpected network error occurred.");
-    return false;
-  }
+  if (!(err instanceof AxiosError) || !err.response) return false;
 
   const res = err.response;
-  if (res.status !== 422) {
-    alert(res.data?.message || "Something went wrong.");
-    return false;
-  }
+  if (res.status !== 422) return false;
 
   const data = res.data as LaravelValidationErrorResponse;
   const errors = data?.errors;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::latest()->get();
         return response()->json($categories);
     }
 
@@ -23,7 +24,13 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('admin', User::class);
+        $fields = $request->validate([
+            'label' => ['required','string','min:1','unique:categories,label']
+        ]);
+
+        Category::create($fields);
+        return response()->json(['message' => 'Created successfully']);
     }
 
     /**
@@ -47,6 +54,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $this->authorize('admin', User::class);
+        $category->delete();
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

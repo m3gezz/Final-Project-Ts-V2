@@ -55,6 +55,11 @@ const userDashboard = async () => {
   return res?.data;
 };
 
+const adminDashboard = async () => {
+  const res = await api.get(`adminDashboard`);
+  return res?.data;
+};
+
 export {
   getUsers,
   getUser,
@@ -62,4 +67,5 @@ export {
   updatePassword,
   destroyUser,
   userDashboard,
+  adminDashboard,
 };

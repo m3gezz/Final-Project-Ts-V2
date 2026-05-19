@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Badge;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,9 @@ class BadgeController extends Controller
      */
     public function index()
     {
-        //
+        $this->authorize('admin', User::class);
+        $badges = Badge::latest()->get();
+        return response()->json($badges);
     }
 
     /**
@@ -22,7 +25,14 @@ class BadgeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('admin', User::class);
+        $fields = $request->validate([
+            'label' => ['required','string','min:1','unique:categories,label'],
+            'description' => ['required','string','min:1'],
+        ]);
+
+        Badge::create($fields);
+        return response()->json(['message' => 'Created successfully']);
     }
 
     /**
@@ -46,6 +56,8 @@ class BadgeController extends Controller
      */
     public function destroy(Badge $badge)
     {
-        //
+        $this->authorize('admin', User::class);
+        $badge->delete();
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

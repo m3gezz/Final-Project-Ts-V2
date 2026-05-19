@@ -1,6 +1,6 @@
 import CommentCard from "../cards/CommentCard";
 import type { CommentType } from "@/assets/types";
-import SentRequestCardSkeleton from "../skeletons/SentRequestCardSkeleton";
+import CommentCardSkeleton from "../skeletons/CommentCardSkeleton";
 
 export default function CommentsList({
   comments,
@@ -12,7 +12,7 @@ export default function CommentsList({
   return isLoading ? (
     <div className="max-h-60 space-y-2 overflow-auto">
       {[...Array(3)].map((_, i) => (
-        <SentRequestCardSkeleton key={i} />
+        <CommentCardSkeleton key={i} />
       ))}
     </div>
   ) : comments?.length ? (

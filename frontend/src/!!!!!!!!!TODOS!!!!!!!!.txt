@@ -1,5 +1,5 @@
-1. rah kin toast, khdem bih w dir messages mn l backend lfrontend, imkn lik dirha b toast.success(data?.data?.message) f onsuccess dyal l mutation (amine)
-2. zid skeleton dyal comments, nsit madrtox 9bila (amine)
+1. rah kin toast, khdem bih w dir messages mn l backend lfrontend, imkn lik dirha b toast.success(data?.data?.message) f onsuccess dyal l mutation (amine):done ghi fhalat l error li not expected
+2. zid skeleton dyal comments, nsit madrtox 9bila (amine) :done
 3. bdl xkl dyal lmsgs (ahmed)
 4. bdl design rah kiban na9s (ahmed)
 5. low-key hadxi na9s 

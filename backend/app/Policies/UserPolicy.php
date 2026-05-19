@@ -62,4 +62,9 @@ class UserPolicy
     {
         return false;
     }
+
+    public function admin(User $user): bool
+    {
+        return $user->admin;
+    }
 }

@@ -24,6 +24,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
       mutationFn: (data: { status: "doing" | "done" }) =>
         updateTask(task?.id, data),
       onMutate: (data) => {
+        queryClient.cancelQueries();
         const previousProject = queryClient.getQueryData([
           "workspace",
           String(id),
@@ -58,6 +59,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
   const { mutate: removeTask, isPending: isRemoveTaskPending } = useMutation({
     mutationFn: () => destroyTask(task?.id),
     onMutate: () => {
+      queryClient.cancelQueries();
       const previousProject = queryClient.getQueryData([
         "workspace",
         String(id),

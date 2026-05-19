@@ -56,6 +56,7 @@ export default function Project() {
       return createProjectLike(id);
     },
     onMutate: () => {
+      queryClient.cancelQueries();
       const previousProject = queryClient.getQueryData([
         "project",
         String(project?.id),
@@ -84,6 +85,7 @@ export default function Project() {
     useMutation({
       mutationFn: () => createRequest({ project_id: id }),
       onMutate: () => {
+        queryClient.cancelQueries();
         const previousProject = queryClient.getQueryData([
           "project",
           String(id),
@@ -110,6 +112,7 @@ export default function Project() {
     useMutation({
       mutationFn: () => createComment({ project_id: id, content: comment }),
       onMutate: () => {
+        queryClient.cancelQueries();
         const previousProject = queryClient.getQueryData([
           "project-comments",
           String(id),
@@ -214,7 +217,7 @@ export default function Project() {
           </section>
           <section className="rounded-xl border bg-card p-6">
             <h2 className="text-lg font-semibold">Manifesto</h2>
-            <p className="mt-2 italic text-muted-foreground">
+            <p className="mt-2 italic text-muted-foreground line-clamp-2">
               "{project?.manifesto}"
             </p>
           </section>

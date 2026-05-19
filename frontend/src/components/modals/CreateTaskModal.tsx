@@ -44,6 +44,7 @@ export default function CreateTaskModal() {
     useMutation({
       mutationFn: (data: createTaskSchemaType) => createTask(data),
       onMutate: (data) => {
+        queryClient.cancelQueries();
         const previousProject = queryClient.getQueryData([
           "workspace",
           String(id),

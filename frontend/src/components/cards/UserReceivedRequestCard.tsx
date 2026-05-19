@@ -22,6 +22,7 @@ export default function UserReceivedRequestCard({
     mutationFn: (data: { status: "accepted" | "declined" }) =>
       updateInvitation(request?.id, data),
     onMutate: () => {
+      queryClient.cancelQueries();
       const previous = queryClient.getQueryData(["invitations"]);
       queryClient.setQueryData(["invitations"], (old: RequestType[]) => [
         ...old?.filter((r) => r?.id != request?.id),

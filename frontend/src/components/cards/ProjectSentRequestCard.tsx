@@ -27,6 +27,7 @@ export default function ProjectSentRequestCard({
   } = useMutation({
     mutationFn: () => destroyInvitation(request?.id),
     onMutate: () => {
+      queryClient.cancelQueries();
       const previous = queryClient.getQueryData([
         "workspace",
         String(request?.workspace_id),

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Skill;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class SkillController extends Controller
      */
     public function index()
     {
-        $skills = Skill::all();
+        $skills = Skill::latest()->get();
         return response()->json($skills);
     }
 
@@ -23,7 +24,13 @@ class SkillController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('admin', User::class);
+        $fields = $request->validate([
+            'label' => ['required','string','min:1','unique:skills,label']
+        ]);
+
+        Skill::create($fields);
+        return response()->json(['message' => 'Created successfully']);
     }
 
     /**
@@ -47,6 +54,8 @@ class SkillController extends Controller
      */
     public function destroy(Skill $skill)
     {
-        //
+        $this->authorize('admin', User::class);
+        $skill->delete();
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

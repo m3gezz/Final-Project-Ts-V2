@@ -28,6 +28,7 @@ export default function WsMemberCard({ member }: { member: MembershipType }) {
     useMutation({
       mutationFn: () => destroyMember(member?.id),
       onMutate: () => {
+        queryClient.cancelQueries();
         const previous = queryClient.getQueryData([
           "workspace",
           String(member?.workspace_id),

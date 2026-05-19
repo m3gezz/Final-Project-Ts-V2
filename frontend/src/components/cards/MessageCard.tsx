@@ -9,6 +9,12 @@ import { Input } from "../ui/input";
 import { destroyMessage, updateMessage } from "@/api/functions/messages";
 import type { PopulatedMessage } from "@/assets/types";
 import { useAppSelector } from "@/redux/store";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 export default function MessageCard({
   message,
@@ -26,6 +32,7 @@ export default function MessageCard({
     useMutation({
       mutationFn: () => destroyMessage(message?.id),
       onMutate: () => {
+        queryClient.cancelQueries();
         const previous = queryClient.getQueryData(["messages", String(id)]);
         queryClient.setQueryData(
           ["messages", String(id)],
@@ -50,6 +57,7 @@ export default function MessageCard({
     useMutation({
       mutationFn: () => updateMessage(message?.id, { message: edit?.message }),
       onMutate: () => {
+        queryClient.cancelQueries();
         setEdit((prev) => ({ ...prev, editing: false }));
         const previous = queryClient.getQueryData(["messages", String(id)]);
         queryClient.setQueryData(
@@ -71,28 +79,26 @@ export default function MessageCard({
     <div className="flex justify-end gap-2 items-start text-end">
       <div className="flex flex-col gap-1 w-full">
         <div>
-          {!message?.isDeleted && (
-            <Button
-              size={"icon-xs"}
-              variant={"secondary"}
-              onClick={() =>
-                setEdit((prev) => ({ ...prev, editing: !prev?.editing }))
-              }
-              className="mx-2"
-            >
-              {edit?.editing ? <X /> : <Pen />}
-            </Button>
-          )}
-          {edit?.editing && !message?.isDeleted && (
-            <Button
-              size={"icon-xs"}
-              variant={"secondary"}
-              disabled={isUpdateMessagePending}
-              onClick={() => updateMessageMutation()}
-              className="my-auto mx-2"
-            >
-              <Check />
-            </Button>
+          {edit?.editing && (
+            <>
+              <Button
+                size={"icon-xs"}
+                variant={"secondary"}
+                onClick={() => setEdit((prev) => ({ ...prev, editing: false }))}
+                className="mx-2"
+              >
+                <X />
+              </Button>
+              <Button
+                size={"icon-xs"}
+                variant={"secondary"}
+                disabled={isUpdateMessagePending}
+                onClick={() => updateMessageMutation()}
+                className="my-auto mx-2"
+              >
+                <Check />
+              </Button>
+            </>
           )}
           <span className="font-medium">
             <span className="text-xs text-muted-foreground">
@@ -102,17 +108,6 @@ export default function MessageCard({
           </span>
         </div>
         <div className="relative rounded flex justify-end">
-          {!edit?.editing && !message?.isDeleted && (
-            <Button
-              size={"icon-xs"}
-              variant={"destructive"}
-              disabled={isDestroyMessagePending}
-              onClick={() => destroyMessageMutation()}
-              className="my-auto mx-2"
-            >
-              <X />
-            </Button>
-          )}
           {edit?.editing && !message?.isDeleted ? (
             <Input
               value={edit?.message}
@@ -122,11 +117,32 @@ export default function MessageCard({
               className="w-[80%] max-w-200 p-2 rounded border rounded-tr-none"
             />
           ) : (
-            <p
-              className={`w-[80%] max-w-200 p-2 rounded border rounded-tr-none ${message?.isDeleted ? "text-destructive border-destructive" : ""}`}
-            >
-              {message?.message}
-            </p>
+            <ContextMenu>
+              <ContextMenuTrigger
+                className={`max-w-200 py-1 px-4 rounded-lg rounded-tr-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-muted"}`}
+              >
+                <p>{message?.message}</p>
+              </ContextMenuTrigger>
+              {!message?.isDeleted && (
+                <ContextMenuContent>
+                  <ContextMenuItem
+                    onClick={() =>
+                      setEdit((prev) => ({ ...prev, editing: true }))
+                    }
+                    variant={"default"}
+                  >
+                    <Pen /> Edit
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    disabled={isDestroyMessagePending}
+                    onClick={() => destroyMessageMutation()}
+                    variant={"destructive"}
+                  >
+                    <X /> Delete
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              )}
+            </ContextMenu>
           )}
         </div>
       </div>
@@ -150,7 +166,7 @@ export default function MessageCard({
         </span>
         <div className="relative rounded flex">
           <p
-            className={`w-[80%] max-w-200 p-2 rounded border rounded-tl-none ${message?.isDeleted ? "text-destructive border-destructive" : ""}`}
+            className={`max-w-200 py-1 px-4 rounded-lg rounded-tr-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-muted"}`}
           >
             {message?.message}
           </p>

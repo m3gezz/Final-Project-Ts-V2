@@ -17,6 +17,7 @@ export default function CommentCard({ comment }: { comment: CommentType }) {
     useMutation({
       mutationFn: () => destroyComment(comment?.id),
       onMutate: () => {
+        queryClient.cancelQueries();
         const previousProject = queryClient.getQueryData([
           "project-comments",
           String(id),

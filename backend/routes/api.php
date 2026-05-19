@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\UserController;
@@ -44,8 +45,9 @@ Route::post('/password/reset-password', [PasswordController::class, 'reset_passw
 
 //Data routes
 Route::middleware('auth:sanctum')->group(function() {
-    Route::apiResource('skills', SkillController::class)->only(['index']);
-    Route::apiResource('categories', CategoryController::class)->only(['index']);
+    Route::apiResource('skills', SkillController::class)->except(['show','update']);
+    Route::apiResource('categories', CategoryController::class)->except(['show','update']);
+    Route::apiResource('badges', BadgeController::class)->except(['show','update']);
 
     Route::apiResource('users', UserController::class)->except(['store']);
     Route::apiResource('projects', ProjectController::class);
@@ -61,5 +63,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('likes', LikeController::class)->only(['store']);
 
     Route::get('/userDashboard', [UserController::class, 'userDashboard']);
+    Route::get('/adminDashboard', [UserController::class, 'adminDashboard']);
     Route::get('/can-edit/{project}', [ProjectController::class, 'canEdit']);
 });

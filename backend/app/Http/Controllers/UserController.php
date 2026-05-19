@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Workspace;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -177,6 +178,52 @@ class UserController extends Controller
         $dashboard['user'] = $user;
         $dashboard['workspaces'] = $workspaces;
         $dashboard['projects'] = $projects;
+        return response()->json($dashboard);
+    }
+
+    public function adminDashboard() 
+    {
+        $this->authorize('admin', User::class);
+        $startOfThisMonth = Carbon::now()->startOfMonth();
+        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfLastMonth   = Carbon::now()->subMonth()->endOfMonth();
+
+        $dashboard['count']['users'] = User::count();
+        $dashboard['count']['workspaces'] = Workspace::count();
+        $dashboard['count']['projects'] = Project::count();
+        $activeUsersCount = User::whereHas('tokens', function ($query) use ($startOfThisMonth) {$query->where('created_at', '>=', $startOfThisMonth);})->count();
+        $dashboard['count']['active_users'] = $activeUsersCount;
+        
+        $getGrowth = function ($modelClass) use ($startOfThisMonth, $startOfLastMonth, $endOfLastMonth) {
+            $thisMonth = $modelClass::where('created_at', '>=', $startOfThisMonth)->count();
+            $lastMonth = $modelClass::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->count();
+
+            if ($lastMonth > 0) {
+                return round((($thisMonth - $lastMonth) / $lastMonth) * 100, 1);
+            }
+            return $thisMonth > 0 ? 100 : 0;
+        };
+
+        $dashboard['growth']['users'] = $getGrowth(User::class);
+        $dashboard['growth']['workspaces'] = $getGrowth(Workspace::class);
+        $dashboard['growth']['projects'] = $getGrowth(Project::class);
+        
+        $activeThisMonth = $activeUsersCount;
+
+        $activeLastMonth = User::whereHas('tokens', function ($query) use ($startOfLastMonth, $endOfLastMonth) {
+            $query->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth]);
+        })->count();
+
+        if ($activeLastMonth > 0) {
+            $dashboard['growth']['active_users'] = round((($activeThisMonth - $activeLastMonth) / $activeLastMonth) * 100, 1);
+        } else {
+            $dashboard['growth']['active_users'] = $activeThisMonth > 0 ? 100 : 0;
+        }
+
+        $dashboard['new_users'] = User::withExists(['tokens as is_active' => function ($query) use ($startOfThisMonth) {
+            $query->where('created_at', '>=', $startOfThisMonth);
+        }])->latest()->limit(5)->get();
+
         return response()->json($dashboard);
     }
 }

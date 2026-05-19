@@ -26,6 +26,7 @@ import WorkspaceMembers from "./pages/protected/WorkspaceMembers";
 import WorkspaceChat from "./pages/protected/WorkspaceChat";
 import WorkspaceTasks from "./pages/protected/WorkspaceTasks";
 import WorkspaceLayout from "./layouts/WorkspaceLayout";
+import Populate from "./pages/admin/Populate";
 
 const routes = [
   {
@@ -130,10 +131,6 @@ const routes = [
             ],
           },
           { path: "inbox", element: <Inbox /> },
-          {
-            path: "project-edit/:id",
-            element: <>hi</>,
-          },
         ],
       },
       {
@@ -142,6 +139,10 @@ const routes = [
           {
             path: "dashboard",
             element: <Dashboard />,
+          },
+          {
+            path: "populate",
+            element: <Populate />,
           },
         ],
       },

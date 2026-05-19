@@ -17,6 +17,7 @@ export default function UserSentRequestCard({
     useMutation({
       mutationFn: () => destroyRequest(request?.id),
       onMutate: () => {
+        queryClient.cancelQueries();
         const previous = queryClient.getQueryData(["requests"]);
         queryClient.setQueryData(["requests"], (old: RequestType[]) => [
           ...old?.filter((r) => r?.id != request?.id),

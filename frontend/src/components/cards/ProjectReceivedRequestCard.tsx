@@ -27,6 +27,7 @@ export default function ProjectReceivedRequestCard({
       mutationFn: (data: { status: "accepted" | "declined" }) =>
         updateRequest(request?.id, data),
       onMutate: () => {
+        queryClient.cancelQueries();
         const previous = queryClient.getQueryData([
           "workspace",
           String(request?.workspace_id),

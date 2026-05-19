@@ -101,17 +101,16 @@ export default function UserEdit() {
       onError: (err) => {
         handleApiErrors(err, form);
       },
-      onSuccess: (data) => {
+      onSuccess: () => {
         queryClient.fetchQuery({
           queryKey: ["getMe"],
           queryFn: () => getMe(disp),
+          staleTime: 0,
         });
         queryClient.invalidateQueries({
           queryKey: ["profile", String(user?.id)],
         });
-        if (data) {
-          nav(-1);
-        }
+        nav(-1);
       },
     });
 

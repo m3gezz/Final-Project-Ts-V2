@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('avatar')->default("");
+            $table->boolean('admin')->default(0);
             $table->string('full_name');
             $table->string('username')->nullable();
             $table->text('professional_title')->nullable();
