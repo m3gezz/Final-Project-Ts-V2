@@ -17,9 +17,12 @@ import type { PopulatedWorkspace } from "@/assets/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTaskSchema, type createTaskSchemaType } from "@/zod/taskSchemas";
 import { handleApiErrors } from "@/api/functions/validation";
+import { useAppDispatch } from "@/redux/store";
+import { toggleModal } from "@/redux/modalSlice";
 
 export default function CreateTaskModal() {
   const { id } = useParams();
+  const disp = useAppDispatch();
   const queryClient = useQueryClient();
   const data: PopulatedWorkspace | undefined = queryClient.getQueryData([
     "workspace",
@@ -44,6 +47,7 @@ export default function CreateTaskModal() {
     useMutation({
       mutationFn: (data: createTaskSchemaType) => createTask(data),
       onMutate: (data) => {
+        disp(toggleModal(false));
         queryClient.cancelQueries();
         const previousProject = queryClient.getQueryData([
           "workspace",
@@ -63,6 +67,7 @@ export default function CreateTaskModal() {
                 description: data?.description,
                 user: old.memberships.find((m) => m?.user?.id == data?.user_id)
                   ?.user,
+                created_at: new Date(),
               },
             ],
           }),

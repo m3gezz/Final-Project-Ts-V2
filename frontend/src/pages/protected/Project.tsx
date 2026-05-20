@@ -110,9 +110,11 @@ export default function Project() {
     });
   const { mutate: createCommentMutation, isPending: isCreateCommentPending } =
     useMutation({
-      mutationFn: () => createComment({ project_id: id, content: comment }),
+      mutationFn: (data: string) =>
+        createComment({ project_id: id, content: data }),
       onMutate: () => {
         queryClient.cancelQueries();
+        setComment("");
         const previousProject = queryClient.getQueryData([
           "project-comments",
           String(id),
@@ -121,7 +123,7 @@ export default function Project() {
           ["project-comments", String(id)],
           (old: CommentType[]) => [
             ...old,
-            { id: Date.now(), content: comment, user },
+            { id: Date.now(), content: comment, user, created_at: new Date() },
           ],
         );
         return { previousProject };
@@ -224,9 +226,8 @@ export default function Project() {
           <section className="rounded-xl border bg-card p-6">
             <h2 className="flex items-center gap-2 text-lg font-semibold">
               <MessageCircle className="h-4 w-4" />
-              Comments ({project?.comments_count})
+              Comments ({comments?.length})
             </h2>
-            <CommentsList comments={comments} isLoading={isCommentsLoading} />
             <div className="mt-4 flex gap-2">
               <Textarea
                 placeholder="Leave a comment…"
@@ -237,12 +238,13 @@ export default function Project() {
               <Button
                 onClick={() => {
                   if (!comment.trim() || isCreateCommentPending) return;
-                  createCommentMutation();
+                  createCommentMutation(comment);
                 }}
               >
                 <Send className="h-4 w-4" />
               </Button>
             </div>
+            <CommentsList comments={comments} isLoading={isCommentsLoading} />
           </section>
         </div>
 

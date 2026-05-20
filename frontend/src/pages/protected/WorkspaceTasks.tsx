@@ -6,12 +6,15 @@ import { useQuery } from "@tanstack/react-query";
 import { getWorkspace } from "@/api/functions/workspaces";
 import { useParams } from "react-router-dom";
 import TasksList from "@/components/lists/TasksList";
-import { useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import type { MembershipType } from "@/assets/types";
+import { toggleModal } from "@/redux/modalSlice";
 
 export default function WorkspaceTasks() {
   const { id } = useParams();
+  const disp = useAppDispatch();
   const { user } = useAppSelector((state) => state?.auth);
+  const { open } = useAppSelector((state) => state?.modal);
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "tasks"],
     queryFn: () => getWorkspace(id, "tasks"),
@@ -26,7 +29,7 @@ export default function WorkspaceTasks() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
-        <Dialog>
+        <Dialog open={open} onOpenChange={(v) => disp(toggleModal(v))}>
           {isAdmin && (
             <DialogTrigger asChild>
               <Button>

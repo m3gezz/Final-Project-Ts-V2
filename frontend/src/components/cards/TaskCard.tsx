@@ -1,12 +1,17 @@
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getImageUrl } from "@/lib/utils";
+import { formatTime, getImageUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-import { X } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import { Check, Circle, CircleDot, Loader, X } from "lucide-react";
 import type { PopulatedTask, PopulatedWorkspace } from "@/assets/types";
 import { destroyTask, updateTask } from "@/api/functions/tasks";
 import { useAppSelector } from "@/redux/store";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 export default function TaskCard({ task }: { task: PopulatedTask }) {
   const { id } = useParams();
@@ -15,13 +20,13 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
   const previous: PopulatedWorkspace | undefined = queryClient.getQueryData([
     "workspace",
     String(id),
-    "members",
+    "tasks",
   ]);
   const isOwner = user?.id === previous?.project?.user_id;
 
   const { mutate: updateTaskMutation, isPending: isUpdateTaskPending } =
     useMutation({
-      mutationFn: (data: { status: "doing" | "done" }) =>
+      mutationFn: (data: { status: "todo" | "doing" | "done" }) =>
         updateTask(task?.id, data),
       onMutate: (data) => {
         queryClient.cancelQueries();
@@ -56,83 +61,110 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
       },
     });
 
-  const { mutate: removeTask, isPending: isRemoveTaskPending } = useMutation({
-    mutationFn: () => destroyTask(task?.id),
-    onMutate: () => {
-      queryClient.cancelQueries();
-      const previousProject = queryClient.getQueryData([
-        "workspace",
-        String(id),
-        "tasks",
-      ]);
-      queryClient.setQueryData(
-        ["workspace", String(id), "tasks"],
-        (old: PopulatedWorkspace) => ({
-          ...old,
-          tasks: [...old?.tasks?.filter((t) => t?.id != task?.id)],
-        }),
-      );
-      return { previousProject };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(id), "tasks"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", String(id), "overview"],
-      });
-    },
-  });
+  const { mutate: destroyTaskMutation, isPending: isDestroyTaskPending } =
+    useMutation({
+      mutationFn: () => destroyTask(task?.id),
+      onMutate: () => {
+        queryClient.cancelQueries();
+        const previousProject = queryClient.getQueryData([
+          "workspace",
+          String(id),
+          "tasks",
+        ]);
+        queryClient.setQueryData(
+          ["workspace", String(id), "tasks"],
+          (old: PopulatedWorkspace) => ({
+            ...old,
+            tasks: [...old?.tasks?.filter((t) => t?.id != task?.id)],
+          }),
+        );
+        return { previousProject };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(id), "tasks"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["workspace", String(id), "overview"],
+        });
+      },
+    });
 
   return (
     <div
       key={task?.id}
-      className="rounded-lg border bg-card p-3 space-y-4"
+      className="rounded-lg border bg-card p-3 space-y-6"
       style={{ boxShadow: "var(--shadow-soft)" }}
     >
-      <div className="flex items-center justify-between">
-        <div className="text-sm">
-          <h1 className="font-medium">{task?.title}</h1>
-          {task?.description && <p>{task?.description}</p>}
-        </div>
-        {(user?.id === task?.user?.id || isOwner) && task?.status === "todo" ? (
-          <Button
-            variant={"default"}
-            disabled={isUpdateTaskPending}
-            onClick={() => updateTaskMutation({ status: "doing" })}
-          >
-            I'll work on it
-          </Button>
-        ) : (user?.id === task?.user?.id || isOwner) &&
-          task?.status === "doing" ? (
-          <Button
-            variant={"secondary"}
-            disabled={isUpdateTaskPending}
-            onClick={() => updateTaskMutation({ status: "done" })}
-          >
-            Done
-          </Button>
-        ) : (
-          (user?.id === task?.user?.id || isOwner) &&
-          task?.status === "done" && (
-            <Button
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <div className="flex items-center justify-between">
+            <div className="text-sm">
+              <h1 className="font-medium text-xl">{task?.title}</h1>
+              {task?.description && <p>{task?.description}</p>}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {formatTime(task?.created_at)}
+            </span>
+          </div>
+          <div className="mt-2 flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={getImageUrl(task?.user?.avatar)} />
+              <AvatarFallback>{task?.user?.full_name?.[0]}</AvatarFallback>
+            </Avatar>
+            <div className="truncate">
+              <Link to={`/users/${task?.user?.id}`} className="font-medium ">
+                {task?.user?.full_name}
+              </Link>
+              <p className="text-xs text-muted-foreground">@{user?.username}</p>
+            </div>
+          </div>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          {(user?.id === task?.user?.id || isOwner) && (
+            <>
+              {task?.status !== "todo" && (
+                <ContextMenuItem
+                  variant={"default"}
+                  disabled={isUpdateTaskPending}
+                  onClick={() => updateTaskMutation({ status: "todo" })}
+                >
+                  <Circle />
+                  Set as todo
+                </ContextMenuItem>
+              )}
+              {task?.status !== "doing" && (
+                <ContextMenuItem
+                  variant={"default"}
+                  disabled={isUpdateTaskPending}
+                  onClick={() => updateTaskMutation({ status: "doing" })}
+                >
+                  <CircleDot /> Set as in progress
+                </ContextMenuItem>
+              )}
+              {task?.status !== "done" && (
+                <ContextMenuItem
+                  variant={"default"}
+                  disabled={isUpdateTaskPending}
+                  onClick={() => updateTaskMutation({ status: "done" })}
+                >
+                  <Check />
+                  Set as done
+                </ContextMenuItem>
+              )}
+            </>
+          )}
+          {isOwner && (
+            <ContextMenuItem
               variant={"destructive"}
-              disabled={isRemoveTaskPending}
-              onClick={() => removeTask()}
+              disabled={isDestroyTaskPending}
+              onClick={() => destroyTaskMutation()}
             >
-              <X />
-            </Button>
-          )
-        )}
-      </div>
-      <div className="mt-2 flex items-center justify-between">
-        {task?.user && (
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={getImageUrl(task?.user?.avatar)} />
-            <AvatarFallback>{task?.user?.full_name?.[0]}</AvatarFallback>
-          </Avatar>
-        )}
-      </div>
+              <X /> Delete
+            </ContextMenuItem>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
     </div>
   );
 }

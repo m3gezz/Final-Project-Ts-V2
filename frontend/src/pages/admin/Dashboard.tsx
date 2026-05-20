@@ -4,6 +4,7 @@ import Header from "@/components/slices/Header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getImageUrl } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   Users as UsersIcon,
@@ -92,7 +93,7 @@ export default function Dashboard() {
                 className="flex items-center gap-3 border-b p-4 last:border-b-0"
               >
                 <Avatar>
-                  <AvatarImage src={u?.avatar} />
+                  <AvatarImage src={getImageUrl(u?.avatar)} />
                   <AvatarFallback>{u?.full_name[0]}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">

@@ -4,10 +4,13 @@ import { getImageUrl } from "@/lib/utils";
 import { Link, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createInvitation } from "@/api/functions/invitations";
-import type { UserType } from "@/assets/types";
+import type { PopulatedWorkspace, UserType } from "@/assets/types";
+import { useAppDispatch } from "@/redux/store";
+import { toggleModal } from "@/redux/modalSlice";
 
 export default function InvitingUserCard({ user }: { user: UserType }) {
   const { id } = useParams();
+  const disp = useAppDispatch();
   const queryClient = useQueryClient();
   const {
     mutate: createInvitationMutation,
@@ -18,6 +21,35 @@ export default function InvitingUserCard({ user }: { user: UserType }) {
         workspace_id: id,
         user_id: user?.id,
       }),
+    onMutate: () => {
+      disp(toggleModal(false));
+      queryClient.cancelQueries();
+      const previous = queryClient.getQueryData([
+        "workspace",
+        String(id),
+        "members",
+      ]);
+
+      queryClient.setQueryData(
+        ["workspace", String(id), "members"],
+        (old: PopulatedWorkspace) => ({
+          ...old,
+          invitations: [
+            ...old.invitations,
+            {
+              id: Date.now(),
+              workspace_id: id,
+              user_id: user?.id,
+              user,
+              status: "pending",
+              created_at: new Date(),
+            },
+          ],
+        }),
+      );
+
+      return { previous };
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["workspace", String(id), "members"],

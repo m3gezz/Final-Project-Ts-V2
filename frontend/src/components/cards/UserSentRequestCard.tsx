@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getImageUrl } from "@/lib/utils";
+import { formatTime, getImageUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { destroyRequest } from "@/api/functions/requests";
 import type { RequestType } from "@/assets/types";
@@ -56,8 +56,11 @@ export default function UserSentRequestCard({
           </Link>
           's workspace
         </div>
-        <div className="mt-1">
+        <div className="mt-1 space-x-2">
           <Badge variant="outline">{request?.status}</Badge>
+          <span className="text-xs text-muted-foreground">
+            {formatTime(request?.created_at)}
+          </span>
         </div>
       </div>
       {request?.status === "pending" && (
