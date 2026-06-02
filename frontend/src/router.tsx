@@ -20,7 +20,9 @@ import Admin from "./layouts/Admin";
 import Guest from "./layouts/Guest";
 import Home from "./pages/protected/Home";
 import User from "./pages/protected/User";
-import Landing from "./pages/Landing";
+import Landing from "./pages/landing";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
 import ProjectManipulator from "./pages/protected/ProjectManipulator";
 import WorkspaceMembers from "./pages/protected/WorkspaceMembers";
 import WorkspaceChat from "./pages/protected/WorkspaceChat";
@@ -34,12 +36,20 @@ const routes = [
     element: <NotFound />,
   },
   {
+    path: "/welcome",
+    element: <Landing />,
+  },
+  {
+    path: "/about",
+    element: <AboutUs />,
+  },
+  {
+    path: "/contact",
+    element: <Contact />,
+  },
+  {
     element: <Guest />,
     children: [
-      {
-        path: "/welcome",
-        element: <Landing />,
-      },
       {
         path: "/sign-up",
         element: <SignUp />,

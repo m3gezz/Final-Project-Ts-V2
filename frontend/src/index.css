@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap");
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -5,6 +6,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-heading: "Sora", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+  --color-brand-primary: #2563eb;
+  --color-brand-accent: #6366f1;
+  --color-brand-dark: #0f172a;
+  --color-brand-light: #f0f4ff;
+  --color-brand-muted: #64748b;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -145,20 +153,22 @@
 }
 
 @layer base {
+  html {
+    background-color: var(--color-background);
+  }
   * {
     border-color: var(--color-border);
   }
   body {
+    min-height: 100vh;
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family:
-      ui-sans-serif,
-      system-ui,
-      -apple-system,
-      "Inter",
-      "Segoe UI",
-      sans-serif;
+    font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
+  }
+  #root {
+    min-height: 100vh;
+    background-color: var(--color-background);
   }
   h1,
   h2,
@@ -166,6 +176,14 @@
   h4 {
     letter-spacing: -0.02em;
   }
+}
+
+.marketing-stats-bg {
+  background-image:
+    linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.8)),
+    url("https://picsum.photos/seed/mountains/1600/900");
+  background-size: cover;
+  background-position: center;
 }
 
 *::-webkit-scrollbar {

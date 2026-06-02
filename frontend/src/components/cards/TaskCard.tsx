@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatTime, getImageUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
-import { Check, Circle, CircleDot, Loader, X } from "lucide-react";
+import { Check, Circle, CircleDot, X } from "lucide-react";
 import type { PopulatedTask, PopulatedWorkspace } from "@/assets/types";
 import { destroyTask, updateTask } from "@/api/functions/tasks";
 import { useAppSelector } from "@/redux/store";
