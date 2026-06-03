@@ -63,7 +63,7 @@ class MessageController extends Controller
 
         $message->update($fields);
         broadcast(new EventsMessage('updated', $message->workspace_id));
-        return response()->json('updated');
+        return response()->json(['message' => 'Message updated successfully.']);
     }
 
     /**
@@ -74,6 +74,6 @@ class MessageController extends Controller
         $this->authorize('delete',$message);
         $message->update(['message' => 'This message has been deleted.', 'isDeleted' => 1]);
         broadcast(new EventsMessage('deleted', $message->workspace_id));
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Message deleted successfully']);
     }
 }

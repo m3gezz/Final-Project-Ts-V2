@@ -1,5 +1,6 @@
 import type { createDataSchemaType } from "@/zod/data";
 import { api } from "../axios";
+import { toast } from "sonner";
 
 const getSkills = async () => {
   const res = await api.get("skills");
@@ -18,11 +19,13 @@ const getBadges = async () => {
 
 const createData = async (url: string, data: createDataSchemaType) => {
   const res = await api.post(url, data);
+  toast.success(res?.data?.message);
   return res;
 };
 
 const deleteData = async (url: string) => {
   const res = await api.delete(url);
+  toast.success(res?.data?.message);
   return res;
 };
 

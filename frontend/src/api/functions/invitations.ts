@@ -1,5 +1,6 @@
 import type { DefaultFields } from "@/assets/types";
 import { api } from "../axios";
+import { toast } from "sonner";
 
 const getInvitations = async () => {
   const res = await api.get(`invitations`);
@@ -11,6 +12,7 @@ const createInvitation = async (data: {
   user_id: DefaultFields["id"];
 }) => {
   const res = await api.post("invitations", data);
+  toast.success(res?.data?.message);
   return res;
 };
 
@@ -19,11 +21,13 @@ const updateInvitation = async (
   data: { status: "accepted" | "declined" },
 ) => {
   const res = await api.put(`invitations/${id}`, data);
+  toast.success(res?.data?.message);
   return res.data;
 };
 
 const destroyInvitation = async (id: DefaultFields["id"]) => {
   const res = await api.delete(`invitations/${id}`);
+  toast.success(res?.data?.message);
   return res;
 };
 

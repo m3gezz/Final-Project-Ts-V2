@@ -45,7 +45,7 @@ class RequestController extends Controller
 
         $fields['workspace_id'] = $workspace->id;
         $req->user()->requests()->create($fields);
-        return response()->json('created');
+        return response()->json(['message' => 'Request created successfully.']);
     }
 
     /**
@@ -81,7 +81,7 @@ class RequestController extends Controller
             $request->delete();
         }
 
-        return response()->json('updated');
+        return response()->json(['message' => 'Request '.$fields['status'].' successfully.']);
     }
 
     /**
@@ -90,6 +90,6 @@ class RequestController extends Controller
     public function destroy(Request $request)
     {
         $request->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Request deleted successfully']);
     }
 }

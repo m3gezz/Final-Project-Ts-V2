@@ -33,7 +33,7 @@ class TaskController extends Controller
         );
 
         Task::create($fields);
-        return response()->json('created');
+        return response()->json(['message' => 'Task created successfully.']);
     }
 
     /**
@@ -57,7 +57,7 @@ class TaskController extends Controller
         );
 
         $task->update($fields);
-        return response()->json('updated');
+        return response()->json(['message' => 'Task is '.$fields['status'].' now.']);
     }
 
     /**
@@ -67,6 +67,6 @@ class TaskController extends Controller
     {
         $this->authorize('delete', $task);
         $task->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Task deleted successfully']);
     }
 }

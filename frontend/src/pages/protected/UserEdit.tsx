@@ -123,7 +123,6 @@ export default function UserEdit() {
       <form
         onSubmit={form.handleSubmit((data) => updateUserMutation(data))}
         className="space-y-6 rounded-xl border bg-card p-6"
-        style={{ boxShadow: "var(--shadow-soft)" }}
       >
         <div className="flex items-center gap-4">
           <Avatar className="h-20 w-20">

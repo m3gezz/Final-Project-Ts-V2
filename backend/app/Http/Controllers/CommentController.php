@@ -29,7 +29,7 @@ class CommentController extends Controller
             ]
         );
         $request->user()->comments()->create($fields);
-        return response()->json('created');
+        return response()->json(['message' => 'Comment created successfully.']);
     }
 
     /**
@@ -48,7 +48,7 @@ class CommentController extends Controller
         $this->authorize('update', $comment);
         $fields = $request->validate(['content' => ['required','string','min:1']]);
         $comment->update($fields);
-        return response()->json('updated');
+        return response()->json(['message' => 'Comment updated successfully.']);
     }
 
     /**
@@ -58,6 +58,6 @@ class CommentController extends Controller
     {
         $this->authorize('delete', $comment);
         $comment->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Comment deleted successfully.']);
     }
 }

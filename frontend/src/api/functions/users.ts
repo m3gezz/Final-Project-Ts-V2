@@ -6,6 +6,7 @@ import type {
   destroyUserSchemaType,
   updatePasswordSchemaType,
 } from "@/zod/usersSchemas";
+import { toast } from "sonner";
 
 const getUsers = async (searcher: SearcherType) => {
   const res = await api.get(
@@ -27,6 +28,7 @@ const getUser = async (id: DefaultFields["id"]) => {
 
 const updateUser = async (id: DefaultFields["id"], data: any) => {
   const res = await api.post(`users/${id}`, data);
+  toast.success(res?.data?.message);
   return res;
 };
 
@@ -35,6 +37,7 @@ const updatePassword = async (
   data: updatePasswordSchemaType,
 ) => {
   const res = await api.patch(`users/${id}`, data);
+  toast.success(res?.data?.message);
   return res;
 };
 
@@ -47,6 +50,7 @@ const destroyUser = async (
     data: data,
   });
   disp(unsetAuth());
+  toast.success(res?.data?.message);
   return res;
 };
 

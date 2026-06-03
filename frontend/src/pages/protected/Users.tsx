@@ -54,7 +54,7 @@ export default function Users() {
     <div>
       <Header title="Users" description="Find people to collaborate with." />
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <div className="flex w-full lg:max-w-2xl gap-2 ml-auto">
+        <div className="flex flex-col w-full lg:max-w-2xl lg:flex-row gap-2 ml-auto">
           <InputController
             control={form.control}
             f={{
@@ -93,11 +93,13 @@ export default function Users() {
       </div>
       <UsersList users={users} isLoading={isUsersFetching} />
 
-      <PageFooter
-        pagination={pagination}
-        setPagination={setPagination}
-        isLoading={isUsersFetching}
-      />
+      {!!users?.length && (
+        <PageFooter
+          pagination={pagination}
+          setPagination={setPagination}
+          isLoading={isUsersFetching}
+        />
+      )}
     </div>
   );
 }

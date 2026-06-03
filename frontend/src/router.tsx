@@ -23,13 +23,12 @@ import User from "./pages/protected/User";
 import Landing from "./pages/Landing";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
-// import likan from "./pages/protected/likan";
 import WorkspaceMembers from "./pages/protected/WorkspaceMembers";
 import WorkspaceChat from "./pages/protected/WorkspaceChat";
 import WorkspaceTasks from "./pages/protected/WorkspaceTasks";
 import WorkspaceLayout from "./layouts/WorkspaceLayout";
 import Populate from "./pages/admin/Populate";
-import ProjectManipulator from "./pages/protected/CreateProject";
+import ProjectManipulator from "./pages/protected/ProjectManipulator";
 
 const routes = [
   {

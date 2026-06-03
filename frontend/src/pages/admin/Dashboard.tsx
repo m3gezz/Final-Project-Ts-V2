@@ -55,11 +55,7 @@ export default function Dashboard() {
       />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats?.map((s) => (
-          <div
-            key={s?.label}
-            className="rounded-xl border bg-card p-5"
-            style={{ boxShadow: "var(--shadow-soft)" }}
-          >
+          <div key={s?.label} className="rounded-xl border bg-card p-5">
             <div className="flex items-center justify-between">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground">
                 <s.icon className="h-4 w-4" />

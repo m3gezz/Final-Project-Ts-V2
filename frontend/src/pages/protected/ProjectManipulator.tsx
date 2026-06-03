@@ -23,6 +23,7 @@ import {
 } from "@/zod/projectsSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
   Check,
   ChevronLeft,
@@ -30,11 +31,13 @@ import {
   Lock,
   Pen,
   Plus,
+  TriangleAlert,
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
+import DeleteProjectModal from "@/components/modals/DeleteProjectModal";
 
 const textareaFields = [
   {
@@ -355,6 +358,35 @@ export default function ProjectManipulator({
                   </div>
                 )}
               />
+              {mode === "update" && (
+                <div className="rounded-xl border border-destructive bg-destructive/20 p-4">
+                  <div className="flex items-center mb-4 gap-2 text-destructive">
+                    <TriangleAlert className="h-4 w-4" />
+                    <span className="flex items-center gap-2">
+                      Delete project
+                    </span>
+                  </div>
+                  <Dialog>
+                    <div className="flex flex-col gap-2">
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Permanently remove your project and all associated data.
+                        This action cannot be undone.
+                      </p>
+                      <DialogTrigger asChild>
+                        <Button
+                          type="button"
+                          variant={"destructive"}
+                          className="ml-auto"
+                        >
+                          Delete
+                        </Button>
+                      </DialogTrigger>
+                    </div>
+
+                    <DeleteProjectModal />
+                  </Dialog>
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <Button

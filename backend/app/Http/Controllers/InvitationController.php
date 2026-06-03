@@ -40,7 +40,7 @@ class InvitationController extends Controller
         if ($isMember || $hasInvitation || $hasRequest) abort(403, 'You either already a member, or you have a request.');
 
         $receiver->invitations()->create($fields);
-        return response()->json('created');
+        return response()->json(['message' => 'Invitation created successfully.']);
     }
 
     /**
@@ -76,7 +76,7 @@ class InvitationController extends Controller
             $invitation->delete();
         }
 
-        return response()->json('updated');
+        return response()->json(['message' => 'Invitation '.$fields['status'].' successfully.']);
     }
 
     /**
@@ -85,6 +85,6 @@ class InvitationController extends Controller
     public function destroy(Invitation $invitation)
     {
         $invitation->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Invitation deleted successfully.']);
     }
 }

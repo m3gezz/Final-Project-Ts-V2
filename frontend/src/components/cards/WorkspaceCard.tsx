@@ -32,7 +32,7 @@ export default function WorkspaceCard({
           )}
         </div>
       </div>
-      <p className="line-clamp-2 text-sm text-muted-foreground">
+      <p className="line-clamp-2 text-sm text-muted-foreground truncate">
         {workspace?.project?.description}
       </p>
       <div className="flex items-center justify-between">

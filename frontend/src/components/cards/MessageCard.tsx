@@ -92,7 +92,9 @@ export default function MessageCard({
               <Button
                 size={"icon-xs"}
                 variant={"secondary"}
-                disabled={isUpdateMessagePending}
+                disabled={
+                  isUpdateMessagePending || edit?.message?.trim()?.length === 0
+                }
                 onClick={() => updateMessageMutation()}
                 className="my-auto mx-2"
               >
@@ -102,7 +104,12 @@ export default function MessageCard({
           )}
           <span className="font-medium">
             <span className="text-xs text-muted-foreground">
-              {formatTime(message?.updated_at ?? message?.created_at)}
+              {message?.updated_at != message?.created_at &&
+                !message?.isDeleted &&
+                "edited"}
+            </span>{" "}
+            <span className="text-xs text-muted-foreground">
+              {formatTime(message?.created_at)}
             </span>{" "}
             You
           </span>
@@ -129,7 +136,7 @@ export default function MessageCard({
                     onClick={() =>
                       setEdit((prev) => ({ ...prev, editing: true }))
                     }
-                    variant={"default"}
+                    variant={"done"}
                   >
                     <Pen /> Edit
                   </ContextMenuItem>
@@ -162,7 +169,12 @@ export default function MessageCard({
           {message?.user?.full_name}{" "}
           <span className="text-xs text-muted-foreground">
             {formatTime(message?.created_at)}
-          </span>
+          </span>{" "}
+          <span className="text-xs text-muted-foreground">
+            {message?.updated_at != message?.created_at &&
+              !message?.isDeleted &&
+              "edited"}
+          </span>{" "}
         </span>
         <div className="relative rounded flex">
           <p

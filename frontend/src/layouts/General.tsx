@@ -4,9 +4,29 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "@/router";
 import { refreshToken } from "@/api/functions/auth";
 import { useAppDispatch } from "@/redux/store";
+import { useEffect } from "react";
 
 export default function General() {
   const disp = useAppDispatch();
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const root = window.document.documentElement;
+
+    const checkTheme = (e: MediaQueryList | MediaQueryListEvent) => {
+      if (e.matches) {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+    };
+
+    checkTheme(mediaQuery);
+
+    mediaQuery.addEventListener("change", checkTheme);
+
+    return () => mediaQuery.removeEventListener("change", checkTheme);
+  }, []);
 
   const { isLoading: isRefreshTokenLoading } = useQuery({
     queryKey: ["refreshToken"],

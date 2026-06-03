@@ -83,7 +83,7 @@ class ProjectController extends Controller
             $project->skills()->sync($fields['skills']);
         }
 
-        $data = ['message' => 'Created successfully', 'id' => $project->id];
+        $data = ['message' => 'Project created successfully', 'id' => $project->id];
         return response()->json($data);
     }
 
@@ -133,7 +133,7 @@ class ProjectController extends Controller
         }
 
         $project->update($fields);
-        $data = ['message' => 'Updated successfully', 'id' => $project->id];
+        $data = ['message' => 'Project updated successfully', 'id' => $project->id];
         return response()->json($data);
     }
 
@@ -144,7 +144,7 @@ class ProjectController extends Controller
     {
         $this->authorize('delete', $project);
         $project->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Project deleted successfully']);
     }
 
     /**

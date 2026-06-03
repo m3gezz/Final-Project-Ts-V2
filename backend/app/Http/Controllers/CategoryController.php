@@ -30,7 +30,7 @@ class CategoryController extends Controller
         ]);
 
         Category::create($fields);
-        return response()->json(['message' => 'Created successfully']);
+        return response()->json(['message' => 'Category created successfully']);
     }
 
     /**
@@ -56,6 +56,6 @@ class CategoryController extends Controller
     {
         $this->authorize('admin', User::class);
         $category->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'category deleted successfully']);
     }
 }

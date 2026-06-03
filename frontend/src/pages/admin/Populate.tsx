@@ -166,7 +166,7 @@ function ManagerPanel({
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr,1.2fr]">
-      <div className="p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
+      <div className="p-5">
         <h2 className="text-sm font-semibold">Add {title}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Items appear instantly in the list and become selectable across the
@@ -205,7 +205,7 @@ function ManagerPanel({
         </form>
       </div>
 
-      <div className="p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
+      <div className="p-5">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold">{title}</h2>
           <Badge variant="secondary">{items?.length ?? 0}</Badge>

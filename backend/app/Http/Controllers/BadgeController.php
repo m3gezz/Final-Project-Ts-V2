@@ -32,7 +32,7 @@ class BadgeController extends Controller
         ]);
 
         Badge::create($fields);
-        return response()->json(['message' => 'Created successfully']);
+        return response()->json(['message' => 'Badge created successfully']);
     }
 
     /**
@@ -58,6 +58,6 @@ class BadgeController extends Controller
     {
         $this->authorize('admin', User::class);
         $badge->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Badge deleted successfully']);
     }
 }

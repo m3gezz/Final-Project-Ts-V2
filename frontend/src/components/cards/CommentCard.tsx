@@ -3,13 +3,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatTime, getImageUrl } from "@/lib/utils";
 import { useAppSelector } from "@/redux/store";
 import { Button } from "../ui/button";
-import { X } from "lucide-react";
+import { Check, Pen, X } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { destroyComment } from "@/api/functions/projects";
+import { destroyComment, updateComment } from "@/api/functions/projects";
+import { useState } from "react";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { Input } from "../ui/input";
 
 export default function CommentCard({ comment }: { comment: CommentType }) {
   const { id } = useParams();
+  const [edit, setEdit] = useState({
+    editing: false,
+    content: comment?.content,
+  });
   const queryClient = useQueryClient();
   const { user } = useAppSelector((state) => state?.auth);
 
@@ -35,32 +47,109 @@ export default function CommentCard({ comment }: { comment: CommentType }) {
       },
     });
 
+  const { mutate: updateCommentMutation, isPending: isUpdateCommentPending } =
+    useMutation({
+      mutationFn: () => updateComment(comment?.id, { content: edit?.content }),
+      onMutate: () => {
+        queryClient.cancelQueries();
+        setEdit((prev) => ({ ...prev, editing: false }));
+        const previous = queryClient.getQueryData([
+          "project-comments",
+          String(id),
+        ]);
+        queryClient.setQueryData(
+          ["project-comments", String(id)],
+          (old: CommentType[]) => [
+            ...old?.map((c) => {
+              if (c?.id == comment?.id) {
+                return { ...c, content: edit?.content };
+              }
+              return c;
+            }),
+          ],
+        );
+        return { previous };
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["project-comments", String(id)],
+        });
+      },
+    });
+
   return (
-    <div className="flex gap-3">
-      <Avatar className="h-8 w-8">
-        <AvatarImage src={getImageUrl(comment?.user?.avatar)} />
-        <AvatarFallback>{comment?.user?.full_name?.[0]}</AvatarFallback>
-      </Avatar>
-      <div className="relative flex-1 rounded-lg bg-muted/50 p-3">
-        <div className="flex items-center justify-between text-sm">
-          <span className="font-medium">{comment?.user?.full_name}</span>
-          <span className="text-xs text-muted-foreground">
-            {formatTime(comment?.created_at)}
-          </span>
-        </div>
-        <p className="mt-1 text-sm">{comment?.content}</p>
+    <ContextMenu>
+      <div className="flex gap-3">
+        <Avatar className="h-8 w-8">
+          <AvatarImage src={getImageUrl(comment?.user?.avatar)} />
+          <AvatarFallback>{comment?.user?.full_name?.[0]}</AvatarFallback>
+        </Avatar>
+
+        {edit?.editing ? (
+          <Input
+            value={edit?.content}
+            onChange={(e) =>
+              setEdit((prev) => ({ ...prev, content: e?.target?.value }))
+            }
+            className="w-[80%] max-w-200 p-2 rounded border rounded-tr-none"
+          />
+        ) : (
+          <ContextMenuTrigger className="relative flex-1 rounded-lg bg-muted/50 p-3">
+            <div className="flex items-center justify-between text-sm">
+              <div>
+                <span className="font-medium">{comment?.user?.full_name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {comment?.updated_at != comment?.created_at && " edited"}
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {formatTime(comment?.created_at)}
+              </span>
+            </div>
+            <p className="mt-2">{comment?.content}</p>
+          </ContextMenuTrigger>
+        )}
         {user?.id === comment?.user?.id && (
-          <Button
-            variant={"destructive"}
-            size={"icon-xs"}
-            className="absolute -top-2 -right-2"
-            disabled={isDestroyCommentPending}
-            onClick={() => destroyCommentMutation()}
-          >
-            <X />
-          </Button>
+          <ContextMenuContent>
+            <ContextMenuItem
+              onClick={() => setEdit((prev) => ({ ...prev, editing: true }))}
+              variant={"done"}
+            >
+              <Pen /> Edit
+            </ContextMenuItem>
+            <ContextMenuItem
+              disabled={isDestroyCommentPending}
+              onClick={() => destroyCommentMutation()}
+              variant={"destructive"}
+            >
+              <X /> Delete
+            </ContextMenuItem>
+          </ContextMenuContent>
+        )}
+        {edit?.editing && (
+          <div className="flex items-center">
+            <Button
+              size={"icon-xs"}
+              variant={"secondary"}
+              onClick={() => setEdit((prev) => ({ ...prev, editing: false }))}
+              className="mx-2"
+            >
+              <X />
+            </Button>
+            <Button
+              size={"icon-xs"}
+              variant={"secondary"}
+              disabled={
+                isUpdateCommentPending || edit?.content?.trim()?.length === 0
+              }
+              onClick={() => updateCommentMutation()}
+              className="my-auto mx-2"
+            >
+              <Check />
+            </Button>
+          </div>
         )}
       </div>
-    </div>
+    </ContextMenu>
   );
 }

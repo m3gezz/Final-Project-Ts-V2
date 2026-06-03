@@ -39,6 +39,7 @@ const updateProject = async (id: DefaultFields["id"], data: any) => {
 
 const destroyProject = async (id: DefaultFields["id"]) => {
   const res = await api.delete(`projects/${id}`);
+  toast.success(res?.data?.message);
   return res;
 };
 
@@ -57,6 +58,7 @@ const createComment = async (data: {
   content: string;
 }) => {
   const res = await api.post("comments", data);
+  toast.success(res?.data?.message);
   return res;
 };
 
@@ -64,12 +66,14 @@ const updateComment = async (
   id: DefaultFields["id"],
   data: { content: string },
 ) => {
-  const res = await api.post(`comments/${id}`, data);
+  const res = await api.put(`comments/${id}`, data);
+  toast.success(res?.data?.message);
   return res;
 };
 
 const destroyComment = async (id: DefaultFields["id"]) => {
   const res = await api.delete(`comments/${id}`);
+  toast.success(res?.data?.message);
   return res;
 };
 

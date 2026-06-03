@@ -30,7 +30,7 @@ class SkillController extends Controller
         ]);
 
         Skill::create($fields);
-        return response()->json(['message' => 'Created successfully']);
+        return response()->json(['message' => 'Skill created successfully']);
     }
 
     /**
@@ -56,6 +56,6 @@ class SkillController extends Controller
     {
         $this->authorize('admin', User::class);
         $skill->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Skills deleted successfully']);
     }
 }

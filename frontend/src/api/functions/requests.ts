@@ -1,5 +1,6 @@
 import type { DefaultFields } from "@/assets/types";
 import { api } from "../axios";
+import { toast } from "sonner";
 
 const getRequests = async () => {
   const res = await api.get(`requests`);
@@ -8,6 +9,7 @@ const getRequests = async () => {
 
 const createRequest = async (data: { project_id: DefaultFields["id"] }) => {
   const res = await api.post("requests", data);
+  toast.success(res?.data?.message);
   return res;
 };
 
@@ -16,11 +18,13 @@ const updateRequest = async (
   data: { status: "accepted" | "declined" },
 ) => {
   const res = await api.put(`requests/${id}`, data);
+  toast.success(res?.data?.message);
   return res.data;
 };
 
 const destroyRequest = async (id: DefaultFields["id"]) => {
   const res = await api.delete(`requests/${id}`);
+  toast.success(res?.data?.message);
   return res;
 };
 

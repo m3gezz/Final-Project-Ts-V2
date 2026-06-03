@@ -16,25 +16,21 @@ import { useAppSelector } from "@/redux/store";
 export default function User() {
   const { id } = useParams();
   const { user } = useAppSelector((state) => state?.auth);
-
   const {
     data: profile,
-    isLoading,
-    isError,
+    isLoading: isProfileLoading,
+    isError: isProfileError,
   } = useQuery({
     queryKey: ["profile", id],
     queryFn: () => getUser(id),
     retry: 0,
   });
 
-  if (isLoading) return <UserSkeleton />;
-  if (isError) return <ErrorCard />;
+  if (isProfileLoading) return <UserSkeleton />;
+  if (isProfileError) return <ErrorCard />;
   return (
     <div className="mx-auto max-w-5xl space-y-8">
-      <div
-        className="rounded-2xl border bg-card p-8"
-        style={{ boxShadow: "var(--shadow-soft)" }}
-      >
+      <div className="rounded-2xl border bg-card p-8">
         <div className="flex flex-wrap flex-col md:flex-row items-start gap-6">
           <Avatar className="h-24 w-24">
             <AvatarImage src={getImageUrl(profile?.avatar)} />
@@ -99,10 +95,16 @@ export default function User() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="owned" className="mt-6">
-          <ProjectsList projects={profile?.owned} isLoading={isLoading} />
+          <ProjectsList
+            projects={profile?.owned}
+            isLoading={isProfileLoading}
+          />
         </TabsContent>
         <TabsContent value="joined" className="mt-6">
-          <ProjectsList projects={profile?.worked} isLoading={isLoading} />
+          <ProjectsList
+            projects={profile?.worked}
+            isLoading={isProfileLoading}
+          />
         </TabsContent>
         <p className="w-fit mx-auto text-sm text-muted-foreground">
           For more search the users name{" "}

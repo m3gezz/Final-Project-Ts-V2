@@ -15,8 +15,10 @@ export default function UserCard({ user }: { user: PopulatedUser }) {
         <AvatarFallback>{user?.full_name?.[0]}</AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
-        <div className="font-semibold">{user?.full_name}</div>
-        <div className="text-xs text-muted-foreground">@{user?.username}</div>
+        <div className="font-semibold truncate">{user?.full_name}</div>
+        <div className="text-xs text-muted-foreground truncate">
+          @{user?.username}
+        </div>
         {user?.private ? (
           <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
             This account is private.

@@ -83,7 +83,7 @@ export default function Projects() {
         }
       />
 
-      <div className="mb-6 flex w-full lg:max-w-2xl gap-2 ml-auto">
+      <div className="mb-6 flex flex-col w-full lg:max-w-2xl lg:flex-row gap-2 ml-auto">
         <InputController
           control={form.control}
           f={{
@@ -122,11 +122,13 @@ export default function Projects() {
 
       <ProjectsList projects={projects} isLoading={isProjectsFetching} />
 
-      <PageFooter
-        pagination={pagination}
-        setPagination={setPagination}
-        isLoading={isProjectsFetching}
-      />
+      {!!projects?.length && (
+        <PageFooter
+          pagination={pagination}
+          setPagination={setPagination}
+          isLoading={isProjectsFetching}
+        />
+      )}
     </div>
   );
 }

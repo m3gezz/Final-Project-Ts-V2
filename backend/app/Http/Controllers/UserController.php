@@ -130,7 +130,7 @@ class UserController extends Controller
 
         unset($fields['email']);
         $user->update($fields);
-        return response()->json('updated');
+        return response()->json(['message' => 'Profile updated successfully.']);
     }
 
     /**
@@ -153,7 +153,7 @@ class UserController extends Controller
 
         $user->tokens()->delete();
         $user->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Profile deleted successfully']);
     }
 
     public function UserDashboard(Request $request) 

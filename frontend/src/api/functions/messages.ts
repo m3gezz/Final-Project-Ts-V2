@@ -4,6 +4,7 @@ import type {
   createMessageSchemaType,
   updateMessageSchemaType,
 } from "@/zod/messagesSchemas";
+import { toast } from "sonner";
 
 const getMessages = async (id: DefaultFields["id"]) => {
   const res = await api.get(`messages?workspace_id=${id}`);
@@ -20,11 +21,13 @@ const updateMessage = async (
   data: updateMessageSchemaType,
 ) => {
   const res = await api.patch(`messages/${id}`, data);
+  toast.success(res?.data?.message);
   return res;
 };
 
 const destroyMessage = async (id: DefaultFields["id"]) => {
   const res = await api.delete(`messages/${id}`);
+  toast.success(res?.data?.message);
   return res;
 };
 

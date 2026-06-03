@@ -91,11 +91,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
     });
 
   return (
-    <div
-      key={task?.id}
-      className="rounded-lg border bg-card p-3 space-y-6"
-      style={{ boxShadow: "var(--shadow-soft)" }}
-    >
+    <div key={task?.id} className="rounded-lg border bg-card p-3 space-y-6">
       <ContextMenu>
         <ContextMenuTrigger>
           <div className="flex items-center justify-between">
@@ -125,7 +121,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
             <>
               {task?.status !== "todo" && (
                 <ContextMenuItem
-                  variant={"default"}
+                  variant={"todo"}
                   disabled={isUpdateTaskPending}
                   onClick={() => updateTaskMutation({ status: "todo" })}
                 >
@@ -135,7 +131,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
               )}
               {task?.status !== "doing" && (
                 <ContextMenuItem
-                  variant={"default"}
+                  variant={"doing"}
                   disabled={isUpdateTaskPending}
                   onClick={() => updateTaskMutation({ status: "doing" })}
                 >
@@ -144,7 +140,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
               )}
               {task?.status !== "done" && (
                 <ContextMenuItem
-                  variant={"default"}
+                  variant={"done"}
                   disabled={isUpdateTaskPending}
                   onClick={() => updateTaskMutation({ status: "done" })}
                 >

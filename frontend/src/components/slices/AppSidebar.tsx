@@ -1,5 +1,5 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut, Sparkles, SidebarClose, SidebarOpen } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { LogOut, SidebarClose, SidebarOpen } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
@@ -8,6 +8,7 @@ import { Spinner } from "../ui/spinner";
 import { cn, getImageUrl, getPages } from "@/lib/utils";
 import { signOut } from "@/api/functions/auth";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { Link } from "react-router-dom";
 
 type SidebarContextType = {
   isOpen: boolean;
@@ -21,13 +22,18 @@ type SidebarProps = {
 };
 
 export default function AppSidebar() {
-  const { isOpen, isMobile } = useSidebar();
+  const { isOpen, isMobile, toggleSidebar } = useSidebar();
   const nav = useNavigate();
+  const { pathname } = useLocation();
   const disp = useAppDispatch();
   const onMobile = `fixed top-0 ${isOpen ? "left-0" : "-left-64"}`;
   const onPc = `sticky top-0`;
-
   const defaultStyles = `h-screen z-20 flex ${isOpen ? "w-64" : "w-16"} shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground transition-all ${isMobile ? onMobile : onPc}`;
+
+  useEffect(() => {
+    if (!isMobile) return;
+    toggleSidebar();
+  }, [pathname]);
 
   const { user } = useAppSelector((state) => state?.auth);
   const pages = getPages(user?.admin);
@@ -38,15 +44,9 @@ export default function AppSidebar() {
   return (
     <aside className={defaultStyles}>
       <div className="flex items-center justify-between p-3">
-        <div className="flex items-center gap-2 min-w-0 truncate">
-          <div
-            className="flex h-8 w-8 items-center justify-center rounded-lg"
-            style={{ background: "var(--gradient-primary)" }}
-          >
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
-          </div>
-          <span className="text-lg font-semibold tracking-tight">Collab</span>
-        </div>
+        <Link to="/" className="flex items-center gap-2 min-w-0 truncate">
+          <img src="/colab-logo-gradient.svg" alt="" className="w-full h-6" />
+        </Link>
 
         <SidebarTrigger />
       </div>

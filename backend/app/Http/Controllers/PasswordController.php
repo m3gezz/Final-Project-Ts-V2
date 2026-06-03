@@ -61,6 +61,10 @@ class PasswordController extends Controller
 
         $user->update(['password' => Hash::make($fields['password'])]);
         $record->delete();
-        return response()->json(['user' => $user]);
+        $data = [
+            'user' => $user,
+            'message' => 'Password updated successfully.'
+        ];
+        return response()->json($data);
     }
 }

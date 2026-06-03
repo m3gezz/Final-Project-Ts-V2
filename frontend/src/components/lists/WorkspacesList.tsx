@@ -12,13 +12,13 @@ export default function WorkspacesList({
   isLoading: boolean;
 }) {
   return isLoading ? (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       {[...Array(4)]?.map((_, i) => (
         <WorkspaceCardSkeleton key={i} />
       ))}
     </div>
   ) : workspaces?.length ? (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       {workspaces?.map((w) => (
         <WorkspaceCard key={w?.id} workspace={w} />
       ))}

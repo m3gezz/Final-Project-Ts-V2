@@ -10,7 +10,6 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
     <Link
       to={`/projects/${project?.id}`}
       className="group flex flex-col overflow-hidden rounded-xl border bg-card transition-all hover:-translate-y-0.5"
-      style={{ boxShadow: "var(--shadow-soft)" }}
     >
       <div className="relative aspect-video overflow-hidden bg-muted">
         <img

@@ -71,7 +71,7 @@ class MembershipController extends Controller
         ]);
 
         $membership->update($fields);
-        return response()->json('updated');
+        return response()->json(['message' => "Member's role updated successfully."]);
     }
 
     /**
@@ -81,6 +81,6 @@ class MembershipController extends Controller
     {
         $this->authorize('delete', $membership);
         $membership->delete();
-        return response()->json(['message' => 'Deleted successfully']);
+        return response()->json(['message' => 'Member deleted successfully']);
     }
 }

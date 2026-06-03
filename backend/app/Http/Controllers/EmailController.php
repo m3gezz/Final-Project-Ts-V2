@@ -44,6 +44,9 @@ class EmailController extends Controller
         
         $user->markEmailAsVerified();
         $record->delete();
-        return response()->json(['user' => $user]);
+        $data = [
+            'user' => $user,
+            'message' => 'Email verified.'];
+        return response()->json($data);
     }
 }

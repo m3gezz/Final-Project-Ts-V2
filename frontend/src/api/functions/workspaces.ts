@@ -1,5 +1,6 @@
 import type { DefaultFields, SearcherType } from "@/assets/types";
 import { api } from "../axios";
+import { toast } from "sonner";
 
 const getWorkspaces = async (searcher: SearcherType) => {
   const res = await api.get(
@@ -34,11 +35,13 @@ const updateMember = async (
   data: { role: string },
 ) => {
   const res = await api.put(`memberships/${id}`, data);
+  toast.success(res?.data?.message);
   return res.data;
 };
 
 const destroyMember = async (id: DefaultFields["id"]) => {
   const res = await api.delete(`memberships/${id}`);
+  toast.success(res?.data?.message);
   return res.data;
 };
 
