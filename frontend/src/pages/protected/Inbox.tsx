@@ -24,7 +24,7 @@ export default function Inbox() {
         description="Review invitations and join requests in one place."
       />
       <Tabs defaultValue="requests" className="flex flex-col">
-        <TabsList className="p-1">
+        <TabsList className="h-12">
           <TabsTrigger value="requests">
             Sent ({requests?.length ?? 0})
           </TabsTrigger>

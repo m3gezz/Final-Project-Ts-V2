@@ -25,7 +25,7 @@ export default function Users() {
   });
   const [search, skill_id, sort] = form.watch(["search", "skill_id", "sort"]);
 
-  const [{ data: users, isFetching: isFetchingUsers }, { data: skills }] =
+  const [{ data: users, isFetching: isUsersFetching }, { data: skills }] =
     useQueries({
       queries: [
         {
@@ -41,7 +41,7 @@ export default function Users() {
         },
         {
           queryKey: ["skills"],
-          queryFn: getSkills,
+          queryFn: () => getSkills(),
         },
       ],
     });
@@ -91,14 +91,13 @@ export default function Users() {
           </div>
         </div>
       </div>
-      <UsersList users={users} isLoading={isFetchingUsers} />
-      {!isFetchingUsers && (
-        <PageFooter
-          pagination={pagination}
-          setPagination={setPagination}
-          isLoading={isFetchingUsers}
-        />
-      )}
+      <UsersList users={users} isLoading={isUsersFetching} />
+
+      <PageFooter
+        pagination={pagination}
+        setPagination={setPagination}
+        isLoading={isUsersFetching}
+      />
     </div>
   );
 }

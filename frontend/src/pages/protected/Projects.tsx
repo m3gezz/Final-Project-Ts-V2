@@ -34,7 +34,7 @@ export default function Projects() {
   ]);
 
   const [
-    { data: projects, isFetching: isFetchingProjects },
+    { data: projects, isFetching: isProjectsFetching },
     { data: categories },
   ] = useQueries({
     queries: [
@@ -120,14 +120,13 @@ export default function Projects() {
         </div>
       </div>
 
-      <ProjectsList projects={projects} isLoading={isFetchingProjects} />
-      {!isFetchingProjects && (
-        <PageFooter
-          pagination={pagination}
-          setPagination={setPagination}
-          isLoading={isFetchingProjects}
-        />
-      )}
+      <ProjectsList projects={projects} isLoading={isProjectsFetching} />
+
+      <PageFooter
+        pagination={pagination}
+        setPagination={setPagination}
+        isLoading={isProjectsFetching}
+      />
     </div>
   );
 }

@@ -12,8 +12,29 @@ export default function Home() {
   const { data: userDashboardData, isLoading: isUserDashboardLoading } =
     useQuery({
       queryKey: ["userDashboard"],
-      queryFn: userDashboard,
+      queryFn: () => userDashboard(),
     });
+
+  const userData = [
+    {
+      icon: FolderKanban,
+      label: "Projects",
+      value: userDashboardData?.user?.projects_count ?? "-",
+      to: "/projects",
+    },
+    {
+      icon: Briefcase,
+      label: "Workspaces",
+      value: userDashboardData?.user?.workspaces_count ?? "-",
+      to: "/workspaces",
+    },
+    {
+      icon: Inbox,
+      label: "Pending invites",
+      value: userDashboardData?.user?.requests_count ?? "-",
+      to: "/inbox",
+    },
+  ];
 
   return (
     <div className="space-y-10">
@@ -41,37 +62,18 @@ export default function Home() {
           </div>
         </div>
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {[
-            {
-              icon: FolderKanban,
-              label: "Projects",
-              value: userDashboardData?.user?.projects_count ?? 0,
-              to: "/projects",
-            },
-            {
-              icon: Briefcase,
-              label: "Workspaces",
-              value: userDashboardData?.user?.workspaces_count ?? 0,
-              to: "/workspaces",
-            },
-            {
-              icon: Inbox,
-              label: "Pending invites",
-              value: userDashboardData?.user?.requests_count ?? 0,
-              to: "/inbox",
-            },
-          ].map((s) => (
+          {userData?.map((ud) => (
             <Link
-              key={s.label}
-              to={s.to}
+              key={ud?.label}
+              to={ud?.to}
               className="flex items-center gap-4 rounded-xl border bg-card p-4 hover:border-primary/50"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-                <s.icon className="h-5 w-5" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-accent">
+                <ud.icon className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-2xl font-semibold">{s.value}</div>
-                <div className="text-xs text-muted-foreground">{s.label}</div>
+                <div className="text-2xl font-semibold">{ud?.value}</div>
+                <div className="text-xs text-muted-foreground">{ud?.label}</div>
               </div>
             </Link>
           ))}
@@ -81,7 +83,7 @@ export default function Home() {
       <section>
         <div className="mb-4 flex items-end justify-between">
           <h2 className="text-xl font-semibold">Your workspaces</h2>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="link" size="sm">
             <Link to="/workspaces">
               View all <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
@@ -96,7 +98,7 @@ export default function Home() {
       <section>
         <div className="mb-4 flex items-end justify-between">
           <h2 className="text-xl font-semibold">Trending projects</h2>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="link" size="sm">
             <Link to="/projects">
               Browse all <ArrowRight className="ml-1 h-4 w-4" />
             </Link>

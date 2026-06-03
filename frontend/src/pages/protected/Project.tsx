@@ -36,7 +36,7 @@ export default function Project() {
   ] = useQueries({
     queries: [
       {
-        queryKey: ["project", id],
+        queryKey: ["projects", id],
         queryFn: () => getProject(id),
         retry: 0,
       },

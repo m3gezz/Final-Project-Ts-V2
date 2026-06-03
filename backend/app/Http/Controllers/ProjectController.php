@@ -57,14 +57,14 @@ class ProjectController extends Controller
     {
         $fields = $request->validate(
             [
-                'image' => ['sometimes', 'image', 'max:2048'],
+                'image' => ['required', 'image', 'max:2048'],
                 'title' => ['required', 'string', 'min:3', 'max:255'],
                 'description' => ['required', 'string', 'min:10'],
                 'category_id' => ['required', 'exists:categories,id'],
                 'private' => ['required', 'boolean'],
                 'manifesto' => ['required', 'string', 'min:20'],
-                'skills'=>['sometimes','array'],
-                'skills.*' => ['sometimes', 'exists:skills,id'],
+                'skills'=>['required','array'],
+                'skills.*' => ['required', 'exists:skills,id'],
             ]
         );
         
@@ -83,8 +83,8 @@ class ProjectController extends Controller
             $project->skills()->sync($fields['skills']);
         }
 
-        $project = $project->id;
-        return response()->json($project);
+        $data = ['message' => 'Created successfully', 'id' => $project->id];
+        return response()->json($data);
     }
 
     /**
@@ -133,7 +133,8 @@ class ProjectController extends Controller
         }
 
         $project->update($fields);
-        return response()->json('updated');
+        $data = ['message' => 'Updated successfully', 'id' => $project->id];
+        return response()->json($data);
     }
 
     /**
@@ -152,7 +153,7 @@ class ProjectController extends Controller
     public function canEdit(Project $project)
     {
         $this->authorize('canEdit', $project);
-        $project->load(['category','skills']);
+        $project->load(['skills']);
         return response()->json($project);
     }
 }

@@ -1,5 +1,6 @@
 import type { DefaultFields, SearcherType } from "@/assets/types";
 import { api } from "../axios";
+import { toast } from "sonner";
 
 const getProjects = async (searcher: SearcherType) => {
   const res = await api.get(
@@ -21,7 +22,8 @@ const getProject = async (id: DefaultFields["id"]) => {
 
 const createProject = async (data: any) => {
   const res = await api.post("projects", data);
-  return res;
+  toast.success(res?.data?.message);
+  return res?.data;
 };
 
 const canEdit = async (id: DefaultFields["id"]) => {
@@ -31,7 +33,8 @@ const canEdit = async (id: DefaultFields["id"]) => {
 
 const updateProject = async (id: DefaultFields["id"], data: any) => {
   const res = await api.post(`projects/${id}`, data);
-  return res;
+  toast.success(res?.data?.message);
+  return res?.data;
 };
 
 const destroyProject = async (id: DefaultFields["id"]) => {

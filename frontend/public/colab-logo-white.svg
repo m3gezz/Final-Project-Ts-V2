@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2144.52 569.49">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: Satoshi-Regular, Satoshi;
+      }
+
+      .cls-2 {
+        font-family: Satoshi-Medium, Satoshi;
+        font-weight: 500;
+      }
+
+      .cls-3 {
+        font-size: 514.2px;
+      }
+
+      .cls-3, .cls-4 {
+        fill: #fff;
+      }
+
+      .cls-4 {
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <g>
+        <polygon class="cls-4" points="562.79 0 562.79 189.83 379.66 189.83 189.83 0 562.79 0"/>
+        <polygon class="cls-4" points="189.83 0 189.83 379.66 189.83 379.66 0 569.49 0 569.49 0 189.83 0 189.83 189.83 0 189.83 0"/>
+        <polygon class="cls-4" points="562.79 379.66 372.96 569.49 189.83 569.49 189.83 379.66 562.79 379.66"/>
+      </g>
+      <text class="cls-3" transform="translate(626.08 446.33)"><tspan class="cls-1" x="0" y="0">Co</tspan><tspan class="cls-2" x="666.92" y="0">Lab</tspan></text>
+    </g>
+  </g>
+</svg>

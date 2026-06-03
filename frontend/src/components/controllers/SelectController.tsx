@@ -33,7 +33,10 @@ export default function SelectController<T extends FieldValues>({
       render={({ field, fieldState }) => (
         <Field className="space-y-2" data-invalid={fieldState.invalid}>
           <FieldLabel>{f?.label}</FieldLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select
+            value={field.value ? String(field.value) : ""}
+            onValueChange={(val) => field.onChange(val)}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>

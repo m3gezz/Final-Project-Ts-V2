@@ -25,7 +25,7 @@ export default function Workspaces() {
 
   const [search, type] = form.watch(["search", "type"]);
 
-  const { data: workspaces, isFetching } = useQuery({
+  const { data: workspaces, isFetching: isWorkspacesFetching } = useQuery({
     queryKey: ["workspaces", pagination.current_page, search, type],
     queryFn: () =>
       getWorkspaces({
@@ -73,14 +73,16 @@ export default function Workspaces() {
         </div>
       </div>
 
-      <WorkspacesList workspaces={workspaces} isLoading={isFetching} />
-      {!isFetching && (
-        <PageFooter
-          pagination={pagination}
-          setPagination={setPagination}
-          isLoading={isFetching}
-        />
-      )}
+      <WorkspacesList
+        workspaces={workspaces}
+        isLoading={isWorkspacesFetching}
+      />
+
+      <PageFooter
+        pagination={pagination}
+        setPagination={setPagination}
+        isLoading={isWorkspacesFetching}
+      />
     </div>
   );
 }

@@ -21,12 +21,15 @@ import Guest from "./layouts/Guest";
 import Home from "./pages/protected/Home";
 import User from "./pages/protected/User";
 import Landing from "./pages/Landing";
-import ProjectManipulator from "./pages/protected/ProjectManipulator";
+import AboutUs from "./pages/AboutUs";
+import Contact from "./pages/Contact";
+// import likan from "./pages/protected/likan";
 import WorkspaceMembers from "./pages/protected/WorkspaceMembers";
 import WorkspaceChat from "./pages/protected/WorkspaceChat";
 import WorkspaceTasks from "./pages/protected/WorkspaceTasks";
 import WorkspaceLayout from "./layouts/WorkspaceLayout";
 import Populate from "./pages/admin/Populate";
+import ProjectManipulator from "./pages/protected/CreateProject";
 
 const routes = [
   {
@@ -34,12 +37,16 @@ const routes = [
     element: <NotFound />,
   },
   {
+    path: "/about",
+    element: <AboutUs />,
+  },
+  {
+    path: "/contact",
+    element: <Contact />,
+  },
+  {
     element: <Guest />,
     children: [
-      {
-        path: "/welcome",
-        element: <Landing />,
-      },
       {
         path: "/sign-up",
         element: <SignUp />,
@@ -63,6 +70,10 @@ const routes = [
       {
         path: "/reset-password",
         element: <ResetPassword />,
+      },
+      {
+        path: "/welcome",
+        element: <Landing />,
       },
     ],
   },
@@ -103,7 +114,7 @@ const routes = [
           },
           {
             path: "projects/:id/edit",
-            element: <ProjectManipulator mode="edit" />,
+            element: <ProjectManipulator mode="update" />,
           },
           {
             path: "workspaces",
