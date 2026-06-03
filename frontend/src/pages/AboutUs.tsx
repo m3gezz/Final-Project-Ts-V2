@@ -79,7 +79,7 @@ export default function AboutUs() {
             <img
               src="https://picsum.photos/seed/team-office/600/400"
               alt="Equipe CoLab au bureau"
-              className="w-full rounded-[2rem] object-cover shadow-xl shadow-blue-100"
+              className="w-full rounded-4xl object-cover shadow-xl shadow-blue-100"
             />
             <div>
               <p className="text-sm font-semibold tracking-[0.26em] text-brand-primary">
@@ -178,7 +178,7 @@ export default function AboutUs() {
         </div>
 
         <section className="px-4 pb-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-5xl rounded-[2rem] bg-white p-10 text-center shadow-sm ring-1 ring-slate-100">
+          <div className="mx-auto max-w-5xl rounded-4xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-100">
             <h2 className="font-heading text-4xl font-bold text-brand-dark">
               Envie de rejoindre l'aventure ?
             </h2>
