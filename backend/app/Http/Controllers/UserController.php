@@ -191,7 +191,7 @@ class UserController extends Controller
         
 
         $data['counts'] = $counts;
-        $data['tasks'] = $user->tasks()->limit(5)->orderBy('updated_at')->get();
+        $data['tasks'] = $user->tasks()->orderBy('updated_at')->limit(3)->get();
         $data['workspaces'] = $workspaces;
         $data['projects'] = Project::where('private', false)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get();
         return response()->json($data);

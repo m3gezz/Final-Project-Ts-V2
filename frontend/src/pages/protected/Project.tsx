@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Heart, Send, UserPlus, MessageCircle, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import {
   createComment,
@@ -25,11 +23,13 @@ import { createRequest } from "@/api/functions/requests";
 import { useAppSelector } from "@/redux/store";
 import CommentsList from "@/components/lists/CommentsList";
 import UpdateCommentModal from "@/components/modals/UpdateCommentModal";
+import { useForm } from "react-hook-form";
+import type { createCommentSchemaType } from "@/zod/comments";
+import TextareaController from "@/components/controllers/TextareaController";
 
 export default function Project() {
   const { id } = useParams();
   const queryClient = useQueryClient();
-  const [comment, setComment] = useState("");
   const { user } = useAppSelector((state) => state?.auth);
   const [
     { data: project, isLoading: isProjectLoading, isError: isProjectError },
@@ -47,6 +47,13 @@ export default function Project() {
         retry: 0,
       },
     ],
+  });
+
+  const form = useForm<createCommentSchemaType>({
+    defaultValues: {
+      project_id: id,
+      content: "",
+    },
   });
 
   const {
@@ -111,11 +118,10 @@ export default function Project() {
     });
   const { mutate: createCommentMutation, isPending: isCreateCommentPending } =
     useMutation({
-      mutationFn: (data: string) =>
-        createComment({ project_id: id, content: data }),
-      onMutate: () => {
+      mutationFn: (data: createCommentSchemaType) => createComment(data),
+      onMutate: (data) => {
         queryClient.cancelQueries();
-        setComment("");
+        form.reset();
         const previousProject = queryClient.getQueryData([
           "project-comments",
           String(id),
@@ -127,7 +133,7 @@ export default function Project() {
             return [
               {
                 id: Date.now(),
-                content: comment,
+                content: data?.content,
                 user,
                 created_at: now,
                 updated_at: now,
@@ -148,8 +154,8 @@ export default function Project() {
   if (isProjectLoading) return <ProjectSkeleton />;
   if (isProjectError) return <ErrorCard />;
   return (
-    <div className="mx-auto max-w-5xl space-y-8">
-      <div
+    <main className="mx-auto max-w-5xl space-y-8">
+      <section
         className="overflow-hidden rounded-2xl border"
         style={{ boxShadow: "var(--shadow-soft)" }}
       >
@@ -219,9 +225,9 @@ export default function Project() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <section className="grid gap-6 md:grid-cols-3">
         <div className="space-y-6 md:col-span-2">
           <section className="rounded-xl border bg-card p-6">
             <h2 className="text-lg font-semibold">About</h2>
@@ -238,22 +244,23 @@ export default function Project() {
               <MessageCircle className="h-4 w-4" />
               Comments ({comments?.length})
             </h2>
-            <div className="mt-4 flex gap-2">
-              <Textarea
-                placeholder="Leave a comment…"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                rows={2}
-              />
-              <Button
-                onClick={() => {
-                  if (!comment.trim() || isCreateCommentPending) return;
-                  createCommentMutation(comment);
+            <form
+              className="mt-4 flex gap-2"
+              onSubmit={form.handleSubmit((data) =>
+                createCommentMutation(data),
+              )}
+            >
+              <TextareaController
+                control={form.control}
+                f={{
+                  name: "content",
+                  placeholder: "Leave a comment…",
                 }}
-              >
+              />
+              <Button disabled={isCreateCommentPending}>
                 <Send className="h-4 w-4" />
               </Button>
-            </div>
+            </form>
             <CommentsList comments={comments} isLoading={isCommentsLoading} />
           </section>
         </div>
@@ -301,8 +308,8 @@ export default function Project() {
             </div>
           </section>
         </aside>
-      </div>
+      </section>
       <UpdateCommentModal />
-    </div>
+    </main>
   );
 }

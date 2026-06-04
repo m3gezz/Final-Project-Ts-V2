@@ -16,6 +16,7 @@ import {
   type createMessageSchemaType,
 } from "@/zod/messagesSchemas";
 import UpdateMessageModal from "@/components/modals/UpdateMessageModal";
+import PinnedList from "@/components/lists/PinnedList";
 
 export default function WorkspaceChat() {
   const { id } = useParams();
@@ -29,7 +30,7 @@ export default function WorkspaceChat() {
   });
 
   const queryClient = useQueryClient();
-  const { data: messages, isLoading } = useQuery({
+  const { data: messages, isLoading: isMessagesLoading } = useQuery({
     queryKey: ["messages", id],
     queryFn: () => getMessages(id),
   });
@@ -70,7 +71,7 @@ export default function WorkspaceChat() {
           </p>
         </div>
 
-        <MessagesList messages={messages} isLoading={isLoading} />
+        <MessagesList messages={messages} isLoading={isMessagesLoading} />
 
         <form
           onSubmit={form.handleSubmit((data) => mutate(data))}
@@ -97,25 +98,12 @@ export default function WorkspaceChat() {
         </form>
         <UpdateMessageModal />
       </section>
-      <section className="p-4">
-        <h1 className="text-2xl font-bold mb-4">Pinned messages</h1>
-        <ul>
-          {messages
-            ?.filter((m: PopulatedMessage) => m?.isPinned)
-            ?.slice(0, 5)
-            ?.map((m: PopulatedMessage, i: number) => (
-              <li key={i} className="flex items-start gap-2 border-l pb-4">
-                <div className="-ml-1 h-2 w-2 bg-primary rounded-full mt-2" />
-                <div>
-                  <h2>{m?.user?.full_name}</h2>
-                  <p className="italic text-xs truncate border rounded-2xl w-full px-4 py-2 mt-2">
-                    {m?.message}
-                  </p>
-                </div>
-              </li>
-            ))}
-        </ul>
-      </section>
+      <PinnedList
+        messages={messages
+          ?.filter((m: PopulatedMessage) => m?.isPinned)
+          ?.slice(0, 5)}
+        isLoading={isMessagesLoading}
+      />
     </main>
   );
 }

@@ -6,8 +6,7 @@ import ProjectsList from "@/components/lists/ProjectsList";
 import WorkspacesList from "@/components/lists/WorkspacesList";
 import { userDashboard } from "@/api/functions/users";
 import { useAppSelector } from "@/redux/store";
-import { formatTime } from "@/lib/utils";
-import type { TaskType } from "@/assets/types";
+import FeedList from "@/components/lists/FeedList";
 
 export default function Home() {
   const { user } = useAppSelector((state) => state?.auth);
@@ -83,31 +82,7 @@ export default function Home() {
             ))}
           </div>
         </article>
-        <article className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Your activity feed</h1>
-          <ul>
-            {data?.tasks?.map((t: TaskType, i: number) => (
-              <li
-                key={t?.id}
-                className="border-l pb-4"
-                style={{
-                  opacity: (data?.tasks?.length - i) / data?.tasks?.length,
-                }}
-              >
-                <div className="flex items-start gap-2">
-                  <div className="-ml-1 h-2 w-2 bg-primary rounded-full mt-2" />
-                  <div>
-                    <h2>{t?.title}</h2>
-                    <p className="italic text-xs truncate">{t?.description}</p>
-                  </div>
-                </div>
-                <span className="text-accent text-xs ml-4">
-                  {formatTime(t?.updated_at)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </article>
+        <FeedList tasks={data?.tasks} isLoading={isUserDashboardLoading} />
       </section>
 
       <section>

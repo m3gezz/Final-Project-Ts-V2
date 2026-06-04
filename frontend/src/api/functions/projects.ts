@@ -1,6 +1,7 @@
 import type { DefaultFields, SearcherType } from "@/assets/types";
 import { api } from "../axios";
 import { toast } from "sonner";
+import type { updateCommentSchemaType } from "@/zod/comments";
 
 const getProjects = async (searcher: SearcherType) => {
   const res = await api.get(
@@ -64,7 +65,7 @@ const createComment = async (data: {
 
 const updateComment = async (
   id: DefaultFields["id"],
-  data: { content: string },
+  data: updateCommentSchemaType,
 ) => {
   const res = await api.put(`comments/${id}`, data);
   toast.success(res?.data?.message);

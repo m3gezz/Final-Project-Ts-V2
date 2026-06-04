@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import InputController from "../controllers/InputController";
 import { toggleModal } from "@/redux/modalSlice";
 import { useEffect } from "react";
+import type { updateCommentSchemaType } from "@/zod/comments";
 
 export default function UpdateCommentModal() {
   const { id } = useParams();
@@ -22,7 +23,7 @@ export default function UpdateCommentModal() {
   const disp = useAppDispatch();
   const { value } = useAppSelector((state) => state?.modal);
   const { isUpdateComment } = useAppSelector((state) => state?.modal);
-  const form = useForm({
+  const form = useForm<updateCommentSchemaType>({
     defaultValues: {
       content: "",
     },
@@ -34,7 +35,8 @@ export default function UpdateCommentModal() {
 
   const { mutate: updateCommentMutation, isPending: isUpdateCommentPending } =
     useMutation({
-      mutationFn: (data) => updateComment(value?.id, data),
+      mutationFn: (data: updateCommentSchemaType) =>
+        updateComment(value?.id, data),
       onMutate: (data) => {
         queryClient.cancelQueries();
         disp(toggleModal({ name: "isUpdateComment" }));
