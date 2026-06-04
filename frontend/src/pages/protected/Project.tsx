@@ -245,7 +245,7 @@ export default function Project() {
               Comments ({comments?.length})
             </h2>
             <form
-              className="mt-4 flex gap-2"
+              className="mt-4 flex gap-2 items-end"
               onSubmit={form.handleSubmit((data) =>
                 createCommentMutation(data),
               )}

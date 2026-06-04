@@ -10,8 +10,8 @@ export default function CommentsList({
   isLoading: boolean;
 }) {
   return isLoading ? (
-    <div className="max-h-60 space-y-2 overflow-auto">
-      {[...Array(3)].map((_, i) => (
+    <div className="max-h-60 space-y-2 overflow-auto my-2">
+      {[...Array(2)].map((_, i) => (
         <CommentCardSkeleton key={i} />
       ))}
     </div>
