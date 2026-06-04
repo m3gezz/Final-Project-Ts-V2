@@ -13,7 +13,7 @@ class CommentController extends Controller
      */
     public function index(Request $request)
     {
-        $comments = Comment::where('project_id', $request->project_id)->with('user')->get();
+        $comments = Comment::where('project_id', $request->project_id)->with('user')->latest()->get();
         return response()->json($comments);
     }
 

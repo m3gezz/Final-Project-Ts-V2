@@ -55,13 +55,17 @@ class MessageController extends Controller
         $this->authorize('update',$message);
         $fields = $request->validate(
             [
-                'message' => ['required', 'string', 'min:1'],
+                'message' => ['sometimes', 'string', 'min:1'],
+                'isPinned' => ['sometimes', 'boolean'],
             ]
         );
 
-        if ($message->isDeleted) return response()->json('deleted');
+        if ($message->isDeleted) return response()->json(['message' => 'Message was deleted already.']);
 
-        $message->update($fields);
+        $message->update([
+            ...$fields, 'isEdited' => 1
+        ]);
+
         broadcast(new EventsMessage('updated', $message->workspace_id));
         return response()->json(['message' => 'Message updated successfully.']);
     }

@@ -1,4 +1,5 @@
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -29,21 +30,23 @@ export default function InvitingModal() {
   });
 
   return (
-    <DialogContent aria-describedby="">
-      <DialogHeader>
-        <DialogTitle>Invite to workspace</DialogTitle>
-        <DialogDescription>
-          Invite new members to this workspace.
-        </DialogDescription>
-      </DialogHeader>
+    <Dialog>
+      <DialogContent aria-describedby="">
+        <DialogHeader>
+          <DialogTitle>Invite to workspace</DialogTitle>
+          <DialogDescription>
+            Invite new members to this workspace.
+          </DialogDescription>
+        </DialogHeader>
 
-      <div className="space-y-3">
-        <InputController control={form.control} f={{ name: "search" }} />
-        <InvitingUsersList
-          users={nonMembers}
-          isLoading={isNonMembersFetching}
-        />
-      </div>
-    </DialogContent>
+        <div className="space-y-3">
+          <InputController control={form.control} f={{ name: "search" }} />
+          <InvitingUsersList
+            users={nonMembers}
+            isLoading={isNonMembersFetching}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

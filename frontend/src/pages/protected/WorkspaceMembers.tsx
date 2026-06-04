@@ -15,9 +15,7 @@ import { toggleModal } from "@/redux/modalSlice";
 
 export default function WorkspaceMembers() {
   const { id } = useParams();
-  const disp = useAppDispatch();
   const { user } = useAppSelector((state) => state?.auth);
-  const { open } = useAppSelector((state) => state?.modal);
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "members"],
     queryFn: () => getWorkspace(id, "members"),
@@ -32,17 +30,14 @@ export default function WorkspaceMembers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Members</h1>
-        <Dialog open={open} onOpenChange={(v) => disp(toggleModal(v))}>
-          {isAdmin && (
-            <DialogTrigger asChild>
-              <Button>
-                <UserPlus className="mr-2 h-4 w-4" />
-                Invite
-              </Button>
-            </DialogTrigger>
-          )}
-          <InvitingModal />
-        </Dialog>
+
+        {isAdmin && (
+          <Button>
+            <UserPlus className="mr-2 h-4 w-4" />
+            Invite
+          </Button>
+        )}
+        <InvitingModal />
       </div>
 
       <WsMembersList members={workspace?.memberships} isLoading={isLoading} />

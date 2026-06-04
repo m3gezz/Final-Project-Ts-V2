@@ -87,6 +87,7 @@ export type ProjectType = DefaultFields & {
 //Workspace
 export type WorkspaceType = DefaultFields & {
   project_id: ProjectType["id"];
+  progress: number;
 };
 
 export type PopulatedWorkspace = WorkspaceType & {
@@ -119,6 +120,8 @@ export type RequestType = DefaultFields & {
 export type MessageType = DefaultFields & {
   message: string;
   isDeleted: boolean;
+  isEdited: boolean;
+  isPinned: boolean;
   workspace_id: WorkspaceType["id"];
   user_id: UserType["id"];
 };

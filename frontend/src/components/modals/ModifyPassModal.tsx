@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -65,28 +66,30 @@ export default function ModifyPassModal() {
     });
 
   return (
-    <DialogContent
-      aria-describedby=""
-      className="rounded-2xl border bg-card p-8"
-    >
-      <DialogHeader>
-        <DialogTitle>Change password</DialogTitle>
-        <DialogDescription>Enter old and new password.</DialogDescription>
-      </DialogHeader>
+    <Dialog>
+      <DialogContent
+        aria-describedby=""
+        className="rounded-2xl border bg-card p-8"
+      >
+        <DialogHeader>
+          <DialogTitle>Change password</DialogTitle>
+          <DialogDescription>Enter old and new password.</DialogDescription>
+        </DialogHeader>
 
-      <form className="space-y-4">
-        {fields.map((f, i) => (
-          <InputController key={i} control={form.control} f={f} />
-        ))}
-        <Button
-          type="button"
-          onClick={form.handleSubmit((data) => updatePasswordMutation(data))}
-          className="w-full"
-          disabled={isUpdatePasswordPending}
-        >
-          {isUpdatePasswordPending ? "Modifying..." : "Modify"}
-        </Button>
-      </form>
-    </DialogContent>
+        <form className="space-y-4">
+          {fields.map((f, i) => (
+            <InputController key={i} control={form.control} f={f} />
+          ))}
+          <Button
+            type="button"
+            onClick={form.handleSubmit((data) => updatePasswordMutation(data))}
+            className="w-full"
+            disabled={isUpdatePasswordPending}
+          >
+            {isUpdatePasswordPending ? "Modifying..." : "Modify"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

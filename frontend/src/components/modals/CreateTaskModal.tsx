@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
   DialogContent,
   DialogTitle,
   DialogFooter,
@@ -17,11 +18,12 @@ import type { PopulatedWorkspace } from "@/assets/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTaskSchema, type createTaskSchemaType } from "@/zod/taskSchemas";
 import { handleApiErrors } from "@/api/functions/validation";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { toggleModal } from "@/redux/modalSlice";
 
 export default function CreateTaskModal() {
   const { id } = useParams();
+  const { isCreateTask } = useAppSelector((state) => state?.modal);
   const disp = useAppDispatch();
   const queryClient = useQueryClient();
   const data: PopulatedWorkspace | undefined = queryClient.getQueryData([
@@ -47,7 +49,7 @@ export default function CreateTaskModal() {
     useMutation({
       mutationFn: (data: createTaskSchemaType) => createTask(data),
       onMutate: (data) => {
-        disp(toggleModal(false));
+        disp(toggleModal({ name: "isCreateTask" }));
         queryClient.cancelQueries();
         const previousProject = queryClient.getQueryData([
           "workspace",
@@ -89,47 +91,52 @@ export default function CreateTaskModal() {
     });
 
   return (
-    <DialogContent aria-describedby="">
-      <DialogHeader>
-        <DialogTitle>Create task</DialogTitle>
-        <DialogDescription>
-          Fill the bottom fields to create a new task.
-        </DialogDescription>
-      </DialogHeader>
-      <form
-        className="space-y-3"
-        onSubmit={form.handleSubmit((data) => createTaskMutation(data))}
-      >
-        <InputController
-          control={form.control}
-          f={{
-            name: "title",
-            label: "Title",
-            placeholder: "Task title",
-          }}
-        />
-        <TextareaController
-          control={form.control}
-          f={{
-            name: "description",
-            label: "Description",
-            placeholder: "Description (optional)",
-          }}
-        />
-        <SelectController
-          control={form.control}
-          f={{
-            name: "user_id",
-            label: "Assign to",
-          }}
-          options={members}
-        />
-        <DialogFooter>
-          <Button disabled={isCreateTaskPending}>
-            {isCreateTaskPending ? "Creating..." : "Create"}
-          </Button>
-        </DialogFooter>
-      </form>
-    </DialogContent>
+    <Dialog
+      open={isCreateTask}
+      onOpenChange={() => disp(toggleModal({ name: "isCreateTask" }))}
+    >
+      <DialogContent aria-describedby="">
+        <DialogHeader>
+          <DialogTitle>Create task</DialogTitle>
+          <DialogDescription>
+            Fill the bottom fields to create a new task.
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          className="space-y-3"
+          onSubmit={form.handleSubmit((data) => createTaskMutation(data))}
+        >
+          <InputController
+            control={form.control}
+            f={{
+              name: "title",
+              label: "Title",
+              placeholder: "Task title",
+            }}
+          />
+          <TextareaController
+            control={form.control}
+            f={{
+              name: "description",
+              label: "Description",
+              placeholder: "Description (optional)",
+            }}
+          />
+          <SelectController
+            control={form.control}
+            f={{
+              name: "user_id",
+              label: "Assign to",
+            }}
+            options={members}
+          />
+          <DialogFooter>
+            <Button disabled={isCreateTaskPending}>
+              {isCreateTaskPending ? "Creating..." : "Create"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

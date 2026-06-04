@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->text('message');
             $table->boolean('isDeleted')->default(0);
+            $table->boolean('isEdited')->default(0);
+            $table->boolean('isPinned')->default(0);
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

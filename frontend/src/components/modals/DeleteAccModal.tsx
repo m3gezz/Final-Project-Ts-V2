@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -53,30 +54,32 @@ export default function DeleteAccModal() {
     });
 
   return (
-    <DialogContent
-      aria-describedby=""
-      className="rounded-2xl border bg-card p-8"
-    >
-      <DialogHeader>
-        <DialogTitle>Delete Account</DialogTitle>
-        <DialogDescription>
-          Just to make sure, please enter you password.
-        </DialogDescription>
-      </DialogHeader>
-      <form className="space-y-4">
-        {fields.map((f, i) => (
-          <InputController key={i} control={form.control} f={f} />
-        ))}
-        <Button
-          type="button"
-          onClick={form.handleSubmit((data) => destroyUserMutation(data))}
-          variant={"destructive"}
-          className="w-full"
-          disabled={isDestroyUserPending}
-        >
-          {isDestroyUserPending ? "Deleting..." : "Delete"}
-        </Button>
-      </form>
-    </DialogContent>
+    <Dialog>
+      <DialogContent
+        aria-describedby=""
+        className="rounded-2xl border bg-card p-8"
+      >
+        <DialogHeader>
+          <DialogTitle>Delete Account</DialogTitle>
+          <DialogDescription>
+            Just to make sure, please enter you password.
+          </DialogDescription>
+        </DialogHeader>
+        <form className="space-y-4">
+          {fields.map((f, i) => (
+            <InputController key={i} control={form.control} f={f} />
+          ))}
+          <Button
+            type="button"
+            onClick={form.handleSubmit((data) => destroyUserMutation(data))}
+            variant={"destructive"}
+            className="w-full"
+            disabled={isDestroyUserPending}
+          >
+            {isDestroyUserPending ? "Deleting..." : "Delete"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

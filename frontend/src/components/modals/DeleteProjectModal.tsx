@@ -1,6 +1,7 @@
 import { destroyProject } from "@/api/functions/projects";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -21,28 +22,30 @@ export default function DeleteProjectModal() {
     });
 
   return (
-    <DialogContent
-      aria-describedby=""
-      className="rounded-2xl border bg-card p-8"
-    >
-      <DialogHeader>
-        <DialogTitle>Delete Project</DialogTitle>
-        <DialogDescription>
-          Just to make sure, this action will delete this project and all its
-          data, are you really sure ?
-        </DialogDescription>
-      </DialogHeader>
-      <form className="space-y-4">
-        <Button
-          type="button"
-          onClick={() => destroyProjectMutation()}
-          variant={"destructive"}
-          className="w-full"
-          disabled={isDestroyProjectPending}
-        >
-          {isDestroyProjectPending ? "Deleting..." : "Delete"}
-        </Button>
-      </form>
-    </DialogContent>
+    <Dialog>
+      <DialogContent
+        aria-describedby=""
+        className="rounded-2xl border bg-card p-8"
+      >
+        <DialogHeader>
+          <DialogTitle>Delete Project</DialogTitle>
+          <DialogDescription>
+            Just to make sure, this action will delete this project and all its
+            data, are you really sure ?
+          </DialogDescription>
+        </DialogHeader>
+        <form className="space-y-4">
+          <Button
+            type="button"
+            onClick={() => destroyProjectMutation()}
+            variant={"destructive"}
+            className="w-full"
+            disabled={isDestroyProjectPending}
+          >
+            {isDestroyProjectPending ? "Deleting..." : "Delete"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

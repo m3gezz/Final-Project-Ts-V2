@@ -17,7 +17,7 @@ export default function ProjectCard({ project }: { project: ProjectType }) {
           alt={project?.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <Badge className="absolute left-3 top-3 bg-background/90 text-foreground hover:bg-background">
+        <Badge className="absolute left-3 top-3">
           {project?.category?.label}
         </Badge>
       </div>

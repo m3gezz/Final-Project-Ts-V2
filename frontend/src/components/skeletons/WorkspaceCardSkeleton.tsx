@@ -2,20 +2,39 @@ import { Skeleton } from "../ui/skeleton";
 
 export default function WorkspaceCardSkeleton() {
   return (
-    <div className="border rounded-xl p-5">
-      <div className="flex justify-between items-start">
-        <div className="space-y-2">
-          <Skeleton className="h-3 w-12" />
-          <Skeleton className="h-3 w-12" />
-          <Skeleton className="h-3 w-20" />
-          <Skeleton className="h-2.5 w-30 mt-2" />
+    <article className="flex flex-col justify-between gap-4 rounded-xl border bg-card p-4">
+      <div className="flex items-start justify-between">
+        <Skeleton className="w-12 h-12 rounded-md" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+      </div>
+
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-3/4" />
+        <div className="space-y-1">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
         </div>
-        <Skeleton className="w-10 h-10" />
       </div>
-      <div className="flex items-center justify-between mt-4">
-        <Skeleton className="h-6 w-6 rounded-full" />
-        <Skeleton className="h-2.5 w-10" />
+
+      <div className="my-1 space-y-2">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-4 w-8" />
+        </div>
+        <Skeleton className="h-2 w-full rounded-full" />
       </div>
-    </div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex -space-x-2">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton
+              key={i}
+              className="h-6 w-6 rounded-full ring-2 ring-card"
+            />
+          ))}
+        </div>
+        <Skeleton className="h-4 w-28" />
+      </div>
+    </article>
   );
 }

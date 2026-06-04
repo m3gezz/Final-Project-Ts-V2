@@ -11,7 +11,6 @@ import SkillsController from "@/components/controllers/SkillsController";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import DeleteAccModal from "@/components/modals/DeleteAccModal";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ModifyPassModal from "@/components/modals/ModifyPassModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUser } from "@/api/functions/users";
@@ -219,45 +218,38 @@ export default function UserEdit() {
                 <Lock className="h-4 w-4" />
                 <span className="flex items-center gap-2">Change password</span>
               </div>
-              <Dialog>
-                <div className="flex flex-col gap-2">
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Update your password regularly to protect your account and
-                    maintain a higher level of security.
-                  </p>
-                  <DialogTrigger asChild>
-                    <Button type="button" className="ml-auto">
-                      Modify
-                    </Button>
-                  </DialogTrigger>
-                </div>
-                <ModifyPassModal />
-              </Dialog>
+
+              <div className="flex flex-col gap-2">
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Update your password regularly to protect your account and
+                  maintain a higher level of security.
+                </p>
+
+                <Button type="button" className="ml-auto">
+                  Modify
+                </Button>
+              </div>
             </div>
             <div className="rounded-xl border border-destructive bg-destructive/20 p-4">
               <div className="flex items-center mb-4 gap-2 text-destructive">
                 <TriangleAlert className="h-4 w-4" />
                 <span className="flex items-center gap-2">Delete account</span>
               </div>
-              <Dialog>
-                <div className="flex flex-col gap-2">
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Permanently remove your account and all associated data.
-                    This action cannot be undone.
-                  </p>
-                  <DialogTrigger asChild>
-                    <Button
-                      type="button"
-                      variant={"destructive"}
-                      className="ml-auto"
-                    >
-                      Delete
-                    </Button>
-                  </DialogTrigger>
-                </div>
 
-                <DeleteAccModal />
-              </Dialog>
+              <div className="flex flex-col gap-2">
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Permanently remove your account and all associated data. This
+                  action cannot be undone.
+                </p>
+
+                <Button
+                  type="button"
+                  variant={"destructive"}
+                  className="ml-auto"
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
           </div>
         </section>
@@ -270,6 +262,8 @@ export default function UserEdit() {
           </Button>
         </div>
       </form>
+      <ModifyPassModal />
+      <DeleteAccModal />
     </div>
   );
 }

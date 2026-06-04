@@ -24,6 +24,7 @@ import type {
 import { createRequest } from "@/api/functions/requests";
 import { useAppSelector } from "@/redux/store";
 import CommentsList from "@/components/lists/CommentsList";
+import UpdateCommentModal from "@/components/modals/UpdateCommentModal";
 
 export default function Project() {
   const { id } = useParams();
@@ -121,10 +122,19 @@ export default function Project() {
         ]);
         queryClient.setQueryData(
           ["project-comments", String(id)],
-          (old: CommentType[]) => [
-            ...old,
-            { id: Date.now(), content: comment, user, created_at: new Date() },
-          ],
+          (old: CommentType[]) => {
+            const now = new Date();
+            return [
+              {
+                id: Date.now(),
+                content: comment,
+                user,
+                created_at: now,
+                updated_at: now,
+              },
+              ...old,
+            ];
+          },
         );
         return { previousProject };
       },
@@ -292,6 +302,7 @@ export default function Project() {
           </section>
         </aside>
       </div>
+      <UpdateCommentModal />
     </div>
   );
 }

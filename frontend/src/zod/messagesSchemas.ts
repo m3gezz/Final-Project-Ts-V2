@@ -8,7 +8,12 @@ const createMessageSchema = z.object({
 export type createMessageSchemaType = z.infer<typeof createMessageSchema>;
 
 const updateMessageSchema = z.object({
-  message: z.string().trim().min(1, "Message content cannot be empty"),
+  message: z
+    .string()
+    .trim()
+    .min(1, "Message content cannot be empty")
+    .optional(),
+  isPinned: z.boolean().optional(),
 });
 
 export type updateMessageSchemaType = z.infer<typeof updateMessageSchema>;

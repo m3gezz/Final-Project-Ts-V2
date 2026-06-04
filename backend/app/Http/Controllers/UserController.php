@@ -158,27 +158,43 @@ class UserController extends Controller
 
     public function UserDashboard(Request $request) 
     {
-        $user = $request->user()->loadCount(['projects','requests' => function ($q) {
-            $q->where('status', 'pending');
-        }]);
+        $user = $request->user();
 
-        $user['workspaces_count'] = Workspace::whereHas('memberships', 
-            function($q) use($request) {
-                $q->where('user_id', $request->user()->id);
-            })->count();
+        $counts = [
+            'projects'=>$user->projects()->count(),
+            'requests'=>$user->requests()->where('status', 'pending')->count(),
+            'workspaces'=>$user->memberships()->count(),
+        ];
 
-        $projects = Project::where('private', false)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(3)->get();
-        $workspaces = Workspace::whereHas('memberships', 
-            function ($q) use($request) {
-                $q->where('user_id', $request->user()->id)->where('role', 'owner');
-            })->with(['memberships.user','project'=> function($q) {
-                $q->with(['user', 'skills', 'category'])->withCount(['comments','likes'])->orderByDesc('likes_count');
-            }])->limit(3)->get();
+        $workspaces = Workspace::whereHas('memberships', function ($q) use ($user) {
+            $q->where('user_id', $user->id)->where('role', 'owner');
+        })->with(['memberships.user','project' => function ($q) {
+                $q->with(['category'])->withCount(['likes'])->orderByDesc('likes_count');
+            }
+        ])
+        ->withCount([
+            'tasks', 
+            'tasks as open_tasks_count' => function ($q) {
+                $q->where('status', '!=', 'done');
+            }
+        ])->limit(5)->get()->map(function ($w) {
+            $total = $w->tasks_count;
+            $open = $w->open_tasks_count;
 
-        $dashboard['user'] = $user;
-        $dashboard['workspaces'] = $workspaces;
-        $dashboard['projects'] = $projects;
-        return response()->json($dashboard);
+            $w->progress = $total > 0 
+                ? (int) round((($total - $open) * 100) / $total) 
+                : 0;
+
+            return $w;
+        });
+
+        
+
+        $data['counts'] = $counts;
+        $data['tasks'] = $user->tasks()->limit(5)->orderBy('updated_at')->get();
+        $data['workspaces'] = $workspaces;
+        $data['projects'] = Project::where('private', false)->with(['user', 'category'])->withCount(['comments', 'likes'])->orderByDesc('likes_count')->limit(5)->get();
+        return response()->json($data);
     }
 
     public function adminDashboard() 

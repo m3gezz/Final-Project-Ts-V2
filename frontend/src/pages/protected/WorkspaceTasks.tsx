@@ -14,7 +14,6 @@ export default function WorkspaceTasks() {
   const { id } = useParams();
   const disp = useAppDispatch();
   const { user } = useAppSelector((state) => state?.auth);
-  const { open } = useAppSelector((state) => state?.modal);
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "tasks"],
     queryFn: () => getWorkspace(id, "tasks"),
@@ -29,17 +28,12 @@ export default function WorkspaceTasks() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
-        <Dialog open={open} onOpenChange={(v) => disp(toggleModal(v))}>
-          {isAdmin && (
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                New task
-              </Button>
-            </DialogTrigger>
-          )}
-          <CreateTaskModal />
-        </Dialog>
+        {isAdmin && (
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            New task
+          </Button>
+        )}
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         <TasksList tasks={workspace?.tasks} isLoading={isLoading} />

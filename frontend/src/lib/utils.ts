@@ -8,6 +8,7 @@ import {
   Shield,
   Users,
 } from "lucide-react";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
 function cn(...inputs: ClassValue[]) {
@@ -59,4 +60,15 @@ const getPages = (admin: boolean = false) => {
   ];
 };
 
-export { cn, getImageUrl, formatTime, getPages };
+const handleCopy = async (text: string) => {
+  if (!text) return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success("Copied successfully.");
+  } catch (err) {
+    toast.error("Something went wrong.");
+  }
+};
+
+export { cn, getImageUrl, formatTime, getPages, handleCopy };

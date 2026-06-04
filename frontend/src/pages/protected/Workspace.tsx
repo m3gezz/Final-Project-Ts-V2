@@ -5,24 +5,14 @@ import { getWorkspace } from "@/api/functions/workspaces";
 import { Link } from "react-router-dom";
 import WorkspaceSkeleton from "@/components/skeletons/WorkspaceSkeleton";
 import { formatTime } from "@/lib/utils";
-import { useEffect, useState } from "react";
 import type { PopulatedTask } from "@/assets/types";
 
 export default function Workspace() {
-  const [percentage, setPercentage] = useState(0);
   const { id } = useParams();
   const { data: workspace, isLoading } = useQuery({
     queryKey: ["workspace", id, "overview"],
     queryFn: () => getWorkspace(id, "overview"),
   });
-
-  useEffect(() => {
-    if (!workspace || !workspace?.tasks_count) return;
-    setPercentage(
-      ((workspace?.tasks_count - workspace?.open_tasks_count) * 100) /
-        workspace?.tasks_count,
-    );
-  }, [workspace]);
 
   if (isLoading) return <WorkspaceSkeleton />;
   return (
@@ -38,8 +28,10 @@ export default function Workspace() {
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border bg-card p-5">
           <div className="text-sm text-muted-foreground">Progress</div>
-          <div className="mt-1 text-3xl font-semibold">{percentage ?? 0}%</div>
-          <Progress value={percentage ?? 0} className="mt-3" />
+          <div className="mt-1 text-3xl font-semibold">
+            {workspace?.progress ?? 0}%
+          </div>
+          <Progress value={workspace?.progress ?? 0} className="mt-3" />
         </div>
         <Link
           to={"tasks"}
