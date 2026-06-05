@@ -53,6 +53,7 @@ export default function Populate() {
   return (
     <div className="space-y-8">
       <Header
+        icon={Sparkles}
         title="Populate"
         description="Seed and manage the global vocabulary used across Collab — skills, badges and project categories."
       />

@@ -120,7 +120,7 @@ class UserController extends Controller
             }
 
             $user->update(['password' => Hash::make($fields['new_password'])]);
-            return response()->json('updated');
+            return response()->json(['message' => 'Password updated successfully.']);
         }
 
         if ($fields['email'] !== $user->email) {

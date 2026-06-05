@@ -66,7 +66,7 @@ export default function UserSentRequestCard({
       {request?.status === "pending" && (
         <Button
           size="sm"
-          variant="outline"
+          variant="destructive"
           disabled={isDestroyRequestPending}
           onClick={() => destroyRequestMutation()}
         >

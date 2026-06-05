@@ -16,13 +16,13 @@ export default function SentRequestsList({
   type?: string;
 }) {
   return isLoading ? (
-    <div className="mt-6 space-y-3">
+    <div className="mt-6 grid lg:grid-cols-3 gap-4">
       {[...Array(2)].map((_, i) => (
         <SentRequestCardSkeleton key={i} />
       ))}
     </div>
   ) : requests?.length ? (
-    <div className="mt-6 space-y-3">
+    <div className="mt-6 grid lg:grid-cols-3 gap-4">
       {requests?.map((r) =>
         type === "user" ? (
           <UserSentRequestCard key={r?.id} request={r} />

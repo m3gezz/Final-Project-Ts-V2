@@ -23,7 +23,7 @@ export default function AssetsList({
   ) : (
     <section className="p-4">
       <h1 className="text-lg font-bold mb-4 flex items-center gap-1">
-        <File className="h-6 w-6 fill-accent text-accent" />
+        <File className="h-6 w-6 text-accent" />
         Shared assets
       </h1>
       <ul>

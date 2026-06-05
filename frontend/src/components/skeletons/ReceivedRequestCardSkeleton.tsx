@@ -2,17 +2,23 @@ import { Skeleton } from "../ui/skeleton";
 
 export default function ReceivedRequestCardSkeleton() {
   return (
-    <div className="flex items-start gap-2 border p-4 rounded-xl">
-      <Skeleton className="w-10 h-10 rounded-full" />
-      <div className="flex justify-between w-full">
-        <div className="space-y-2">
-          <Skeleton className="h-2.5 w-30" />
+    <div className="flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4">
+      <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+
+      <div className="flex-1 min-w-0 space-y-2">
+        <div className="space-y-1">
+          <Skeleton className="h-4 w-full max-w-[280px]" />
+          <Skeleton className="h-4 w-1/2 max-w-[150px]" />
+        </div>
+        <div className="flex items-center gap-2 pt-0.5">
+          <Skeleton className="h-5 w-16 rounded-md" />
           <Skeleton className="h-3 w-12" />
         </div>
-        <div className="flex gap-2 items-center">
-          <Skeleton className="h-6 w-20" />
-          <Skeleton className="h-6 w-20" />
-        </div>
+      </div>
+
+      <div className="flex gap-2 shrink-0 ml-auto md:ml-0">
+        <Skeleton className="h-9 w-20 rounded-md" />
+        <Skeleton className="h-9 w-20 rounded-md" />
       </div>
     </div>
   );

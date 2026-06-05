@@ -89,7 +89,7 @@ class WorkspaceController extends Controller
         
         if ($request->dataType === 'overview') {
             $workspace
-                ->load(['project', 'tasks.user'])
+                ->load(['project.category', 'tasks.user', 'memberships.user'])
                 ->loadCount(['memberships',
                     'tasks as open_tasks_count' => function ($q) {
                         $q->where('status','!=', 'done');

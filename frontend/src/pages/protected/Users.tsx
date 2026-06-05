@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { getUsers } from "@/api/functions/users";
 import UsersList from "@/components/lists/UsersList";
 import PageFooter from "@/components/slices/PageFooter";
+import { UsersIcon } from "lucide-react";
 
 export default function Users() {
   const [pagination, setPagination] = useState({
@@ -52,7 +53,11 @@ export default function Users() {
 
   return (
     <div>
-      <Header title="Users" description="Find people to collaborate with." />
+      <Header
+        icon={UsersIcon}
+        title="Users"
+        description="Find people to collaborate with."
+      />
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <div className="flex flex-col w-full lg:max-w-2xl lg:flex-row gap-2 ml-auto">
           <InputController

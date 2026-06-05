@@ -7,22 +7,31 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useMutation } from "@tanstack/react-query";
+import { toggleModal } from "@/redux/modalSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function DeleteProjectModal() {
   const { id } = useParams();
   const nav = useNavigate();
+  const queryClient = useQueryClient();
+  const { isDestroyProject } = useAppSelector((state) => state.modal);
+  const disp = useAppDispatch();
   const { mutate: destroyProjectMutation, isPending: isDestroyProjectPending } =
     useMutation({
       mutationFn: () => destroyProject(id),
       onSuccess: () => {
         nav("/projects");
+        queryClient.invalidateQueries({ queryKey: ["projects"] });
       },
     });
 
   return (
-    <Dialog>
+    <Dialog
+      open={isDestroyProject}
+      onOpenChange={() => disp(toggleModal({ name: "isDestroyProject" }))}
+    >
       <DialogContent
         aria-describedby=""
         className="rounded-2xl border bg-card p-8"

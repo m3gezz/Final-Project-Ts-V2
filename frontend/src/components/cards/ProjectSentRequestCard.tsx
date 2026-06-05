@@ -79,7 +79,7 @@ export default function ProjectSentRequestCard({
       {request?.status === "pending" && isOwner && (
         <Button
           size="sm"
-          variant="outline"
+          variant="destructive"
           disabled={isDestroyInvitationPending}
           onClick={() => destroyInvitationMutation()}
         >

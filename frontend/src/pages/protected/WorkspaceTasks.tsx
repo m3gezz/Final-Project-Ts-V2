@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { List, Plus } from "lucide-react";
 import CreateTaskModal from "@/components/modals/CreateTaskModal";
 import { useQuery } from "@tanstack/react-query";
 import { getWorkspace } from "@/api/functions/workspaces";
@@ -27,9 +26,11 @@ export default function WorkspaceTasks() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
+        <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+          <List className="h-6 w-6" /> Tasks
+        </h1>
         {isAdmin && (
-          <Button>
+          <Button onClick={() => disp(toggleModal({ name: "isCreateTask" }))}>
             <Plus className="mr-2 h-4 w-4" />
             New task
           </Button>
@@ -38,6 +39,7 @@ export default function WorkspaceTasks() {
       <div className="grid gap-4 md:grid-cols-3">
         <TasksList tasks={workspace?.tasks} isLoading={isLoading} />
       </div>
+      <CreateTaskModal />
     </div>
   );
 }

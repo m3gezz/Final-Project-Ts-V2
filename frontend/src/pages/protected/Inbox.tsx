@@ -5,6 +5,7 @@ import SentRequestsList from "@/components/lists/SentRequestsList";
 import ReceivedRequestsList from "@/components/lists/ReceivedRequestsList";
 import { getRequests } from "@/api/functions/requests";
 import { getInvitations } from "@/api/functions/invitations";
+import { InboxIcon } from "lucide-react";
 
 export default function Inbox() {
   const [
@@ -20,11 +21,12 @@ export default function Inbox() {
   return (
     <div>
       <Header
+        icon={InboxIcon}
         title="Inbox"
         description="Review invitations and join requests in one place."
       />
       <Tabs defaultValue="requests" className="flex flex-col">
-        <TabsList className="h-12">
+        <TabsList>
           <TabsTrigger value="requests">
             Sent ({requests?.length ?? 0})
           </TabsTrigger>

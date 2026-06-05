@@ -6,6 +6,7 @@ import WorkspacesList from "@/components/lists/WorkspacesList";
 import Header from "@/components/slices/Header";
 import PageFooter from "@/components/slices/PageFooter";
 import { useQuery } from "@tanstack/react-query";
+import { Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -43,6 +44,7 @@ export default function Workspaces() {
   return (
     <div>
       <Header
+        icon={Briefcase}
         title="Workspaces"
         description="Private spaces where your teams collaborate."
       />

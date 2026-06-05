@@ -23,7 +23,7 @@ export default function PinnedList({
   ) : (
     <section className="p-4">
       <h1 className="text-lg font-bold mb-4 flex items-center gap-1">
-        <Pin className="h-6 w-6 fill-accent text-accent" />
+        <Pin className="h-6 w-6 text-accent" />
         Pinned messages
       </h1>
       <ul>
@@ -31,7 +31,14 @@ export default function PinnedList({
           messages?.map((m: PopulatedMessage, i: number) => (
             <li key={i} className="flex items-start gap-2 border-l pb-4">
               <div className="-ml-1 h-2 w-2 bg-primary rounded-full mt-2" />
-              <div>
+              <div
+                onClick={() =>
+                  document
+                    .getElementById(`message-${m?.id}`)
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+                className="cursor-pointer"
+              >
                 <h2>{m?.user?.full_name}</h2>
                 <p className="italic text-xs border rounded-2xl w-full px-4 py-2 mt-2">
                   {m?.message}

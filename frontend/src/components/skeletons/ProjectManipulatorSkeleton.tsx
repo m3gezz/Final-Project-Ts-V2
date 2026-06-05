@@ -1,10 +1,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "../slices/Header";
+import { PenIcon } from "lucide-react";
 
 export default function ProjectManipulatorSkeleton() {
   return (
     <article>
       <Header
+        icon={PenIcon}
         title={"Update this project"}
         description="Tell the community what you're building and the team you need."
       />

@@ -16,8 +16,9 @@ import {
   updatePasswordSchema,
   type updatePasswordSchemaType,
 } from "@/zod/usersSchemas";
-import { useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { handleApiErrors } from "@/api/functions/validation";
+import { toggleModal } from "@/redux/modalSlice";
 
 const fields = [
   {
@@ -41,6 +42,8 @@ const fields = [
 ] as const;
 
 export default function ModifyPassModal() {
+  const disp = useAppDispatch();
+  const { isUpdatePassword } = useAppSelector((state) => state.modal);
   const { user } = useAppSelector((state) => state?.auth);
   const form = useForm<updatePasswordSchemaType>({
     defaultValues: {
@@ -61,12 +64,15 @@ export default function ModifyPassModal() {
         handleApiErrors(err, form);
       },
       onSuccess: () => {
-        nav(-1);
+        disp(toggleModal({ name: "isUpdatePassword" }));
       },
     });
 
   return (
-    <Dialog>
+    <Dialog
+      open={isUpdatePassword}
+      onOpenChange={() => disp(toggleModal({ name: "isUpdatePassword" }))}
+    >
       <DialogContent
         aria-describedby=""
         className="rounded-2xl border bg-card p-8"

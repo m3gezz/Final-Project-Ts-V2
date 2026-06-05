@@ -74,7 +74,11 @@ export default function MessageCard({
   });
 
   return user?.id === message?.user?.id ? (
-    <article key={message?.id} className="flex items-end gap-4">
+    <article
+      id={`message-${message?.id}`}
+      key={message?.id}
+      className="flex items-end gap-4"
+    >
       <ContextMenu>
         <div className="w-full flex flex-col items-end gap-1">
           <ContextMenuTrigger
@@ -83,7 +87,7 @@ export default function MessageCard({
             {message?.message}
           </ContextMenuTrigger>
           <span className="text-xs text-muted-foreground flex items-center gap-1">
-            {message?.isStared && <Star className="h-2.5 w-2.5 fill-accent" />}
+            {message?.isStared && <Star className="h-2.5 w-2.5" />}
             {formatTime(message?.created_at)}
           </span>
         </div>
@@ -147,7 +151,11 @@ export default function MessageCard({
       </Avatar>
     </article>
   ) : (
-    <article key={message?.id} className="flex items-end gap-4">
+    <article
+      id={`message-${message?.id}`}
+      key={message?.id}
+      className="flex items-end gap-4"
+    >
       <Avatar className="h-9 w-9">
         <AvatarImage src={getImageUrl(message?.user?.avatar)} />
         <AvatarFallback>
@@ -166,9 +174,7 @@ export default function MessageCard({
             </ContextMenuTrigger>
 
             <span className="text-xs text-muted-foreground flex items-center gap-1">
-              {message?.isStared && (
-                <Star className="h-2.5 w-2.5 fill-accent" />
-              )}
+              {message?.isStared && <Star className="h-2.5 w-2.5" />}
               {formatTime(message?.created_at)}
             </span>
           </div>

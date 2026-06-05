@@ -16,6 +16,7 @@ import InputController from "../controllers/InputController";
 import { toggleModal } from "@/redux/modalSlice";
 import { useEffect } from "react";
 import type { updateCommentSchemaType } from "@/zod/comments";
+import TextareaController from "../controllers/TextareaController";
 
 export default function UpdateCommentModal() {
   const { id } = useParams();
@@ -74,10 +75,9 @@ export default function UpdateCommentModal() {
         className="rounded-2xl border bg-card p-8"
       >
         <DialogHeader>
-          <DialogTitle>Edit your comment</DialogTitle>
+          <DialogTitle>Edit Your Comment</DialogTitle>
           <DialogDescription>
-            Continuing means that your comment will be changed, and marked as
-            so.
+            Make changes to your comment and save when you're ready.
           </DialogDescription>
         </DialogHeader>
 
@@ -85,13 +85,14 @@ export default function UpdateCommentModal() {
           className="space-y-4"
           onSubmit={form.handleSubmit((data) => updateCommentMutation(data))}
         >
-          <InputController
+          <TextareaController
             control={form.control}
             f={{
               name: "content",
               type: "text",
               label: "Edit your comment",
             }}
+            className="min-h-10"
           />
           <Button className="w-full" disabled={isUpdateCommentPending}>
             {isUpdateCommentPending ? "Modifying..." : "Modify"}

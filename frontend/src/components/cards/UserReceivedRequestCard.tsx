@@ -65,7 +65,7 @@ export default function UserReceivedRequestCard({
         <div className="flex gap-2">
           <Button
             size="sm"
-            variant="outline"
+            variant="destructive"
             disabled={isUpdateInvitationPending}
             onClick={() => updateInvitationMutation({ status: "declined" })}
           >

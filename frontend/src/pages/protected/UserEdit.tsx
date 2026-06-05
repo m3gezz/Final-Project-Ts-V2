@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Lock, TriangleAlert } from "lucide-react";
+import { Camera, Lock, Pen, TriangleAlert } from "lucide-react";
 import Header from "@/components/slices/Header";
 import { Controller, useForm } from "react-hook-form";
 import InputController from "@/components/controllers/InputController";
@@ -23,6 +23,7 @@ import type { DataType } from "@/assets/types";
 import { getMe } from "@/api/functions/auth";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { handleApiErrors } from "@/api/functions/validation";
+import { toggleModal } from "@/redux/modalSlice";
 
 const fields = [
   {
@@ -116,6 +117,7 @@ export default function UserEdit() {
   return (
     <div className="mx-auto max-w-3xl">
       <Header
+        icon={Pen}
         title="Edit profile"
         description="Keep your profile fresh and discoverable."
       />
@@ -225,7 +227,13 @@ export default function UserEdit() {
                   maintain a higher level of security.
                 </p>
 
-                <Button type="button" className="ml-auto">
+                <Button
+                  type="button"
+                  className="ml-auto"
+                  onClick={() =>
+                    disp(toggleModal({ name: "isUpdatePassword" }))
+                  }
+                >
                   Modify
                 </Button>
               </div>
@@ -246,6 +254,9 @@ export default function UserEdit() {
                   type="button"
                   variant={"destructive"}
                   className="ml-auto"
+                  onClick={() =>
+                    disp(toggleModal({ name: "isDestroyAccount" }))
+                  }
                 >
                   Delete
                 </Button>

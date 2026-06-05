@@ -6,7 +6,6 @@ import {
 } from "@/api/functions/projects";
 import { handleApiErrors } from "@/api/functions/validation";
 import type { DataType } from "@/assets/types";
-import EmptyCard from "@/components/cards/EmptyCard";
 import InputController from "@/components/controllers/InputController";
 import SelectController from "@/components/controllers/SelectController";
 import SkillsController from "@/components/controllers/SkillsController";
@@ -40,6 +39,8 @@ import { Link, useParams } from "react-router-dom";
 import DeleteProjectModal from "@/components/modals/DeleteProjectModal";
 import ProjectManipulatorSkeleton from "@/components/skeletons/ProjectManipulatorSkeleton";
 import NoContentCard from "@/components/cards/NoContentCard";
+import { toggleModal } from "@/redux/modalSlice";
+import { useAppDispatch } from "@/redux/store";
 
 const textareaFields = [
   {
@@ -62,6 +63,7 @@ export default function ProjectManipulator({
 }) {
   const { id } = useParams();
   const queryClient = useQueryClient();
+  const disp = useAppDispatch();
   const [skills, setSkills] = useState<DataType[]>([]);
   const [preview, setPreview] = useState("");
   const [step, setStep] = useState<number>(1);
@@ -86,7 +88,7 @@ export default function ProjectManipulator({
       },
       {
         queryKey: ["categories"],
-        queryFn: getCategories,
+        queryFn: () => getCategories(),
         staleTime: Infinity,
       },
     ],
@@ -203,6 +205,7 @@ export default function ProjectManipulator({
   return (
     <main>
       <Header
+        icon={mode === "create" ? Plus : Pen}
         title={mode === "create" ? "Create a " : "Update this " + "project"}
         description="Tell the community what you're building and the team you need."
       />
@@ -381,6 +384,9 @@ export default function ProjectManipulator({
                           type="button"
                           variant={"destructive"}
                           className="ml-auto"
+                          onClick={() =>
+                            disp(toggleModal({ name: "isDestroyProject" }))
+                          }
                         >
                           Delete
                         </Button>
@@ -425,11 +431,7 @@ export default function ProjectManipulator({
               action={
                 <Button asChild variant={"outline"}>
                   <Link
-                    to={
-                      response?.project_id
-                        ? `/projects/${response.project_id}`
-                        : "/projects"
-                    }
+                    to={response?.id ? `/projects/${response.id}` : "/projects"}
                   >
                     View project
                   </Link>

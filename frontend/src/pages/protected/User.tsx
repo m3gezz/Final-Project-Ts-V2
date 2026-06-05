@@ -74,11 +74,11 @@ export default function User() {
             )}
             {profile?.badges?.map((b: DataType) => (
               <div
-                key={b.id}
+                key={b?.id}
                 className="flex items-center gap-3 rounded-lg border bg-muted/30 p-3"
               >
-                <span className="text-xl">{b.label}</span>
-                <span className="text-sm font-medium">{b.description}</span>
+                <span className="text-xl">{b?.label}</span>
+                <span className="text-sm font-medium">{b?.description}</span>
               </div>
             ))}
           </div>

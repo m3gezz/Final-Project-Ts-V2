@@ -17,6 +17,7 @@ import {
 } from "@/zod/usersSchemas";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { handleApiErrors } from "@/api/functions/validation";
+import { toggleModal } from "@/redux/modalSlice";
 
 const fields = [
   {
@@ -35,6 +36,7 @@ const fields = [
 
 export default function DeleteAccModal() {
   const { user } = useAppSelector((state) => state?.auth);
+  const { isDestroyAccount } = useAppSelector((state) => state?.modal);
   const form = useForm<destroyUserSchemaType>({
     defaultValues: {
       password: "",
@@ -54,7 +56,10 @@ export default function DeleteAccModal() {
     });
 
   return (
-    <Dialog>
+    <Dialog
+      open={isDestroyAccount}
+      onOpenChange={() => disp(toggleModal({ name: "isDestroyAccount" }))}
+    >
       <DialogContent
         aria-describedby=""
         className="rounded-2xl border bg-card p-8"

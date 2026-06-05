@@ -11,6 +11,7 @@ import {
   FolderKanban,
   Briefcase,
   TrendingUp,
+  LayoutDashboard,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -50,6 +51,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <Header
+        icon={LayoutDashboard}
         title="Admin dashboard"
         description="Platform health at a glance."
       />

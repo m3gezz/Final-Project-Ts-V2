@@ -26,13 +26,25 @@ export default function ProjectReceivedRequestCard({
     useMutation({
       mutationFn: (data: { status: "accepted" | "declined" }) =>
         updateRequest(request?.id, data),
-      onMutate: () => {
+      onMutate: (data) => {
         queryClient.cancelQueries();
         const previous = queryClient.getQueryData([
           "workspace",
           String(request?.workspace_id),
           "members",
         ]);
+
+        if (data?.status === "declined") {
+          queryClient.setQueryData(
+            ["workspace", String(request?.workspace_id), "members"],
+            (old: PopulatedWorkspace) => ({
+              ...old,
+              requests: [...old?.requests?.filter((r) => r?.id != request?.id)],
+            }),
+          );
+          return { previous };
+        }
+
         queryClient.setQueryData(
           ["workspace", String(request?.workspace_id), "members"],
           (old: PopulatedWorkspace) => ({
@@ -71,13 +83,18 @@ export default function ProjectReceivedRequestCard({
       </Avatar>
       <div className="flex-1">
         <div className="text-sm">
-          <Link to={`/users/${request?.user?.id}`} className="font-medium">
+          <Link
+            to={`/users/${request?.user?.id}`}
+            className="font-medium text-accent"
+          >
             {request?.user?.full_name}
           </Link>{" "}
           Wants to join
         </div>
         <div className="mt-1 space-x-2">
-          <Badge variant="outline">{request?.status}</Badge>
+          <Badge variant="outline" className="border-yellow-400/50">
+            {request?.status}
+          </Badge>
           <span className="text-xs text-muted-foreground">
             {formatTime(request?.created_at)}
           </span>
@@ -87,7 +104,7 @@ export default function ProjectReceivedRequestCard({
         <div className="flex gap-2">
           <Button
             size="sm"
-            variant="outline"
+            variant="destructive"
             disabled={isUpdateRequestPending}
             onClick={() => updateRequestMutation({ status: "declined" })}
           >

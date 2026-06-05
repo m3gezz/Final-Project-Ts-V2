@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatTime, getImageUrl } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
-import { Check, Circle, CircleDot, X } from "lucide-react";
+import { Check, Circle, CircleCheck, CircleDot, Timer, X } from "lucide-react";
 import type { PopulatedTask, PopulatedWorkspace } from "@/assets/types";
 import { destroyTask, updateTask } from "@/api/functions/tasks";
 import { useAppSelector } from "@/redux/store";
@@ -22,7 +22,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
     String(id),
     "tasks",
   ]);
-  const isOwner = user?.id === previous?.project?.user_id;
+  const isProjectOwner = user?.id === previous?.project?.user_id;
 
   const { mutate: updateTaskMutation, isPending: isUpdateTaskPending } =
     useMutation({
@@ -90,34 +90,55 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
       },
     });
 
+  const style =
+    task?.status === "todo"
+      ? "border-yellow-400/50"
+      : task?.status === "doing"
+        ? "border-blue-400/50"
+        : "border-green-400/50";
+
   return (
-    <div key={task?.id} className="rounded-lg border bg-card p-3 space-y-6">
+    <article
+      className={`cursor-pointer rounded-lg border bg-card p-3 ${style}`}
+    >
       <ContextMenu>
         <ContextMenuTrigger>
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <h1 className="font-medium text-xl">{task?.title}</h1>
-              {task?.description && <p>{task?.description}</p>}
+          <div className="flex items-start justify-between">
+            <div className="text-sm space-y-2">
+              <h1
+                className={`font-medium text-lg ${task?.status === "done" && "line-through decoration-2"}`}
+              >
+                {task?.title}
+              </h1>
+              {task?.description && (
+                <p
+                  className={`${task?.status === "done" && "line-through decoration-2"}`}
+                >
+                  {task?.description}
+                </p>
+              )}
             </div>
             <span className="text-xs text-muted-foreground">
               {formatTime(task?.created_at)}
             </span>
           </div>
-          <div className="mt-2 flex items-center gap-2">
+
+          <Link
+            to={`/users/${task?.user?.id}`}
+            className="mt-6 flex items-center gap-2"
+          >
             <Avatar className="h-6 w-6">
               <AvatarImage src={getImageUrl(task?.user?.avatar)} />
               <AvatarFallback>{task?.user?.full_name?.[0]}</AvatarFallback>
             </Avatar>
-            <div className="truncate">
-              <Link to={`/users/${task?.user?.id}`} className="font-medium ">
-                {task?.user?.full_name}
-              </Link>
+            <div className="truncate text-sm">
+              {task?.user?.full_name}
               <p className="text-xs text-muted-foreground">@{user?.username}</p>
             </div>
-          </div>
+          </Link>
         </ContextMenuTrigger>
         <ContextMenuContent>
-          {(user?.id === task?.user?.id || isOwner) && (
+          {(user?.id === task?.user?.id || isProjectOwner) && (
             <>
               {task?.status !== "todo" && (
                 <ContextMenuItem
@@ -135,7 +156,7 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
                   disabled={isUpdateTaskPending}
                   onClick={() => updateTaskMutation({ status: "doing" })}
                 >
-                  <CircleDot /> Set as in progress
+                  <Timer /> Set as in progress
                 </ContextMenuItem>
               )}
               {task?.status !== "done" && (
@@ -144,13 +165,13 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
                   disabled={isUpdateTaskPending}
                   onClick={() => updateTaskMutation({ status: "done" })}
                 >
-                  <Check />
+                  <CircleCheck />
                   Set as done
                 </ContextMenuItem>
               )}
             </>
           )}
-          {isOwner && (
+          {isProjectOwner && (
             <ContextMenuItem
               variant={"destructive"}
               disabled={isDestroyTaskPending}
@@ -161,6 +182,6 @@ export default function TaskCard({ task }: { task: PopulatedTask }) {
           )}
         </ContextMenuContent>
       </ContextMenu>
-    </div>
+    </article>
   );
 }

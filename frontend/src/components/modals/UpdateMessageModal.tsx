@@ -16,6 +16,7 @@ import { toggleModal } from "@/redux/modalSlice";
 import { useEffect } from "react";
 import { updateMessage } from "@/api/functions/messages";
 import type { updateMessageSchemaType } from "@/zod/messagesSchemas";
+import TextareaController from "../controllers/TextareaController";
 
 export default function UpdateMessageModal() {
   const { id } = useParams();
@@ -65,10 +66,10 @@ export default function UpdateMessageModal() {
         className="rounded-2xl border bg-card p-8"
       >
         <DialogHeader>
-          <DialogTitle>Edit your comment</DialogTitle>
+          <DialogTitle>Edit Message</DialogTitle>
+
           <DialogDescription>
-            Continuing means that your comment will be changed, and marked as
-            so.
+            Update your message below. Edited messages will be marked as edited.
           </DialogDescription>
         </DialogHeader>
 
@@ -76,13 +77,14 @@ export default function UpdateMessageModal() {
           className="space-y-4"
           onSubmit={form.handleSubmit((data) => updateMessageMutation(data))}
         >
-          <InputController
+          <TextareaController
             control={form.control}
             f={{
               name: "message",
               type: "text",
               label: "Edit your comment",
             }}
+            className="min-h-10"
           />
           <Button className="w-full" disabled={isUpdateMessagePending}>
             {isUpdateMessagePending ? "Modifying..." : "Modify"}

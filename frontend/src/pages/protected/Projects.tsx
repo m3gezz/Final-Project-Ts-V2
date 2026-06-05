@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { FolderKanban, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/slices/Header";
 import { useQueries } from "@tanstack/react-query";
@@ -71,6 +71,7 @@ export default function Projects() {
   return (
     <div>
       <Header
+        icon={FolderKanban}
         title="Projects"
         description="Discover ideas from the community and find your next collaboration."
         action={

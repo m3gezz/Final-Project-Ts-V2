@@ -60,18 +60,16 @@ export default function Project() {
     mutate: createProjectLikeMutation,
     isPending: isCreateProjectLikePending,
   } = useMutation({
-    mutationFn: () => {
-      return createProjectLike(id);
-    },
+    mutationFn: () => createProjectLike(id),
     onMutate: () => {
       queryClient.cancelQueries();
       const previousProject = queryClient.getQueryData([
-        "project",
+        "projects",
         String(project?.id),
       ]);
 
       queryClient.setQueryData(
-        ["project", String(project?.id)],
+        ["projects", String(project?.id)],
         (old: ProjectType) => ({
           ...old,
           isLiked: !old?.isLiked,
@@ -85,7 +83,7 @@ export default function Project() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["project", String(project?.id)],
+        queryKey: ["projects", String(project?.id)],
       });
     },
   });

@@ -6,7 +6,8 @@ import type { ControllerType } from "@/assets/types";
 export default function TextareaController<T extends FieldValues>({
   control,
   f,
-}: ControllerType<T>) {
+  className = "",
+}: ControllerType<T> & { className?: string }) {
   return (
     <Controller
       name={f?.name}
@@ -19,6 +20,7 @@ export default function TextareaController<T extends FieldValues>({
             rows={5}
             aria-invalid={fieldState.invalid}
             placeholder={f?.placeholder}
+            className={className}
           />
           {fieldState.error && (
             <FieldError>{fieldState.error.message}</FieldError>

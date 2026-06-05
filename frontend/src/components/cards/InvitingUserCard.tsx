@@ -22,7 +22,7 @@ export default function InvitingUserCard({ user }: { user: UserType }) {
         user_id: user?.id,
       }),
     onMutate: () => {
-      disp(toggleModal(false));
+      disp(toggleModal({ name: "isCreateInvite" }));
       queryClient.cancelQueries();
       const previous = queryClient.getQueryData([
         "workspace",
@@ -53,6 +53,9 @@ export default function InvitingUserCard({ user }: { user: UserType }) {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["workspace", String(id), "members"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["nonMembers"],
       });
       queryClient.invalidateQueries({
         queryKey: ["workspace", String(id), "overview"],

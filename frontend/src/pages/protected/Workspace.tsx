@@ -4,8 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { getWorkspace } from "@/api/functions/workspaces";
 import { Link } from "react-router-dom";
 import WorkspaceSkeleton from "@/components/skeletons/WorkspaceSkeleton";
-import { formatTime } from "@/lib/utils";
-import type { PopulatedTask } from "@/assets/types";
+import { formatTime, getImageUrl } from "@/lib/utils";
+import type { MembershipType, PopulatedTask } from "@/assets/types";
+import { Badge } from "@/components/ui/badge";
+import { Briefcase, List, UsersIcon } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ProjectCard from "@/components/cards/ProjectCard";
 
 export default function Workspace() {
   const { id } = useParams();
@@ -16,40 +20,90 @@ export default function Workspace() {
 
   if (isLoading) return <WorkspaceSkeleton />;
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
+    <section className="space-y-6">
+      <header>
+        <h1 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+          <Briefcase className="h-6 w-6" />
           {workspace?.project?.title}'s Workspace
         </h1>
         <p className="text-sm text-muted-foreground">
           Project overview & activity
         </p>
-      </div>
+      </header>
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border bg-card p-5">
-          <div className="text-sm text-muted-foreground">Progress</div>
-          <div className="mt-1 text-3xl font-semibold">
-            {workspace?.progress ?? 0}%
-          </div>
-          <Progress value={workspace?.progress ?? 0} className="mt-3" />
-        </div>
         <Link
-          to={"tasks"}
-          className="rounded-xl border bg-card p-4 hover:border-primary/50"
+          to={`/projects/${workspace?.project?.id}`}
+          className="group flex flex-col overflow-hidden rounded-xl border bg-card transition-all hover:-translate-y-0.5"
         >
-          <div className="text-sm text-muted-foreground">Open tasks</div>
-          <div className="mt-1 text-3xl font-semibold">
-            {workspace?.open_tasks_count ?? 0}
+          <div className="relative aspect-video overflow-hidden bg-muted">
+            <img
+              src={getImageUrl(workspace?.project?.image)}
+              alt={workspace?.project?.title}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <Badge className="absolute left-3 top-3">
+              {workspace?.project?.category?.label}
+            </Badge>
+            <div className="absolute bottom-0 left-0 p-4 backdrop-blur-xs w-full">
+              <h3 className="font-semibold leading-tight group-hover:text-primary">
+                {workspace?.project?.title}
+              </h3>
+              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                {workspace?.project?.description}
+              </p>
+            </div>
           </div>
         </Link>
         <Link
-          to={"members"}
-          className="rounded-xl border bg-card p-4 hover:border-primary/50"
+          to={"tasks"}
+          className="space-y-6 rounded-xl border bg-card p-4 hover:border-primary/50"
         >
-          <div className="text-sm text-muted-foreground">Members</div>
-          <div className="mt-1 text-3xl font-semibold">
-            {workspace?.memberships_count ?? 0}
+          <div className="flex items-center justify-between text-sm">
+            <div>
+              <Badge>WORKFLOW</Badge>
+              <h1 className="text-lg font-semibold mt-2">Open tasks</h1>
+            </div>
+            <div className="p-3 bg-muted rounded-full mb-3">
+              <List className="h-6 w-6 text-primary" />
+            </div>
           </div>
+          <div>
+            <h1 className="text-2xl font-semibold mb-2">
+              {workspace?.open_tasks_count ?? 0} open tasks
+            </h1>
+            <Progress value={workspace?.progress ?? 0} />
+          </div>
+          <p>{workspace?.progress ?? 0}% completion rate at this moment</p>
+        </Link>
+        <Link
+          to={"members"}
+          className="space-y-6 rounded-xl border bg-card p-4 hover:border-primary/50"
+        >
+          <div className="flex items-center justify-between text-sm">
+            <div>
+              <Badge>COLAB</Badge>
+              <h1 className="text-lg font-semibold mt-2">Active Members</h1>
+            </div>
+            <div className="p-3 bg-muted rounded-full mb-3">
+              <UsersIcon className="h-6 w-6 text-primary" />
+            </div>
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold mb-2">
+              {workspace?.memberships_count ?? 0} Online
+            </h1>
+            <div className="flex items-center gap-2">
+              {workspace?.memberships?.map((m: MembershipType) => (
+                <Avatar key={m?.id} className="h-6 w-6 -ml-2">
+                  <AvatarImage src={getImageUrl(m?.user?.avatar)} />
+                  <AvatarFallback>
+                    {m?.user?.full_name?.[0]?.toLocaleUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              ))}
+            </div>
+          </div>
+          <p>Syncing in 'Chat'</p>
         </Link>
       </div>
       <div className="rounded-xl border bg-card p-6">
@@ -61,11 +115,10 @@ export default function Workspace() {
                 <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                 Task <i>"{t?.title}"</i> is{" "}
                 {t?.status === "todo"
-                  ? "created"
+                  ? "assigned to"
                   : t?.status === "doing"
-                    ? "advancing"
-                    : "done"}{" "}
-                by
+                    ? "advancing with"
+                    : "done by"}{" "}
                 <b>{t?.user?.full_name}</b>
                 <span className="ml-auto text-xs text-muted-foreground">
                   {formatTime(t?.created_at)}
@@ -80,33 +133,6 @@ export default function Workspace() {
           )}
         </ul>
       </div>
-    </div>
+    </section>
   );
 }
-
-// function WSettings({ name }: { name: string }) {
-//   const [n, setN] = useState(name);
-//   return (
-//     <div className="max-w-2xl space-y-6">
-//       <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-//       <div className="rounded-xl border bg-card p-6 space-y-4">
-//         <div className="space-y-2">
-//           <label className="text-sm font-medium">Workspace name</label>
-//           <Input value={n} onChange={(e) => setN(e.target.value)} />
-//         </div>
-//         <div className="flex justify-end">
-//           <Button onClick={() => toast.success("Saved")}>Save</Button>
-//         </div>
-//       </div>
-//       <div className="rounded-xl border border-destructive/30 bg-card p-6">
-//         <h2 className="text-lg font-semibold text-destructive">Danger zone</h2>
-//         <p className="mt-1 text-sm text-muted-foreground">
-//           Deleting a workspace removes all chat, tasks and attachments.
-//         </p>
-//         <Button variant="destructive" className="mt-4">
-//           Delete workspace
-//         </Button>
-//       </div>
-//     </div>
-//   );
-// }

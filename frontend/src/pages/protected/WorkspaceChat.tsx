@@ -67,8 +67,7 @@ export default function WorkspaceChat() {
       <section className="flex h-[calc(100vh-4rem)] flex-col rounded-xl border bg-card">
         <div className="border-b p-4">
           <h1 className="text-lg font-semibold flex items-center gap-2 mb-2">
-            <MessagesSquare className="h-6 w-6 fill-accent text-accent" /> Team
-            discussion
+            <MessagesSquare className="h-6 w-6 text-accent" /> Team discussion
           </h1>
           <p className="text-xs text-muted-foreground">
             All messages stay private to this workspace.
@@ -89,6 +88,7 @@ export default function WorkspaceChat() {
           <div className="flex-1">
             <TextareaController
               control={form.control}
+              className="min-h-10"
               f={{
                 name: "message",
                 placeholder: "Message the team…",
@@ -106,13 +106,13 @@ export default function WorkspaceChat() {
         <PinnedList
           messages={messages
             ?.filter((m: PopulatedMessage) => m?.isPinned)
-            ?.slice(0, 5)}
+            ?.slice(0, 3)}
           isLoading={isMessagesLoading}
         />
         <AssetsList
           messages={messages
             ?.filter((m: PopulatedMessage) => m?.isPinned)
-            ?.slice(0, 5)}
+            ?.slice(0, 3)}
           isLoading={isMessagesLoading}
         />
       </section>
