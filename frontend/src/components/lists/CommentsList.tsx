@@ -1,6 +1,8 @@
 import CommentCard from "../cards/CommentCard";
 import type { CommentType } from "@/assets/types";
 import CommentCardSkeleton from "../skeletons/CommentCardSkeleton";
+import NoContentCard from "../cards/NoContentCard";
+import { MessagesSquare } from "lucide-react";
 
 export default function CommentsList({
   comments,
@@ -22,8 +24,10 @@ export default function CommentsList({
       ))}
     </div>
   ) : (
-    <p className="text-sm text-muted-foreground text-center my-2">
-      No comments yet.
-    </p>
+    <NoContentCard
+      icon={MessagesSquare}
+      title="No comments yet"
+      description="Be the first to comment on this project!"
+    />
   );
 }

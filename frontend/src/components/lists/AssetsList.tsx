@@ -1,10 +1,10 @@
 import type { PopulatedMessage } from "@/assets/types";
 import { Skeleton } from "../ui/skeleton";
 import PinnedSkeleton from "../skeletons/PinnedSkeleton";
-import { Pin, PinOff } from "lucide-react";
+import { File, Pin } from "lucide-react";
 import NoContentCard from "../cards/NoContentCard";
 
-export default function PinnedList({
+export default function AssetsList({
   messages,
   isLoading,
 }: {
@@ -23,8 +23,8 @@ export default function PinnedList({
   ) : (
     <section className="p-4">
       <h1 className="text-lg font-bold mb-4 flex items-center gap-1">
-        <Pin className="h-6 w-6 fill-accent text-accent" />
-        Pinned messages
+        <File className="h-6 w-6 fill-accent text-accent" />
+        Shared assets
       </h1>
       <ul>
         {messages?.length ? (
@@ -41,9 +41,9 @@ export default function PinnedList({
           ))
         ) : (
           <NoContentCard
-            icon={PinOff}
-            title="No pinned messages"
-            description="Pin important messages to keep them at hand."
+            icon={File}
+            title="No shared assets"
+            description="Shared assets will appear here."
           />
         )}
       </ul>

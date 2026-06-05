@@ -38,6 +38,8 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
 import DeleteProjectModal from "@/components/modals/DeleteProjectModal";
+import ProjectManipulatorSkeleton from "@/components/skeletons/ProjectManipulatorSkeleton";
+import NoContentCard from "@/components/cards/NoContentCard";
 
 const textareaFields = [
   {
@@ -68,7 +70,7 @@ export default function ProjectManipulator({
     {
       data: project,
       isError: isProjectError,
-      isLoading: isProjectLoading,
+      isFetching: isProjectFetching,
       isSuccess: isProjectSuccess,
     },
     { data: categories },
@@ -79,10 +81,13 @@ export default function ProjectManipulator({
         queryFn: () => canEdit(id),
         retry: 0,
         enabled: mode === "update",
+        staleTime: 0,
+        refetchOnMount: "always",
       },
       {
         queryKey: ["categories"],
         queryFn: getCategories,
+        staleTime: Infinity,
       },
     ],
   });
@@ -111,6 +116,7 @@ export default function ProjectManipulator({
         form.setError("skills", { message: "Skills are required" });
         throw new Error("Skills are required");
       }
+
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description", data.description);
@@ -133,15 +139,15 @@ export default function ProjectManipulator({
         return updateProject(id, formData);
       }
     },
+    onMutate: () => {},
     onError: (err: any) => {
       handleApiErrors(err, form);
-
-      const errors = err?.response?.data?.errors || {};
-      const hasStep1Error = errors.title || errors.image || errors.skills;
+      const apiErrors = err?.response?.data?.errors || {};
+      const hasStep1Error =
+        apiErrors?.title || apiErrors?.image || apiErrors?.skills;
       setStep(hasStep1Error ? 1 : 2);
     },
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
@@ -192,12 +198,10 @@ export default function ProjectManipulator({
     return "error";
   }
 
-  if (isProjectLoading) {
-    return "loading";
-  }
+  if (isProjectFetching) return <ProjectManipulatorSkeleton />;
 
   return (
-    <div>
+    <main>
       <Header
         title={mode === "create" ? "Create a " : "Update this " + "project"}
         description="Tell the community what you're building and the team you need."
@@ -235,13 +239,13 @@ export default function ProjectManipulator({
           >
             <div
               onClick={() => imagesRef?.current?.click()}
-              className="aspect-video bg-muted rounded-lg w-full relative group mx-auto overflow-clip"
+              className="aspect-video bg-muted rounded-lg w-full relative group mx-auto cursor-pointer"
             >
               {preview && (
                 <img
                   src={preview}
                   alt="Preview"
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-contain rounded-lg"
                 />
               )}
               <input
@@ -281,7 +285,7 @@ export default function ProjectManipulator({
                 </Button>
               )}
               {form?.formState?.errors?.image && (
-                <span className="text-destructive font-bold absolute bottom-2 left-1/2 -translate-x-1/2">
+                <span className="text-destructive text-xs font-semibold absolute -top-4 left-1/2 -translate-x-1/2">
                   {form?.formState?.errors?.image?.message}
                 </span>
               )}
@@ -408,24 +412,33 @@ export default function ProjectManipulator({
             </div>
           </section>
           <section className={`${step != 3 ? "hidden" : "block"}`}>
-            <EmptyCard
+            <NoContentCard
               icon={Check}
-              title="Created Successfully"
-              description="Your project has been created, plus its workspace, want to check it ?"
+              title={
+                mode === "create" ? "Project created!" : "Project updated!"
+              }
+              description={
+                mode === "create"
+                  ? "Your project has been successfully created. The community is eager to see what you've built!"
+                  : "Your project has been successfully updated. The community is excited to see the new changes!"
+              }
               action={
-                <div className="flex flex-col gap-2">
-                  <Button asChild>
-                    <Link to={`/projects/${response?.id}`}>Check it out</Link>
-                  </Button>
-                  <Button asChild variant={"secondary"}>
-                    <Link to={`/projects`}>Back to projects</Link>
-                  </Button>
-                </div>
+                <Button asChild variant={"outline"}>
+                  <Link
+                    to={
+                      response?.project_id
+                        ? `/projects/${response.project_id}`
+                        : "/projects"
+                    }
+                  >
+                    View project
+                  </Link>
+                </Button>
               }
             />
           </section>
         </form>
       </section>
-    </div>
+    </main>
   );
 }

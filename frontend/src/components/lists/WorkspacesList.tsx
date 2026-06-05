@@ -1,8 +1,9 @@
 import EmptyCard from "../cards/EmptyCard";
-import { InboxIcon } from "lucide-react";
+import { BriefcaseIcon, InboxIcon } from "lucide-react";
 import WorkspaceCard from "../cards/WorkspaceCard";
 import WorkspaceCardSkeleton from "../skeletons/WorkspaceCardSkeleton";
 import type { PopulatedWorkspace } from "@/assets/types";
+import NoContentCard from "../cards/NoContentCard";
 
 export default function WorkspacesList({
   workspaces,
@@ -24,10 +25,10 @@ export default function WorkspacesList({
       ))}
     </div>
   ) : (
-    <EmptyCard
-      icon={InboxIcon}
-      title="Nothing here"
-      description="You're all caught up."
+    <NoContentCard
+      icon={BriefcaseIcon}
+      title="No workspaces yet"
+      description="Create your first workspace to get started."
     />
   );
 }

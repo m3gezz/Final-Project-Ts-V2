@@ -44,7 +44,9 @@ export default function WorkspaceCard({
             return (
               <Avatar key={m?.user?.id} className="h-6 w-6 ring-2 ring-card">
                 <AvatarImage src={getImageUrl(m?.user?.avatar)} />
-                <AvatarFallback>{m?.user?.full_name?.[0]}</AvatarFallback>
+                <AvatarFallback>
+                  {m?.user?.full_name?.[0]?.toLocaleUpperCase()}
+                </AvatarFallback>
               </Avatar>
             );
           })}

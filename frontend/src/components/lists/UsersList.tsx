@@ -1,8 +1,9 @@
 import EmptyCard from "../cards/EmptyCard";
-import { InboxIcon } from "lucide-react";
+import { InboxIcon, UsersIcon } from "lucide-react";
 import UserCard from "../cards/UserCard";
 import UserCardSkeleton from "../skeletons/UserCardSkeleton";
 import type { PopulatedUser } from "@/assets/types";
+import NoContentCard from "../cards/NoContentCard";
 
 export default function UsersList({
   users,
@@ -24,10 +25,10 @@ export default function UsersList({
       ))}
     </div>
   ) : (
-    <EmptyCard
-      icon={InboxIcon}
-      title="Nothing here"
-      description="You're all caught up."
+    <NoContentCard
+      icon={UsersIcon}
+      title="No users found"
+      description="Try searching for a different user."
     />
   );
 }

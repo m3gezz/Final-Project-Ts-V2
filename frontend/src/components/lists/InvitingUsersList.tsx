@@ -1,8 +1,9 @@
 import EmptyCard from "../cards/EmptyCard";
-import { InboxIcon } from "lucide-react";
+import { InboxIcon, UsersIcon } from "lucide-react";
 import InvitingUserCard from "../cards/InvitingUserCard";
 import InvitingUserCardSkeleton from "../skeletons/InvitingUserCardSkeleton";
 import type { UserType } from "@/assets/types";
+import NoContentCard from "../cards/NoContentCard";
 
 export default function InvitingUsersList({
   users,
@@ -24,10 +25,10 @@ export default function InvitingUsersList({
       ))}
     </div>
   ) : (
-    <EmptyCard
-      icon={InboxIcon}
-      title="Nothing here"
-      description="You're all caught up."
+    <NoContentCard
+      icon={UsersIcon}
+      title="No users to invite"
+      description="Invite users to collaborate on this project and see them here."
     />
   );
 }

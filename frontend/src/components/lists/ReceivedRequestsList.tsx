@@ -4,6 +4,7 @@ import ReceivedRequestCardSkeleton from "../skeletons/ReceivedRequestCardSkeleto
 import ProjectReceivedRequestCard from "../cards/ProjectReceivedRequestCard";
 import UserReceivedRequestCard from "../cards/UserReceivedRequestCard";
 import type { RequestType } from "@/assets/types";
+import NoContentCard from "../cards/NoContentCard";
 
 export default function ReceivedRequestList({
   requests,
@@ -31,10 +32,10 @@ export default function ReceivedRequestList({
       )}
     </div>
   ) : (
-    <EmptyCard
+    <NoContentCard
       icon={InboxIcon}
-      title="Nothing here"
-      description="You're all caught up."
+      title="No pending requests"
+      description="Pending requests will appear here."
     />
   );
 }

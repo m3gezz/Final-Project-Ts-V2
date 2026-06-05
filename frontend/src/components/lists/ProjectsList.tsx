@@ -1,8 +1,9 @@
 import ProjectCard from "../cards/ProjectCard";
 import EmptyCard from "../cards/EmptyCard";
-import { InboxIcon } from "lucide-react";
+import { FolderIcon, InboxIcon } from "lucide-react";
 import ProjectCardSkeleton from "../skeletons/ProjectCardSkeleton";
 import type { ProjectType } from "@/assets/types";
+import NoContentCard from "../cards/NoContentCard";
 
 export default function ProjectsList({
   projects,
@@ -24,10 +25,10 @@ export default function ProjectsList({
       ))}
     </div>
   ) : (
-    <EmptyCard
-      icon={InboxIcon}
-      title="Nothing here"
-      description="You're all caught up."
+    <NoContentCard
+      icon={FolderIcon}
+      title="No projects yet"
+      description="Create your first project to get started."
     />
   );
 }

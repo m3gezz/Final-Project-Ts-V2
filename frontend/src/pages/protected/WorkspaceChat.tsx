@@ -1,8 +1,7 @@
-import { Paperclip, Send } from "lucide-react";
+import { MessagesSquare, Paperclip, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import InputController from "@/components/controllers/InputController";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createMessage, getMessages } from "@/api/functions/messages";
 import echo from "@/reverb/echo";
@@ -17,6 +16,8 @@ import {
 } from "@/zod/messagesSchemas";
 import UpdateMessageModal from "@/components/modals/UpdateMessageModal";
 import PinnedList from "@/components/lists/PinnedList";
+import AssetsList from "@/components/lists/AssetsList";
+import TextareaController from "@/components/controllers/TextareaController";
 
 export default function WorkspaceChat() {
   const { id } = useParams();
@@ -62,10 +63,13 @@ export default function WorkspaceChat() {
   }, [id, queryClient]);
 
   return (
-    <main className="grid lg:grid-cols-[5fr_2fr] gap-4">
-      <section className="flex h-[calc(100vh-8rem)] flex-col rounded-xl border bg-card">
+    <main className="grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-4">
+      <section className="flex h-[calc(100vh-4rem)] flex-col rounded-xl border bg-card">
         <div className="border-b p-4">
-          <h1 className="text-lg font-semibold">Chat</h1>
+          <h1 className="text-lg font-semibold flex items-center gap-2 mb-2">
+            <MessagesSquare className="h-6 w-6 fill-accent text-accent" /> Team
+            discussion
+          </h1>
           <p className="text-xs text-muted-foreground">
             All messages stay private to this workspace.
           </p>
@@ -75,15 +79,15 @@ export default function WorkspaceChat() {
 
         <form
           onSubmit={form.handleSubmit((data) => mutate(data))}
-          className="flex relative items-center justify-between gap-2 border-t p-2 mt-auto"
+          className="flex relative items-end justify-between gap-2 border-t p-2 mt-auto"
         >
           <Button variant="ghost" size="icon" type="button">
             <input type="file" accept="images/*" className="hidden" multiple />
             <Paperclip className="h-4 w-4" />
           </Button>
 
-          <div className="flex-1 pb-4">
-            <InputController
+          <div className="flex-1">
+            <TextareaController
               control={form.control}
               f={{
                 name: "message",
@@ -98,12 +102,20 @@ export default function WorkspaceChat() {
         </form>
         <UpdateMessageModal />
       </section>
-      <PinnedList
-        messages={messages
-          ?.filter((m: PopulatedMessage) => m?.isPinned)
-          ?.slice(0, 5)}
-        isLoading={isMessagesLoading}
-      />
+      <section className="grid lg:grid-rows-2 gap-2">
+        <PinnedList
+          messages={messages
+            ?.filter((m: PopulatedMessage) => m?.isPinned)
+            ?.slice(0, 5)}
+          isLoading={isMessagesLoading}
+        />
+        <AssetsList
+          messages={messages
+            ?.filter((m: PopulatedMessage) => m?.isPinned)
+            ?.slice(0, 5)}
+          isLoading={isMessagesLoading}
+        />
+      </section>
     </main>
   );
 }

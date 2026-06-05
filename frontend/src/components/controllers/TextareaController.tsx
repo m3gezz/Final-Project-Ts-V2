@@ -13,7 +13,7 @@ export default function TextareaController<T extends FieldValues>({
       control={control}
       render={({ field, fieldState }) => (
         <Field className="space-y-2" data-invalid={fieldState.invalid}>
-          <FieldLabel>{f?.label}</FieldLabel>
+          {f?.label && <FieldLabel>{f?.label}</FieldLabel>}
           <Textarea
             {...field}
             rows={5}

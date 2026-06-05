@@ -95,11 +95,11 @@ export default function Project() {
       onMutate: () => {
         queryClient.cancelQueries();
         const previousProject = queryClient.getQueryData([
-          "project",
+          "projects",
           String(id),
         ]);
         queryClient.setQueryData(
-          ["project", String(id)],
+          ["projects", String(id)],
           (old: ProjectType) => ({
             ...old,
             isRequested: true,
@@ -109,7 +109,7 @@ export default function Project() {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ["project", String(id)],
+          queryKey: ["projects", String(id)],
         });
         queryClient.invalidateQueries({
           queryKey: ["requests"],

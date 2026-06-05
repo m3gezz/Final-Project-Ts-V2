@@ -1,8 +1,9 @@
 import WsMemberCard from "../cards/WsMemberCard";
 import EmptyCard from "../cards/EmptyCard";
-import { InboxIcon } from "lucide-react";
+import { InboxIcon, UsersIcon } from "lucide-react";
 import WsMemberCardSkeleton from "../skeletons/WsMemberCardSkeleton";
 import type { MembershipType } from "@/assets/types";
+import NoContentCard from "../cards/NoContentCard";
 
 export default function WsMembersList({
   members,
@@ -24,10 +25,10 @@ export default function WsMembersList({
       ))}
     </div>
   ) : (
-    <EmptyCard
-      icon={InboxIcon}
-      title="Nothing here"
-      description="You're all caught up."
+    <NoContentCard
+      icon={UsersIcon}
+      title="No members found"
+      description="Members will appear here."
     />
   );
 }

@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatTime, getImageUrl, handleCopy } from "@/lib/utils";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Copy, Pen, Pin, PinOff, Reply, X } from "lucide-react";
+import { Copy, Pen, Pin, PinOff, Reply, Star, StarOff, X } from "lucide-react";
 import { destroyMessage, updateMessage } from "@/api/functions/messages";
 import type { PopulatedMessage } from "@/assets/types";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -74,100 +74,141 @@ export default function MessageCard({
   });
 
   return user?.id === message?.user?.id ? (
-    <div className="flex justify-end gap-2 items-start text-end">
-      <div className="flex flex-col gap-1 w-full">
-        <div>
-          <span className="font-medium">
-            <span className="text-xs text-muted-foreground">
-              {message?.isEdited && "edited"}
-            </span>{" "}
-            <span className="text-xs text-muted-foreground">
-              {formatTime(message?.created_at)}
-            </span>{" "}
-            You
-          </span>
-        </div>
-        <div className="relative rounded flex justify-end">
-          <ContextMenu>
-            <ContextMenuTrigger
-              className={`max-w-200 py-1 px-4 rounded-lg rounded-tr-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-muted"}`}
-            >
-              <p>{message?.message}</p>
-            </ContextMenuTrigger>
-            {!message?.isDeleted && (
-              <ContextMenuContent>
-                <ContextMenuItem onClick={() => handleCopy(message?.message)}>
-                  <Copy /> Copy
-                </ContextMenuItem>
-                <ContextMenuItem>
-                  <Reply /> Reply
-                </ContextMenuItem>
-                <ContextMenuItem
-                  variant={"todo"}
-                  onClick={() => toggleMessagePinMutation()}
-                >
-                  {message?.isPinned ? (
-                    <>
-                      <PinOff /> Unpin
-                    </>
-                  ) : (
-                    <>
-                      <Pin /> Pin
-                    </>
-                  )}
-                </ContextMenuItem>
-                <ContextMenuItem
-                  variant={"doing"}
-                  onClick={() => {
-                    disp(toggleModal({ name: "isUpdateMessage" }));
-                    disp(setValue({ value: message }));
-                  }}
-                >
-                  <Pen /> Edit
-                </ContextMenuItem>
-                <ContextMenuItem
-                  disabled={isDestroyMessagePending}
-                  onClick={() => destroyMessageMutation()}
-                  variant={"destructive"}
-                >
-                  <X /> Delete
-                </ContextMenuItem>
-              </ContextMenuContent>
-            )}
-          </ContextMenu>
-        </div>
-      </div>
-      <Avatar className="h-9 w-9">
-        <AvatarImage src={getImageUrl(user?.avatar)} />
-        <AvatarFallback>{user?.full_name?.[0]}</AvatarFallback>
-      </Avatar>
-    </div>
-  ) : (
-    <div key={message?.id} className="flex gap-2 items-start">
-      <Avatar className="h-9 w-9">
-        <AvatarImage src={getImageUrl(message?.user?.avatar)} />
-        <AvatarFallback>{message?.user?.full_name?.[0]}</AvatarFallback>
-      </Avatar>
-      <div className="flex flex-col gap-1 w-full">
-        <span className="font-medium">
-          {message?.user?.full_name}{" "}
-          <span className="text-xs text-muted-foreground">
-            {formatTime(message?.created_at)}
-          </span>{" "}
-          <span className="text-xs text-muted-foreground">
-            {message?.updated_at != message?.created_at &&
-              !message?.isDeleted &&
-              "edited"}
-          </span>{" "}
-        </span>
-        <div className="relative rounded flex">
-          <p
-            className={`max-w-200 py-1 px-4 rounded-lg rounded-tr-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-muted"}`}
+    <article key={message?.id} className="flex items-end gap-4">
+      <ContextMenu>
+        <div className="w-full flex flex-col items-end gap-1">
+          <ContextMenuTrigger
+            className={`max-w-1/2 px-4 py-3 rounded-lg rounded-br-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-muted"}`}
           >
             {message?.message}
-          </p>
+          </ContextMenuTrigger>
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
+            {message?.isStared && <Star className="h-2.5 w-2.5 fill-accent" />}
+            {formatTime(message?.created_at)}
+          </span>
         </div>
-      </div>
-    </div>
+        {!message?.isDeleted && (
+          <ContextMenuContent>
+            <ContextMenuItem onClick={() => handleCopy(message?.message)}>
+              <Copy /> Copy
+            </ContextMenuItem>
+            <ContextMenuItem>
+              <Reply /> Reply
+            </ContextMenuItem>
+            <ContextMenuItem
+              variant={"todo"}
+              onClick={() => toggleMessagePinMutation()}
+            >
+              {message?.isPinned ? (
+                <>
+                  <PinOff /> Unpin
+                </>
+              ) : (
+                <>
+                  <Pin /> Pin
+                </>
+              )}
+            </ContextMenuItem>
+            <ContextMenuItem variant={"done"}>
+              {message?.isPinned ? (
+                <>
+                  <StarOff /> Unstar
+                </>
+              ) : (
+                <>
+                  <Star /> Star
+                </>
+              )}
+            </ContextMenuItem>
+            <ContextMenuItem
+              variant={"doing"}
+              onClick={() => {
+                disp(toggleModal({ name: "isUpdateMessage" }));
+                disp(setValue({ value: message }));
+              }}
+            >
+              <Pen /> Edit
+            </ContextMenuItem>
+            <ContextMenuItem
+              disabled={isDestroyMessagePending}
+              onClick={() => destroyMessageMutation()}
+              variant={"destructive"}
+            >
+              <X /> Delete
+            </ContextMenuItem>
+          </ContextMenuContent>
+        )}
+      </ContextMenu>
+      <Avatar className="h-9 w-9">
+        <AvatarImage src={getImageUrl(message?.user?.avatar)} />
+        <AvatarFallback>
+          {user?.full_name?.[0]?.toLocaleUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+    </article>
+  ) : (
+    <article key={message?.id} className="flex items-end gap-4">
+      <Avatar className="h-9 w-9">
+        <AvatarImage src={getImageUrl(message?.user?.avatar)} />
+        <AvatarFallback>
+          {message?.user?.full_name?.[0]?.toLocaleUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <ContextMenu>
+        <div className="flex flex-col gap-1 w-full">
+          <div className="w-full flex flex-col items-start gap-1">
+            <span className="italic text-xs">{message?.user?.full_name}</span>
+
+            <ContextMenuTrigger
+              className={`max-w-1/2 px-4 py-3 rounded-lg rounded-bl-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-accent/50"}`}
+            >
+              {message?.message}
+            </ContextMenuTrigger>
+
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              {message?.isStared && (
+                <Star className="h-2.5 w-2.5 fill-accent" />
+              )}
+              {formatTime(message?.created_at)}
+            </span>
+          </div>
+        </div>
+        {!message?.isDeleted && (
+          <ContextMenuContent>
+            <ContextMenuItem onClick={() => handleCopy(message?.message)}>
+              <Copy /> Copy
+            </ContextMenuItem>
+            <ContextMenuItem>
+              <Reply /> Reply
+            </ContextMenuItem>
+            <ContextMenuItem
+              variant={"todo"}
+              onClick={() => toggleMessagePinMutation()}
+            >
+              {message?.isPinned ? (
+                <>
+                  <PinOff /> Unpin
+                </>
+              ) : (
+                <>
+                  <Pin /> Pin
+                </>
+              )}
+            </ContextMenuItem>
+            <ContextMenuItem variant={"done"}>
+              {message?.isPinned ? (
+                <>
+                  <StarOff /> Unstar
+                </>
+              ) : (
+                <>
+                  <Star /> Star
+                </>
+              )}
+            </ContextMenuItem>
+          </ContextMenuContent>
+        )}
+      </ContextMenu>
+    </article>
   );
 }

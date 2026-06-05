@@ -25,7 +25,7 @@ export default function AuthLCard({
       <div className="relative w-full max-w-md">
         <Link
           to="/welcome"
-          className="flex items-center gap-2 min-w-0 truncate"
+          className="flex items-center gap-2 min-w-0 truncate mb-4"
         >
           <img src="/colab-logo-gradient.svg" alt="" className="w-full h-10" />
         </Link>

@@ -122,6 +122,7 @@ export type MessageType = DefaultFields & {
   isDeleted: boolean;
   isEdited: boolean;
   isPinned: boolean;
+  isStared: boolean;
   workspace_id: WorkspaceType["id"];
   user_id: UserType["id"];
 };

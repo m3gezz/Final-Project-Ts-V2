@@ -2,6 +2,8 @@ import type { TaskType } from "@/assets/types";
 import { formatTime } from "@/lib/utils";
 import FeedSkeleton from "../skeletons/FeedSkeleton";
 import { Skeleton } from "../ui/skeleton";
+import NoContentCard from "../cards/NoContentCard";
+import { List } from "lucide-react";
 
 export default function FeedList({
   tasks,
@@ -22,7 +24,10 @@ export default function FeedList({
     </article>
   ) : (
     <article className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Your activity feed</h1>
+      <h1 className="text-lg font-bold mb-4 flex items-center gap-1">
+        <List className="h-6 w-6 fill-accent text-accent" />
+        Your activity feed
+      </h1>
       <ul>
         {tasks?.length ? (
           tasks?.map((t: TaskType, i: number) => (
@@ -46,9 +51,11 @@ export default function FeedList({
             </li>
           ))
         ) : (
-          <li className="text-sm text-muted-foreground text-center my-2">
-            No tasks yet.
-          </li>
+          <NoContentCard
+            icon={List}
+            title="No recent activity"
+            description="Your recent tasks will appear here."
+          />
         )}
       </ul>
     </article>

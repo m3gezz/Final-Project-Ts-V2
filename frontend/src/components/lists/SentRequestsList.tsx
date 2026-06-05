@@ -4,6 +4,7 @@ import SentRequestCardSkeleton from "../skeletons/SentRequestCardSkeleton";
 import ProjectSentRequestCard from "../cards/ProjectSentRequestCard";
 import UserSentRequestCard from "../cards/UserSentRequestCard";
 import type { RequestType } from "@/assets/types";
+import NoContentCard from "../cards/NoContentCard";
 
 export default function SentRequestsList({
   requests,
@@ -31,10 +32,10 @@ export default function SentRequestsList({
       )}
     </div>
   ) : (
-    <EmptyCard
+    <NoContentCard
       icon={InboxIcon}
-      title="Nothing here"
-      description="You're all caught up."
+      title="No sent requests"
+      description="Sent requests will appear here."
     />
   );
 }

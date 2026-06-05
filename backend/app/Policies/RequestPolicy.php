@@ -37,7 +37,7 @@ class RequestPolicy
      */
     public function update(User $user, Request $request): bool
     {
-        return $user->id === $request->user_id;
+        return $request->workspace->project->user_id || $user->id;
     }
 
     /**
@@ -45,7 +45,7 @@ class RequestPolicy
      */
     public function delete(User $user, Request $request): bool
     {
-        return $user->id === $request->user_id || $user->admin;
+        return $user->id === $request->user_id;
     }
 
     /**
