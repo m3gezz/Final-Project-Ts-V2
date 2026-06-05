@@ -8,7 +8,7 @@ import echo from "@/reverb/echo";
 import { useEffect } from "react";
 import MessagesList from "@/components/lists/MessagesList";
 import type { PopulatedMessage } from "@/assets/types";
-import { useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createMessageSchema,
@@ -16,11 +16,13 @@ import {
 } from "@/zod/messagesSchemas";
 import UpdateMessageModal from "@/components/modals/UpdateMessageModal";
 import PinnedList from "@/components/lists/PinnedList";
-import AssetsList from "@/components/lists/AssetsList";
 import TextareaController from "@/components/controllers/TextareaController";
+import { toggleModal } from "@/redux/modalSlice";
+import CreateFileMessageModal from "@/components/modals/CreateFileMessageModal";
 
 export default function WorkspaceChat() {
   const { id } = useParams();
+  const disp = useAppDispatch();
   const { user } = useAppSelector((state) => state?.auth);
   const form = useForm({
     defaultValues: {
@@ -80,8 +82,12 @@ export default function WorkspaceChat() {
           onSubmit={form.handleSubmit((data) => mutate(data))}
           className="flex relative items-end justify-between gap-2 border-t p-2 mt-auto"
         >
-          <Button variant="ghost" size="icon" type="button">
-            <input type="file" accept="images/*" className="hidden" multiple />
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            onClick={() => disp(toggleModal({ name: "isCreateFileMessage" }))}
+          >
             <Paperclip className="h-4 w-4" />
           </Button>
 
@@ -101,21 +107,15 @@ export default function WorkspaceChat() {
           </Button>
         </form>
         <UpdateMessageModal />
+        <CreateFileMessageModal />
       </section>
-      <section className="grid lg:grid-rows-2 gap-2">
-        <PinnedList
-          messages={messages
-            ?.filter((m: PopulatedMessage) => m?.isPinned)
-            ?.slice(0, 3)}
-          isLoading={isMessagesLoading}
-        />
-        <AssetsList
-          messages={messages
-            ?.filter((m: PopulatedMessage) => m?.isPinned)
-            ?.slice(0, 3)}
-          isLoading={isMessagesLoading}
-        />
-      </section>
+
+      <PinnedList
+        messages={messages
+          ?.filter((m: PopulatedMessage) => m?.isPinned)
+          ?.slice(0, 3)}
+        isLoading={isMessagesLoading}
+      />
     </main>
   );
 }

@@ -8,6 +8,7 @@ export type ModalStateType = {
   isDestroyAccount: boolean;
   isDestroyProject: boolean;
   isCreateInvite: boolean;
+  isCreateFileMessage: boolean;
   value?: any;
 };
 
@@ -19,6 +20,7 @@ const initialState: ModalStateType = {
   isDestroyAccount: false,
   isDestroyProject: false,
   isCreateInvite: false,
+  isCreateFileMessage: false,
   value: null,
 };
 
