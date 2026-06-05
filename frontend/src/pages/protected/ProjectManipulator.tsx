@@ -206,7 +206,7 @@ export default function ProjectManipulator({
     <main>
       <Header
         icon={mode === "create" ? Plus : Pen}
-        title={mode === "create" ? "Create a " : "Update this " + "project"}
+        title={mode === "create" ? "Create a project" : "Update this project"}
         description="Tell the community what you're building and the team you need."
       />
 

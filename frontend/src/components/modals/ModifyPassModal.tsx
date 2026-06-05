@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
 import { updatePassword } from "@/api/functions/users";
-import { useNavigate } from "react-router-dom";
 import {
   updatePasswordSchema,
   type updatePasswordSchemaType,
@@ -53,8 +52,6 @@ export default function ModifyPassModal() {
     },
     resolver: zodResolver(updatePasswordSchema),
   });
-
-  const nav = useNavigate();
 
   const { mutate: updatePasswordMutation, isPending: isUpdatePasswordPending } =
     useMutation({

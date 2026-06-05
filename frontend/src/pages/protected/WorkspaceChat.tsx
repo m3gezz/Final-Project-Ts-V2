@@ -67,7 +67,7 @@ export default function WorkspaceChat() {
       <section className="flex h-[calc(100vh-4rem)] flex-col rounded-xl border bg-card">
         <div className="border-b p-4">
           <h1 className="text-lg font-semibold flex items-center gap-2 mb-2">
-            <MessagesSquare className="h-6 w-6 text-accent" /> Team discussion
+            <MessagesSquare className="h-6 w-6" /> Team discussion
           </h1>
           <p className="text-xs text-muted-foreground">
             All messages stay private to this workspace.

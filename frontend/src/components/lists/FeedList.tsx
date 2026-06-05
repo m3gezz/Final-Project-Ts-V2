@@ -25,7 +25,7 @@ export default function FeedList({
   ) : (
     <article className="p-4">
       <h1 className="text-lg font-bold mb-4 flex items-center gap-1">
-        <List className="h-6 w-6 text-accent" />
+        <List className="h-6 w-6" />
         Your activity feed
       </h1>
       <ul>

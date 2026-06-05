@@ -7,8 +7,8 @@ export default function ReceivedRequestCardSkeleton() {
 
       <div className="flex-1 min-w-0 space-y-2">
         <div className="space-y-1">
-          <Skeleton className="h-4 w-full max-w-[280px]" />
-          <Skeleton className="h-4 w-1/2 max-w-[150px]" />
+          <Skeleton className="h-4 w-full max-w-70" />
+          <Skeleton className="h-4 w-1/2 max-w-37" />
         </div>
         <div className="flex items-center gap-2 pt-0.5">
           <Skeleton className="h-5 w-16 rounded-md" />

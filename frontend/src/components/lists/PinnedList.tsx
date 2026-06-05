@@ -23,7 +23,7 @@ export default function PinnedList({
   ) : (
     <section className="p-4">
       <h1 className="text-lg font-bold mb-4 flex items-center gap-1">
-        <Pin className="h-6 w-6 text-accent" />
+        <Pin className="h-6 w-6" />
         Pinned messages
       </h1>
       <ul>

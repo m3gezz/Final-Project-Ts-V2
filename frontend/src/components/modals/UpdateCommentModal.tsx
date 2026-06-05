@@ -12,7 +12,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
-import InputController from "../controllers/InputController";
 import { toggleModal } from "@/redux/modalSlice";
 import { useEffect } from "react";
 import type { updateCommentSchemaType } from "@/zod/comments";

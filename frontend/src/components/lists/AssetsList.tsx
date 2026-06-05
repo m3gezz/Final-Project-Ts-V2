@@ -1,7 +1,7 @@
 import type { PopulatedMessage } from "@/assets/types";
 import { Skeleton } from "../ui/skeleton";
 import PinnedSkeleton from "../skeletons/PinnedSkeleton";
-import { File, Pin } from "lucide-react";
+import { File } from "lucide-react";
 import NoContentCard from "../cards/NoContentCard";
 
 export default function AssetsList({
@@ -23,7 +23,7 @@ export default function AssetsList({
   ) : (
     <section className="p-4">
       <h1 className="text-lg font-bold mb-4 flex items-center gap-1">
-        <File className="h-6 w-6 text-accent" />
+        <File className="h-6 w-6" />
         Shared assets
       </h1>
       <ul>

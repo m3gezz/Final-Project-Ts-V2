@@ -69,7 +69,7 @@ export default function Home() {
                 to={ud?.to}
                 className="flex items-center gap-4 rounded-xl border bg-card p-4 hover:border-primary/50"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-accent">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
                   <ud.icon className="h-5 w-5" />
                 </div>
                 <div>

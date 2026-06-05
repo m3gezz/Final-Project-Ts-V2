@@ -153,10 +153,7 @@ export default function Project() {
   if (isProjectError) return <ErrorCard />;
   return (
     <main className="mx-auto max-w-5xl space-y-8">
-      <section
-        className="overflow-hidden rounded-2xl border"
-        style={{ boxShadow: "var(--shadow-soft)" }}
-      >
+      <section className="overflow-hidden rounded-2xl border">
         <div className="aspect-21/9 bg-muted">
           <img
             src={getImageUrl(project?.image)}
