@@ -3,6 +3,7 @@ import z from "zod";
 const createMessageSchema = z.object({
   workspace_id: z.string(),
   message: z.string().trim().min(1, "Message content cannot be empty"),
+  replied_to: z.number().optional(),
 });
 
 export type createMessageSchemaType = z.infer<typeof createMessageSchema>;

@@ -211,20 +211,24 @@ export default function ProjectManipulator({
       />
 
       <section className="w-[90%] mx-auto flex items-center justify-around my-10">
-        <Badge className="rounded-full w-8 h-8 text-lg font-bold text-foreground bg-accent">
+        <Badge className="rounded-full w-8 h-8 text-lg font-bold text-foreground bg-brand-primary/50">
           1
         </Badge>
-        <div className={`${step >= 2 ? "bg-accent" : "bg-muted"} h-2 flex-1`} />
+        <div
+          className={`${step >= 2 ? "bg-brand-primary/50" : "bg-muted"} h-2 flex-1`}
+        />
 
         <Badge
-          className={`rounded-full w-8 h-8 text-lg font-bold text-foreground ${step >= 2 ? "bg-accent" : "bg-muted"}`}
+          className={`rounded-full w-8 h-8 text-lg font-bold text-foreground ${step >= 2 ? "bg-brand-primary/50" : "bg-muted"}`}
         >
           2
         </Badge>
-        <div className={`${step >= 3 ? "bg-accent" : "bg-muted"} h-2 flex-1`} />
+        <div
+          className={`${step >= 3 ? "bg-brand-primary/50" : "bg-muted"} h-2 flex-1`}
+        />
 
         <Badge
-          className={`rounded-full w-8 h-8 text-lg font-bold text-foreground ${step >= 3 ? "bg-accent" : "bg-muted"}`}
+          className={`rounded-full w-8 h-8 text-lg font-bold text-foreground ${step >= 3 ? "bg-brand-primary/50" : "bg-muted"}`}
         >
           3
         </Badge>

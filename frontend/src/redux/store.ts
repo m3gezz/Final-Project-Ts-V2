@@ -2,9 +2,10 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import auth from "./authSlice";
 import modal from "./modalSlice";
+import reply from "./replySlice";
 
 export const store = configureStore({
-  reducer: { auth, modal },
+  reducer: { auth, modal, reply },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

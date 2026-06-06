@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/context-menu";
 import { setValue, toggleModal } from "@/redux/modalSlice";
 import { Button } from "../ui/button";
+import { setReply } from "@/redux/replySlice";
 
 export default function MessageCard({
   message,
@@ -81,6 +82,10 @@ export default function MessageCard({
     window.open(`http://localhost:8000/api/download/${fileName}`, "_blank");
   };
 
+  const handleReply = () => {
+    disp(setReply({ reply: message }));
+  };
+
   return user?.id === message?.user?.id ? (
     <article
       id={`message-${message?.id}`}
@@ -89,6 +94,62 @@ export default function MessageCard({
     >
       <ContextMenu>
         <div className="w-full flex flex-col items-end gap-1">
+          {!!message?.replied_to_message && (
+            <div
+              onClick={() =>
+                document
+                  .getElementById(`message-${message?.replied_to_message?.id}`)
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+              className="flex-1 p-2 h-10 border backdrop-blur-2xl rounded-md flex items-center gap-2"
+            >
+              {!!message?.replied_to_message?.attachment && (
+                <div className="aspect-square h-10 relative rounded-md overflow-hidden">
+                  {message?.replied_to_message?.attachment?.file_type ===
+                    "image" && (
+                    <img
+                      src={getImageUrl(
+                        message?.replied_to_message?.attachment?.file_path,
+                      )}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+
+                  {message?.replied_to_message?.attachment?.file_type ===
+                    "video" && (
+                    <video
+                      src={getImageUrl(
+                        message?.replied_to_message?.attachment?.file_path,
+                      )}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  {message?.replied_to_message?.attachment?.file_type ===
+                    "document" && (
+                    <div className="bg-muted w-full h-full rounded-lg flex flex-col items-center gap-4 p-2">
+                      <File className="w-4 h-4" />
+                      <div>
+                        <h1>
+                          size:{" "}
+                          {message?.replied_to_message?.attachment?.file_size}
+                          Kb
+                        </h1>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs truncate text-brand-primary">
+                  {message?.replied_to_message?.user?.full_name}
+                </p>
+                <p className="text-xs italic">
+                  {message?.replied_to_message?.message}
+                </p>
+              </div>
+            </div>
+          )}
           <ContextMenuTrigger
             className={`flex flex-col items-end gap-2 lg:max-w-1/2 p-2 rounded-lg rounded-br-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-muted"}`}
           >
@@ -161,7 +222,7 @@ export default function MessageCard({
             <ContextMenuItem onClick={() => handleCopy(message?.message)}>
               <Copy /> Copy
             </ContextMenuItem>
-            <ContextMenuItem>
+            <ContextMenuItem onClick={handleReply}>
               <Reply /> Reply
             </ContextMenuItem>
             <ContextMenuItem
@@ -219,6 +280,64 @@ export default function MessageCard({
       <ContextMenu>
         <div className="flex flex-col gap-1 w-full">
           <div className="w-full flex flex-col items-start gap-1">
+            {!!message?.replied_to_message && (
+              <div
+                onClick={() =>
+                  document
+                    .getElementById(
+                      `message-${message?.replied_to_message?.id}`,
+                    )
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+                className="flex-1 p-2 h-10 border backdrop-blur-2xl rounded-md flex items-center gap-2"
+              >
+                {!!message?.replied_to_message?.attachment && (
+                  <div className="aspect-square h-10 relative rounded-md overflow-hidden">
+                    {message?.replied_to_message?.attachment?.file_type ===
+                      "image" && (
+                      <img
+                        src={getImageUrl(
+                          message?.replied_to_message?.attachment?.file_path,
+                        )}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+
+                    {message?.replied_to_message?.attachment?.file_type ===
+                      "video" && (
+                      <video
+                        src={getImageUrl(
+                          message?.replied_to_message?.attachment?.file_path,
+                        )}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                    {message?.replied_to_message?.attachment?.file_type ===
+                      "document" && (
+                      <div className="bg-muted w-full h-full rounded-lg flex flex-col items-center gap-4 p-2">
+                        <File className="w-4 h-4" />
+                        <div>
+                          <h1>
+                            size:{" "}
+                            {message?.replied_to_message?.attachment?.file_size}
+                            Kb
+                          </h1>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div>
+                  <p className="text-xs truncate text-brand-primary">
+                    {message?.replied_to_message?.user?.full_name}
+                  </p>
+                  <p className="text-xs italic">
+                    {message?.replied_to_message?.message}
+                  </p>
+                </div>
+              </div>
+            )}
             <span className="italic text-xs">{message?.user?.full_name}</span>
             <ContextMenuTrigger
               className={`flex flex-col items-start gap-2 lg:max-w-1/2 p-2 rounded-lg rounded-bl-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-border"}`}
@@ -293,7 +412,7 @@ export default function MessageCard({
             <ContextMenuItem onClick={() => handleCopy(message?.message)}>
               <Copy /> Copy
             </ContextMenuItem>
-            <ContextMenuItem>
+            <ContextMenuItem onClick={handleReply}>
               <Reply /> Reply
             </ContextMenuItem>
             <ContextMenuItem

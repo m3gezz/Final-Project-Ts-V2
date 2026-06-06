@@ -35,7 +35,10 @@ const slice = createSlice({
       const modalName = action.payload.name;
       state[modalName] = !state[modalName];
     },
-    setValue: (state, action: PayloadAction<{ value: any }>) => {
+    setValue: (
+      state,
+      action: PayloadAction<{ value: ModalStateType["value"] }>,
+    ) => {
       const value = action.payload.value;
       state.value = value;
     },

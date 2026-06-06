@@ -122,6 +122,7 @@ export type MessageType = DefaultFields & {
   isDeleted: boolean;
   isEdited: boolean;
   isPinned: boolean;
+  replied_to: number;
   workspace_id: WorkspaceType["id"];
   user_id: UserType["id"];
 };
@@ -138,6 +139,7 @@ export type PopulatedMessage = MessageType & {
   user: UserType;
   workspace?: WorkspaceType;
   attachment: AttachmentType;
+  replied_to_message?: PopulatedMessage;
 };
 
 //Task

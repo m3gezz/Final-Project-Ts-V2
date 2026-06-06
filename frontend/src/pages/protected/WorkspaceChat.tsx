@@ -1,4 +1,4 @@
-import { MessagesSquare, Paperclip, Send } from "lucide-react";
+import { File, MessagesSquare, Paperclip, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -19,15 +19,19 @@ import PinnedList from "@/components/lists/PinnedList";
 import TextareaController from "@/components/controllers/TextareaController";
 import { toggleModal } from "@/redux/modalSlice";
 import CreateAttachmentModal from "@/components/modals/CreateAttachmentModal";
+import { getImageUrl } from "@/lib/utils";
+import { setReply } from "@/redux/replySlice";
 
 export default function WorkspaceChat() {
   const { id } = useParams();
   const disp = useAppDispatch();
   const { user } = useAppSelector((state) => state?.auth);
+  const { reply } = useAppSelector((state) => state?.reply);
   const form = useForm({
     defaultValues: {
       workspace_id: String(id),
       message: "",
+      replied_to: undefined,
     },
     resolver: zodResolver(createMessageSchema),
   });
@@ -42,12 +46,19 @@ export default function WorkspaceChat() {
     onMutate: (data) => {
       queryClient.cancelQueries();
       form.reset();
+      disp(setReply({ reply: null }));
       const previous = queryClient.getQueryData(["messages", String(id)]);
       queryClient.setQueryData(
         ["messages", String(id)],
         (old: PopulatedMessage[]) => [
           ...old,
-          { ...data, id: Date.now, user, created_at: Date() },
+          {
+            ...data,
+            id: Date.now,
+            user,
+            created_at: Date(),
+            replied_to_message: reply ?? null,
+          },
         ],
       );
       return { previous };
@@ -63,6 +74,11 @@ export default function WorkspaceChat() {
       echo.private(`workspace.${id}`).stopListening(".MessageAction");
     };
   }, [id, queryClient]);
+
+  useEffect(() => {
+    if (!reply) return;
+    form.setValue("replied_to", Number(reply?.id));
+  }, [reply]);
 
   return (
     <main className="grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-4">
@@ -82,6 +98,65 @@ export default function WorkspaceChat() {
           onSubmit={form.handleSubmit((data) => mutate(data))}
           className="flex relative items-end justify-between gap-2 border-t p-2 mt-auto"
         >
+          {!!reply && (
+            <article
+              className={`absolute flex items-center justify-center gap-4 pb-4 left-1/2 -translate-x-1/2 bottom-full rounded-t-lg py-2 px-20 border backdrop-blur-2xl`}
+            >
+              <Button
+                size={"icon"}
+                variant={"destructive"}
+                className="absolute right-2 top-2"
+                onClick={() => {
+                  disp(setReply({ reply: null }));
+                  form.resetField("replied_to");
+                }}
+              >
+                <X />
+              </Button>
+
+              <div className="">
+                <h2>
+                  {reply?.user?.full_name}{" "}
+                  {!!reply?.message?.length && (
+                    <span className="italic text-sm">{reply?.message}</span>
+                  )}
+                </h2>
+
+                {!!reply?.attachment && (
+                  <>
+                    <div className="aspect-square h-20 relative rounded-md overflow-hidden">
+                      {reply?.attachment?.file_type === "image" && (
+                        <img
+                          src={getImageUrl(reply?.attachment?.file_path)}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+
+                      {reply?.attachment?.file_type === "video" && (
+                        <video
+                          src={getImageUrl(reply?.attachment?.file_path)}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                      {reply?.attachment?.file_type === "document" && (
+                        <div className="bg-muted w-full h-full rounded-lg flex flex-col items-center gap-4 p-2">
+                          <File className="w-6 h-6" />
+                          <div>
+                            <h1>size: {reply?.attachment?.file_size}Kb</h1>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+                {reply?.attachment?.file_name && (
+                  <p className="italic text-xs truncate mt-1 text-foreground">
+                    {reply?.attachment?.file_name}
+                  </p>
+                )}
+              </div>
+            </article>
+          )}
           <Button
             variant="ghost"
             size="icon"

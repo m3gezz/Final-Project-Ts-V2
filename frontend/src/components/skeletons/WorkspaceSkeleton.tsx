@@ -13,8 +13,7 @@ export default function WorkspaceSkeleton() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border bg-card overflow-hidden">
-          <div className="aspect-video w-full relative bg-muted/40" />
-          <div className="p-4 space-y-2">
+          <div className="p-4 space-y-2 aspect-video w-full relative bg-muted/40 flex items-start justify-end flex-col">
             <Skeleton className="h-5 w-1/2" />
             <Skeleton className="h-4 w-5/6" />
           </div>

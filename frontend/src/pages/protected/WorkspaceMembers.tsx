@@ -75,7 +75,7 @@ export default function WorkspaceMembers() {
         {stats?.map((s, i) => (
           <div
             key={i}
-            className="flex items-center gap-4 p-4 bg-card rounded-lg"
+            className="flex items-center gap-4 p-4 bg-input rounded-lg"
           >
             <div className="p-3 bg-muted rounded-full">
               <s.icon className="h-6 w-6 text-primary" />
