@@ -100,7 +100,7 @@ export default function Contact() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.08, duration: 0.45 }}
-                    className="rounded-[1.5rem] border border-slate-100 bg-white p-5 shadow-sm"
+                    className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm"
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-light text-brand-primary">
@@ -123,13 +123,13 @@ export default function Contact() {
               })}
             </div>
 
-            <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+            <div className="rounded-4xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
               <h2 className="font-heading text-3xl font-bold text-brand-dark">
                 Envoyez-nous un message
               </h2>
 
               {submitted ? (
-                <div className="mt-8 rounded-[1.5rem] border border-emerald-100 bg-emerald-50 p-6 text-emerald-700">
+                <div className="mt-8 rounded-3xl border border-emerald-100 bg-emerald-50 p-6 text-emerald-700">
                   <CheckCircle2 className="h-8 w-8" />
                   <p className="mt-3 font-heading text-2xl font-semibold">
                     Message envoye !
@@ -222,7 +222,7 @@ export default function Contact() {
                 return (
                   <div
                     key={item.question}
-                    className="rounded-[1.5rem] border border-slate-100 bg-white shadow-sm"
+                    className="rounded-3xl border border-slate-100 bg-white shadow-sm"
                   >
                     <button
                       type="button"

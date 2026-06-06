@@ -2,7 +2,6 @@ import { useEffect, useState, memo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  BarChart2,
   BookOpen,
   Briefcase,
   Home,
@@ -268,7 +267,7 @@ function HeroImageComposition() {
     "rounded-3xl border border-white/70 bg-white/92 p-3.5 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.24)] backdrop-blur-xl";
 
   return (
-    <div className="relative mx-auto w-full max-w-[640px] pt-8 lg:h-[640px]">
+    <div className="relative mx-auto w-full max-w-160 pt-8 lg:h-160">
       <div className="pointer-events-none absolute inset-0 -z-10 rounded-[42px] bg-[radial-gradient(circle_at_28%_18%,rgba(254,228,147,0.45),transparent_18%),radial-gradient(circle_at_70%_24%,rgba(154,129,255,0.34),transparent_20%),radial-gradient(circle_at_82%_74%,rgba(108,216,178,0.24),transparent_18%),linear-gradient(135deg,rgba(226,232,240,0.24),rgba(255,255,255,0.12))] blur-3xl" />
 
       <div className="absolute left-[8%] top-[2%] h-28 w-28 rounded-full bg-yellow-200/45 blur-2xl" />
@@ -277,12 +276,12 @@ function HeroImageComposition() {
       <motion.div
         animate={ANIMATION_CONFIG.float.animate}
         transition={ANIMATION_CONFIG.float.transition}
-        className="relative mx-auto w-full max-w-[420px] rounded-[42px] bg-white/72 p-3 shadow-[0_30px_80px_rgba(67,97,238,0.18)] backdrop-blur-sm overflow-visible"
+        className="relative mx-auto w-full max-w-105 rounded-[42px] bg-white/72 p-3 shadow-[0_30px_80px_rgba(67,97,238,0.18)] backdrop-blur-sm overflow-visible"
       >
         <img
           src={studentImage}
           alt="Apprenante CoLab"
-          className="h-[30rem] w-full rounded-[36px] object-cover object-[center_18%] lg:h-[36rem] "
+          className="h-120 w-full rounded-[36px] object-cover object-[center_18%] lg:h-144 "
           loading="eager"
         />
       </motion.div>
@@ -295,7 +294,7 @@ function HeroImageComposition() {
           ease: "easeInOut",
           repeatType: "loop",
         }}
-        className={`mt-3 w-[204px] ${floatCard} lg:absolute lg:left-0 lg:top-[10%] lg:mt-0`}
+        className={`mt-3 w-51 ${floatCard} lg:absolute lg:left-0 lg:top-[10%] lg:mt-0`}
       >
         <p className="text-xs font-semibold text-slate-500">Projets actifs</p>
         <p className="mt-1.5 text-[2.45rem] font-bold leading-none text-slate-900">
@@ -318,7 +317,7 @@ function HeroImageComposition() {
           delay: 0.2,
           repeatType: "loop",
         }}
-        className={`mt-3 w-[214px] ${floatCard} lg:absolute lg:right-0 lg:top-[5%] lg:mt-0`}
+        className={`mt-3 w-54 ${floatCard} lg:absolute lg:right-0 lg:top-[5%] lg:mt-0`}
       >
         <p className="text-xs font-semibold text-slate-500">Équipes créées</p>
         <p className="mt-1.5 text-[2.45rem] font-bold leading-none text-slate-900">
@@ -341,7 +340,7 @@ function HeroImageComposition() {
           delay: 0.35,
           repeatType: "loop",
         }}
-        className={`mt-3 w-[220px] overflow-hidden ${floatCard} lg:absolute lg:left-0 lg:bottom-[5%] lg:mt-0`}
+        className={`mt-3 w-55 overflow-hidden ${floatCard} lg:absolute lg:left-0 lg:bottom-[5%] lg:mt-0`}
       >
         <div className="flex items-center gap-3">
           <img
@@ -376,7 +375,7 @@ function HeroImageComposition() {
           delay: 0.5,
           repeatType: "loop",
         }}
-        className={`mt-3 w-[214px] ${floatCard} lg:absolute lg:right-0 lg:bottom-[9%] lg:mt-0`}
+        className={`mt-3 w-54 ${floatCard} lg:absolute lg:right-0 lg:bottom-[9%] lg:mt-0`}
       >
         <div className="flex items-start gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
@@ -397,7 +396,7 @@ function HeroImageComposition() {
 function MockDashboard() {
   return (
     <div className="rounded-[1.75rem] bg-white/10 p-3 shadow-2xl ring-1 ring-white/20 backdrop-blur-sm">
-      <div className="rounded-[1.5rem] bg-white p-3 text-slate-900">
+      <div className="rounded-3xl bg-white p-3 text-slate-900">
         <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-2.5">
           <div className="flex items-center gap-2">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-light">
@@ -584,7 +583,7 @@ export default function Landing() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="mt-5 max-w-[540px] text-[1.03rem] leading-7 text-brand-muted"
+                className="mt-5 max-w-135 text-[1.03rem] leading-7 text-brand-muted"
               >
                 Fini les fils de discussion perdus, les fichiers dispersés et
                 les réunions inutiles. CoLab centralise vos espaces de travail,
@@ -625,7 +624,7 @@ export default function Landing() {
                       key={seed}
                       src={`https://picsum.photos/seed/${seed}/72/72`}
                       alt=""
-                      className="h-[34px] w-[34px] rounded-full border-2 border-white object-cover shadow-sm"
+                      className="h-8.5 w-8.5 rounded-full border-2 border-white object-cover shadow-sm"
                       loading="lazy"
                     />
                   ))}
@@ -780,7 +779,7 @@ export default function Landing() {
         </section>
 
         <section className="px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-primary to-brand-accent lg:grid-cols-2">
+          <div className="mx-auto grid max-w-7xl overflow-hidden rounded-4xl bg-linear-to-br from-brand-primary to-brand-accent lg:grid-cols-2">
             <div className="p-8 sm:p-9 lg:p-10">
               <motion.h2
                 initial={{ opacity: 0, x: -20 }}
@@ -847,7 +846,7 @@ export default function Landing() {
           transition={{ duration: 0.6 }}
           className="px-4 py-12 sm:px-6 lg:px-8"
         >
-          <div className="mx-auto flex max-w-5xl flex-col gap-5 rounded-[2rem] border border-slate-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:px-7 sm:py-5">
+          <div className="mx-auto flex max-w-5xl flex-col gap-5 rounded-4xl border border-slate-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:px-7 sm:py-5">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-light text-brand-primary">
               <Mail className="h-6 w-6" />
             </div>
@@ -871,7 +870,7 @@ export default function Landing() {
               <input
                 type="email"
                 placeholder="Votre adresse e-mail universitaire"
-                className="min-w-0 flex-1 rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-primary sm:min-w-[28rem]"
+                className="min-w-0 flex-1 rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-primary sm:min-w-md"
               />
               <button
                 type="submit"
