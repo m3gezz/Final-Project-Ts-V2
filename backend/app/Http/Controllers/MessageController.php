@@ -19,7 +19,7 @@ class MessageController extends Controller
     public function index(Request $request)
     {
         $workspace = Workspace::findOrFail($request->workspace_id);
-        $messages = $workspace->messages()->with(['user', 'attachment'])->get();
+        $messages = $workspace->messages()->with(['user', 'attachment', 'replied_to_message.user'])->get();
         return response()->json($messages);
     }
 
@@ -32,8 +32,11 @@ class MessageController extends Controller
             [
                 'workspace_id' => ['required', 'exists:workspaces,id'],
                 'message' => ['required', 'string', 'min:1'],
+                'replied_to' => ['nullable', 'exists:messages,id'],
             ]
         );
+
+        $fields['replied_to'] = $fields['replied_to'] ?? null;
 
         $request->user()->messages()->create($fields);
         broadcast(new EventsMessage('created',$fields['workspace_id']));

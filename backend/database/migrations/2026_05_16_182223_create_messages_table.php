@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('isEdited')->default(0);
             $table->boolean('isPinned')->default(0);
             $table->foreignId('workspace_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('replied_to')->nullable()->constrained('messages')->onDelete('set null');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
