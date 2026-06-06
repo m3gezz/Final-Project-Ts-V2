@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SkillSeeder::class,
             CategorySeeder::class,
+            BadgeSeeder::class
         ]);
     }
 }

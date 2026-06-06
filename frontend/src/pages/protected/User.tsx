@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { Pencil } from "lucide-react";
+import { Laptop, Pencil } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import ErrorCard from "@/components/cards/ErrorCard";
 import UserSkeleton from "@/components/skeletons/UserSkeleton";
 import type { DataType } from "@/assets/types";
 import { useAppSelector } from "@/redux/store";
+import BadgeCard from "@/components/cards/BadgeCard";
 
 export default function User() {
   const { id } = useParams();
@@ -38,8 +39,11 @@ export default function User() {
           </Avatar>
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-semibold tracking-tight">
-              {profile?.full_name}
+              {profile?.full_name}{" "}
             </h1>
+            <p className="text-muted-foreground flex items-center gap-2">
+              <Laptop className="w-4 h-4" /> {profile?.professional_title}
+            </p>
             <p className="text-muted-foreground">@{profile?.username}</p>
             <p className="mt-3 max-w-2xl">{profile?.bio}</p>
             <div className="mt-4 flex flex-wrap gap-1.5">
@@ -68,18 +72,12 @@ export default function User() {
         </div>
         <div className="rounded-xl border bg-card p-6">
           <h2 className="text-lg font-semibold">Badges</h2>
-          <div className="mt-3 space-y-2">
+          <div className="mt-3 space-y-2 max-h-50 overflow-y-scroll">
             {profile?.badges?.length === 0 && (
               <p className="text-sm text-muted-foreground">No badges yet.</p>
             )}
             {profile?.badges?.map((b: DataType) => (
-              <div
-                key={b?.id}
-                className="flex items-center gap-3 rounded-lg border bg-muted/30 p-3"
-              >
-                <span className="text-xl">{b?.label}</span>
-                <span className="text-sm font-medium">{b?.description}</span>
-              </div>
+              <BadgeCard key={b?.id} badge={b} />
             ))}
           </div>
         </div>

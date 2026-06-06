@@ -48,7 +48,10 @@ export default function UserSkeleton() {
                 className="flex items-center gap-3 rounded-lg border bg-muted/20 p-3"
               >
                 <Skeleton className="h-6 w-6 rounded-md" />
-                <Skeleton className="h-4 w-32 flex-1" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/5" />
+                </div>
               </div>
             ))}
           </div>

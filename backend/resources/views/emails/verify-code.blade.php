@@ -16,7 +16,7 @@
         text-align:center;
       "
     >
-      <p style="text-align:left; font-size:22px; margin-bottom:10px; margin-left:10px;">Hi, {{$user->first_name}}</p>
+      <p style="text-align:left; font-size:22px; margin-bottom:10px; margin-left:10px;">Hi, {{$user->full_name}}</p>
       <h3 style="margin-bottom:10px; color:#111;">Verify your email</h3>
 
       <p style="color:#555; font-size:14px;">Use the verification code below to confirm your email address.</p>

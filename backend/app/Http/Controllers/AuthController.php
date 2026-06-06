@@ -23,6 +23,8 @@ class AuthController extends Controller
         $fields['username'] = str_replace(" ", "_", $fields['full_name']);
         
         $user = User::create($fields);
+        $user->badges()->syncWithoutDetaching([4]); //new user
+
         $access_token = $user->createToken('access-token')->plainTextToken;
         $refresh_token = $user->createToken('refresh-token')->plainTextToken;
 
@@ -57,6 +59,7 @@ class AuthController extends Controller
         }
         
         $user = Auth::user();
+        $user->badges()->syncWithoutDetaching([5]); //returning user
         $access_token = $user->createToken('access-token')->plainTextToken;
         $refresh_token = $user->createToken('refresh-token')->plainTextToken;
 

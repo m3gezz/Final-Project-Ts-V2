@@ -67,12 +67,20 @@ class ProjectController extends Controller
                 'skills.*' => ['required', 'exists:skills,id'],
             ]
         );
+
+        $user = $request->user();
+        $projects_count = $user->projects()->count();
+
+        $user->badges()->syncWithoutDetaching([1]); //first project
+        if ($projects_count >= 9) {
+            $user->badges()->syncWithoutDetaching([2]);//10th project sf ghi hado ntesti bihom wsf
+        }
         
         if ($request->hasFile('image')) {
             $fields['image'] = $request->file('image')->store('projectImages', 'public');
         }
         
-        $project = $request->user()->projects()->create($fields);
+        $project = $user->projects()->create($fields);
         $workspace = $project->workspace()->create();
         $workspace->memberships()->create([
             'user_id' => $project->user_id,
@@ -120,6 +128,9 @@ class ProjectController extends Controller
                 'skills.*' => ['sometimes', 'exists:skills,id'],
             ]
         );
+
+        $user = $request->user();
+        $user->badges()->syncWithoutDetaching([3]); //first update
 
         if ($request->hasFile('image')) {
             if ($project->image && Storage::disk('public')->exists($project->image)) {

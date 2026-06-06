@@ -69,23 +69,24 @@ export default function SkillsController({
             <FieldError>{fieldState.error.message}</FieldError>
           )}
           <div className="flex flex-wrap gap-2">
-            {skills?.slice(0, 4)?.map((s) => (
-              <Badge
-                key={s?.id}
-                variant="secondary"
-                className="flex items-center gap-2 justify-between px-1"
-              >
-                {s?.label}
-                <button
-                  type="button"
-                  className="text-destructive"
-                  onClick={() => handleSkill(s?.label)}
+            {!!skills?.length &&
+              skills?.slice(0, 3)?.map((s) => (
+                <Badge
+                  key={s?.id}
+                  variant="secondary"
+                  className="flex items-center gap-2 justify-between px-1"
                 >
-                  <X className="h-5 w-5" />
-                </button>
-              </Badge>
-            ))}
-            {/* {skills?.length > 3 && <Badge variant="secondary">•••</Badge>} */}
+                  {s?.label}
+                  <button
+                    type="button"
+                    className="text-destructive"
+                    onClick={() => handleSkill(s?.label)}
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </Badge>
+              ))}
+            {skills?.length > 3 && <Badge variant="secondary">•••</Badge>}
           </div>
         </Field>
       )}

@@ -100,6 +100,8 @@ class UserController extends Controller
             'skills.*' => ['nullable', 'exists:skills,id'],
         ]);
 
+        $user->badges()->syncWithoutDetaching([7]); //first profile update
+
         if ($request->hasFile('avatar')) {
             if ($user->avatar !== null) {
                 Storage::disk('public')->delete($user->avatar);

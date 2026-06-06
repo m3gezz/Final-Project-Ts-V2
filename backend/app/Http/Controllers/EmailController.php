@@ -43,6 +43,7 @@ class EmailController extends Controller
         
         
         $user->markEmailAsVerified();
+        $user->badges()->syncWithoutDetaching([6]); //email verified
         $record->delete();
         $data = [
             'user' => $user,
