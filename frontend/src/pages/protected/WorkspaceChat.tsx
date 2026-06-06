@@ -100,7 +100,7 @@ export default function WorkspaceChat() {
         >
           {!!reply && (
             <article
-              className={`absolute flex items-center justify-center gap-4 pb-4 left-1/2 -translate-x-1/2 bottom-full rounded-t-lg py-2 px-20 border backdrop-blur-2xl`}
+              className={`absolute flex items-center justify-center gap-4 pb-4 left-1/2 -translate-x-1/2 bottom-full rounded-t-lg py-2 px-20 border backdrop-blur-lg`}
             >
               <Button
                 size={"icon"}
@@ -116,7 +116,8 @@ export default function WorkspaceChat() {
 
               <div className="">
                 <h2>
-                  {reply?.user?.full_name}{" "}
+                  {reply?.user?.full_name}
+                  {": "}
                   {!!reply?.message?.length && (
                     <span className="italic text-sm">{reply?.message}</span>
                   )}

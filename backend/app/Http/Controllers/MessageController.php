@@ -19,7 +19,9 @@ class MessageController extends Controller
     public function index(Request $request)
     {
         $workspace = Workspace::findOrFail($request->workspace_id);
-        $messages = $workspace->messages()->with(['user', 'attachment', 'replied_to_message.user'])->get();
+        $messages = $workspace->messages()->with(['user', 'attachment', 'replied_to_message' => function ($q) {
+            $q->with(['user', 'attachment']);
+        }])->get();
         return response()->json($messages);
     }
 
@@ -89,7 +91,7 @@ class MessageController extends Controller
             $message->attachment()->delete();
         }
 
-        $message->update(['message' => 'This message has been deleted.', 'isDeleted' => 1]);
+        $message->update(['message' => 'This message has been deleted.', 'isDeleted' => 1, 'replied_to' => null]);
         broadcast(new EventsMessage('deleted', $message->workspace_id));
         return response()->json(['message' => 'Message deleted successfully']);
     }

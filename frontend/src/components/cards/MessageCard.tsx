@@ -41,6 +41,8 @@ export default function MessageCard({
                   ...m,
                   isDeleted: true,
                   attachment: {},
+                  replied_to: null,
+                  replied_to_message: null,
                   message: "This message has been deleted.",
                 };
               }
