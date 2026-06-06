@@ -553,7 +553,6 @@ export default function Landing() {
               >
                 PLATEFORME COLLABORATIVE POUR ÉTUDIANTS
               </motion.p>
-
               <h1 className="mt-4 max-w-xl font-heading text-6xl font-bold tracking-tight leading-[0.92] text-slate-900 xl:text-7xl">
                 <motion.span
                   className="block"

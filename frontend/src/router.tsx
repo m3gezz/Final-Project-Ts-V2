@@ -36,14 +36,6 @@ const routes = [
     element: <NotFound />,
   },
   {
-    path: "/about",
-    element: <AboutUs />,
-  },
-  {
-    path: "/contact",
-    element: <Contact />,
-  },
-  {
     element: <Guest />,
     children: [
       {
@@ -73,6 +65,14 @@ const routes = [
       {
         path: "/welcome",
         element: <Landing />,
+      },
+      {
+        path: "/about",
+        element: <AboutUs />,
+      },
+      {
+        path: "/contact",
+        element: <Contact />,
       },
     ],
   },

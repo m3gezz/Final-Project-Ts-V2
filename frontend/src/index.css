@@ -8,13 +8,19 @@
 @theme inline {
   --font-heading: "Sora", sans-serif;
   --font-body: "DM Sans", sans-serif;
+<<<<<<< HEAD
 
+=======
+>>>>>>> ef842dbfaf5e510688040708341a51df957cf36b
   --color-brand-primary: #2563eb;
   --color-brand-accent: #6366f1;
   --color-brand-dark: #0f172a;
   --color-brand-light: #f0f4ff;
   --color-brand-muted: #64748b;
+<<<<<<< HEAD
 
+=======
+>>>>>>> ef842dbfaf5e510688040708341a51df957cf36b
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
