@@ -37,7 +37,7 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $user->id === $task->user_id;
+        return $user->id === $task->user_id || $user->memberships()->where('workspace_id', $task->workspace_id)->where('role', 'owner')->exists();
     }
 
     /**
