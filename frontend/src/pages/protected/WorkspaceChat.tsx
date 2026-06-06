@@ -18,7 +18,7 @@ import UpdateMessageModal from "@/components/modals/UpdateMessageModal";
 import PinnedList from "@/components/lists/PinnedList";
 import TextareaController from "@/components/controllers/TextareaController";
 import { toggleModal } from "@/redux/modalSlice";
-import CreateFileMessageModal from "@/components/modals/CreateFileMessageModal";
+import CreateAttachmentModal from "@/components/modals/CreateAttachmentModal";
 
 export default function WorkspaceChat() {
   const { id } = useParams();
@@ -86,7 +86,7 @@ export default function WorkspaceChat() {
             variant="ghost"
             size="icon"
             type="button"
-            onClick={() => disp(toggleModal({ name: "isCreateFileMessage" }))}
+            onClick={() => disp(toggleModal({ name: "isAttachmentMessage" }))}
           >
             <Paperclip className="h-4 w-4" />
           </Button>
@@ -107,12 +107,13 @@ export default function WorkspaceChat() {
           </Button>
         </form>
         <UpdateMessageModal />
-        <CreateFileMessageModal />
+        <CreateAttachmentModal />
       </section>
 
       <PinnedList
         messages={messages
-          ?.filter((m: PopulatedMessage) => m?.isPinned)
+          ?.filter((m: PopulatedMessage) => m?.isPinned && !m?.isDeleted)
+          ?.reverse()
           ?.slice(0, 3)}
         isLoading={isMessagesLoading}
       />

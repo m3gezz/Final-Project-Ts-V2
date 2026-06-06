@@ -37,7 +37,14 @@ class RequestPolicy
      */
     public function update(User $user, Request $request): bool
     {
-        return $request->workspace->project->user_id || $user->id;
+        return $user->id === $request->user_id ||
+            $request->whereHas('workspace.memberships', function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->where(function ($subQuery) {
+                        $subQuery->where('role', 'owner')
+                                ->orWhere('role', 'admin');
+                    });
+            })->exists();
     }
 
     /**

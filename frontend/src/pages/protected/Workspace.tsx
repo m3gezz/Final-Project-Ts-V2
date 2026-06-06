@@ -9,7 +9,6 @@ import type { MembershipType, PopulatedTask } from "@/assets/types";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, List, UsersIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ProjectCard from "@/components/cards/ProjectCard";
 
 export default function Workspace() {
   const { id } = useParams();
@@ -35,7 +34,7 @@ export default function Workspace() {
           to={`/projects/${workspace?.project?.id}`}
           className="group flex flex-col overflow-hidden rounded-xl border bg-card transition-all hover:-translate-y-0.5"
         >
-          <div className="relative aspect-video overflow-hidden bg-muted">
+          <div className="relative aspect-video h-full overflow-hidden bg-muted">
             <img
               src={getImageUrl(workspace?.project?.image)}
               alt={workspace?.project?.title}

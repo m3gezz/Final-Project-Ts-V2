@@ -17,6 +17,8 @@ function cn(...inputs: ClassValue[]) {
 
 const getImageUrl = (path: string | undefined) => {
   if (!path) return "";
+  if (path?.startsWith("blob:http:")) return path;
+
   const baseURL = import.meta.env.VITE_API_URL;
   return `${baseURL}/storage/${path}`;
 };

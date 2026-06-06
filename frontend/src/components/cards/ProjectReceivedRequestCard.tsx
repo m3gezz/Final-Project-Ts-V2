@@ -21,7 +21,7 @@ export default function ProjectReceivedRequestCard({
     String(request?.workspace_id),
     "members",
   ]);
-  const isOwner = user?.id === previous?.project?.user_id;
+  const isWorkspaceOwner = user?.id === previous?.project?.user_id;
   const { mutate: updateRequestMutation, isPending: isUpdateRequestPending } =
     useMutation({
       mutationFn: (data: { status: "accepted" | "declined" }) =>
@@ -100,7 +100,7 @@ export default function ProjectReceivedRequestCard({
           </span>
         </div>
       </div>
-      {request?.status === "pending" && isOwner && (
+      {request?.status === "pending" && isWorkspaceOwner && (
         <div className="flex gap-2">
           <Button
             size="sm"

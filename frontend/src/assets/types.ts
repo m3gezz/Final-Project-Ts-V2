@@ -122,16 +122,22 @@ export type MessageType = DefaultFields & {
   isDeleted: boolean;
   isEdited: boolean;
   isPinned: boolean;
-  isStared: boolean;
-  file?: File;
-  type: "file" | "image" | "video";
   workspace_id: WorkspaceType["id"];
   user_id: UserType["id"];
+};
+
+export type AttachmentType = DefaultFields & {
+  file_path: string;
+  file_type: "document" | "image" | "video";
+  file_size: number;
+  file_name: string;
+  message_id: MessageType["id"];
 };
 
 export type PopulatedMessage = MessageType & {
   user: UserType;
   workspace?: WorkspaceType;
+  attachment: AttachmentType;
 };
 
 //Task

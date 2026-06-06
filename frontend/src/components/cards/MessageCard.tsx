@@ -2,18 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatTime, getImageUrl, handleCopy } from "@/lib/utils";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Copy,
-  Download,
-  File,
-  Pen,
-  Pin,
-  PinOff,
-  Reply,
-  Star,
-  StarOff,
-  X,
-} from "lucide-react";
+import { Copy, Download, File, Pen, Pin, PinOff, Reply, X } from "lucide-react";
 import { destroyMessage, updateMessage } from "@/api/functions/messages";
 import type { PopulatedMessage } from "@/assets/types";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -50,6 +39,7 @@ export default function MessageCard({
                 return {
                   ...m,
                   isDeleted: true,
+                  attachment: {},
                   message: "This message has been deleted.",
                 };
               }
@@ -85,6 +75,12 @@ export default function MessageCard({
     },
   });
 
+  const handleDownload = (filePath: string) => {
+    const fileName = filePath.split("/").pop();
+
+    window.open(`http://localhost:8000/api/download/${fileName}`, "_blank");
+  };
+
   return user?.id === message?.user?.id ? (
     <article
       id={`message-${message?.id}`}
@@ -94,45 +90,70 @@ export default function MessageCard({
       <ContextMenu>
         <div className="w-full flex flex-col items-end gap-1">
           <ContextMenuTrigger
-            className={`flex flex-col items-end gap-2 max-w-1/2 px-4 py-3 rounded-lg rounded-br-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-muted"}`}
+            className={`flex flex-col items-end gap-2 lg:max-w-1/2 p-2 rounded-lg rounded-br-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-muted"}`}
           >
-            {message?.message && <p>{message?.message}</p>}
-            {message?.file && (
-              <div className="aspect-video relative rounded-md overflow-clip">
-                {message?.type === "image" && (
-                  <img
-                    src={URL.createObjectURL(message?.file)}
-                    className="w-full h-full object-cover"
-                  />
-                )}
+            {!!message?.message?.length && <p>{message?.message}</p>}
+            {!!message?.attachment && (
+              <>
+                <div className="aspect-video relative rounded-md overflow-clip">
+                  {message?.attachment?.file_type === "image" && (
+                    <>
+                      <img
+                        src={getImageUrl(message?.attachment?.file_path)}
+                        className="w-full h-full object-cover"
+                      />
+                      <Button
+                        size={"icon"}
+                        variant={"ghost"}
+                        type="button"
+                        className="absolute bottom-2 right-2"
+                        onClick={() =>
+                          handleDownload(message?.attachment?.file_path)
+                        }
+                      >
+                        <Download className="w-6 h-6" />
+                      </Button>
+                    </>
+                  )}
 
-                {message?.type === "video" && (
-                  <video
-                    controls
-                    src={URL.createObjectURL(message?.file)}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-
-                {message?.type === "file" && (
+                  {message?.attachment?.file_type === "video" && (
+                    <video
+                      controls
+                      src={getImageUrl(message?.attachment?.file_path)}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+                {message?.attachment?.file_type === "document" && (
                   <div className="bg-border w-full h-full rounded-lg flex items-center gap-4 py-2 px-4">
-                    <File className="w-10 h-10" />
+                    <File className="w-6 h-6" />
                     <div>
-                      <h1>{message?.file?.name}</h1>
-                      <h1>{message?.file?.size}Kb</h1>
+                      <h1>size: {message?.attachment?.file_size}Kb</h1>
                     </div>
-                    <Button size={"icon"} variant={"ghost"}>
+                    <Button
+                      size={"icon"}
+                      variant={"ghost"}
+                      type="button"
+                      onClick={() =>
+                        handleDownload(message?.attachment?.file_path)
+                      }
+                    >
                       <Download className="w-6 h-6" />
                     </Button>
                   </div>
                 )}
-              </div>
+                {message?.attachment?.file_name && (
+                  <p className="italic text-xs truncate mt-1 text-foreground">
+                    {message?.attachment?.file_name}
+                  </p>
+                )}
+              </>
             )}
           </ContextMenuTrigger>
 
           <span className="text-xs text-muted-foreground flex items-center gap-1">
-            {message?.isStared && <Star className="h-2.5 w-2.5" />}
             {formatTime(message?.created_at)}
+            {!!message?.isPinned && <Pin className="h-2.5 w-2.5" />}
           </span>
         </div>
         {!message?.isDeleted && (
@@ -154,17 +175,6 @@ export default function MessageCard({
               ) : (
                 <>
                   <Pin /> Pin
-                </>
-              )}
-            </ContextMenuItem>
-            <ContextMenuItem variant={"done"}>
-              {message?.isPinned ? (
-                <>
-                  <StarOff /> Unstar
-                </>
-              ) : (
-                <>
-                  <Star /> Star
                 </>
               )}
             </ContextMenuItem>
@@ -210,15 +220,70 @@ export default function MessageCard({
         <div className="flex flex-col gap-1 w-full">
           <div className="w-full flex flex-col items-start gap-1">
             <span className="italic text-xs">{message?.user?.full_name}</span>
-
             <ContextMenuTrigger
-              className={`max-w-1/2 px-4 py-3 rounded-lg rounded-bl-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-accent/50"}`}
+              className={`flex flex-col items-start gap-2 lg:max-w-1/2 p-2 rounded-lg rounded-bl-none ${message?.isDeleted ? "text-destructive bg-destructive/10" : "bg-border"}`}
             >
-              {message?.message}
+              {!!message?.message?.length && <p>{message?.message}</p>}
+              {!!message?.attachment && (
+                <>
+                  <div className="aspect-video relative rounded-md overflow-clip">
+                    {message?.attachment?.file_type === "image" && (
+                      <>
+                        <img
+                          src={getImageUrl(message?.attachment?.file_path)}
+                          className="w-full h-full object-cover"
+                        />
+                        <Button
+                          size={"icon"}
+                          variant={"ghost"}
+                          type="button"
+                          className="absolute bottom-2 right-2"
+                          onClick={() =>
+                            handleDownload(message?.attachment?.file_path)
+                          }
+                        >
+                          <Download className="w-6 h-6" />
+                        </Button>
+                      </>
+                    )}
+
+                    {message?.attachment?.file_type === "video" && (
+                      <video
+                        controls
+                        src={getImageUrl(message?.attachment?.file_path)}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+                  {message?.attachment?.file_type === "document" && (
+                    <div className="bg-muted w-full h-full rounded-lg flex items-center gap-4 py-2 px-4">
+                      <File className="w-6 h-6" />
+                      <div>
+                        <h1>size: {message?.attachment?.file_size}Kb</h1>
+                      </div>
+                      <Button
+                        size={"icon"}
+                        variant={"ghost"}
+                        type="button"
+                        onClick={() =>
+                          handleDownload(message?.attachment?.file_path)
+                        }
+                      >
+                        <Download className="w-6 h-6" />
+                      </Button>
+                    </div>
+                  )}
+                  {message?.attachment?.file_name && (
+                    <p className="italic text-xs truncate mt-1 text-foreground">
+                      {message?.attachment?.file_name}
+                    </p>
+                  )}
+                </>
+              )}
             </ContextMenuTrigger>
 
             <span className="text-xs text-muted-foreground flex items-center gap-1">
-              {message?.isStared && <Star className="h-2.5 w-2.5" />}
+              {!!message?.isPinned && <Pin className="h-2.5 w-2.5" />}
               {formatTime(message?.created_at)}
             </span>
           </div>
@@ -242,17 +307,6 @@ export default function MessageCard({
               ) : (
                 <>
                   <Pin /> Pin
-                </>
-              )}
-            </ContextMenuItem>
-            <ContextMenuItem variant={"done"}>
-              {message?.isPinned ? (
-                <>
-                  <StarOff /> Unstar
-                </>
-              ) : (
-                <>
-                  <Star /> Star
                 </>
               )}
             </ContextMenuItem>

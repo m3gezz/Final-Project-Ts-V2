@@ -1,6 +1,5 @@
 import ProjectCard from "../cards/ProjectCard";
-import EmptyCard from "../cards/EmptyCard";
-import { FolderIcon, InboxIcon } from "lucide-react";
+import { FolderIcon } from "lucide-react";
 import ProjectCardSkeleton from "../skeletons/ProjectCardSkeleton";
 import type { ProjectType } from "@/assets/types";
 import NoContentCard from "../cards/NoContentCard";

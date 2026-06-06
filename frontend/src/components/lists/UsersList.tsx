@@ -1,5 +1,4 @@
-import EmptyCard from "../cards/EmptyCard";
-import { InboxIcon, UsersIcon } from "lucide-react";
+import { UsersIcon } from "lucide-react";
 import UserCard from "../cards/UserCard";
 import UserCardSkeleton from "../skeletons/UserCardSkeleton";
 import type { PopulatedUser } from "@/assets/types";

@@ -122,9 +122,10 @@ class ProjectController extends Controller
         );
 
         if ($request->hasFile('image')) {
-            if ($project->image !== null && $project->image !== 'default/default-project-image.jpg') {
+            if ($project->image && Storage::disk('public')->exists($project->image)) {
                 Storage::disk('public')->delete($project->image);
             }
+            
             $fields['image'] = $request->file('image')->store('projectImages', 'public');
         }
 

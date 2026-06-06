@@ -1,5 +1,4 @@
-import EmptyCard from "../cards/EmptyCard";
-import { BriefcaseIcon, InboxIcon } from "lucide-react";
+import { BriefcaseIcon } from "lucide-react";
 import WorkspaceCard from "../cards/WorkspaceCard";
 import WorkspaceCardSkeleton from "../skeletons/WorkspaceCardSkeleton";
 import type { PopulatedWorkspace } from "@/assets/types";

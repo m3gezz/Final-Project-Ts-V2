@@ -1,4 +1,3 @@
-import EmptyCard from "../cards/EmptyCard";
 import { InboxIcon } from "lucide-react";
 import ReceivedRequestCardSkeleton from "../skeletons/ReceivedRequestCardSkeleton";
 import ProjectReceivedRequestCard from "../cards/ProjectReceivedRequestCard";

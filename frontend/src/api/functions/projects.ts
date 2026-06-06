@@ -21,7 +21,7 @@ const getProject = async (id: DefaultFields["id"]) => {
   return res?.data;
 };
 
-const createProject = async (data: any) => {
+const createProject = async (data: FormData) => {
   const res = await api.post("projects", data);
   toast.success(res?.data?.message);
   return res?.data;
@@ -32,7 +32,7 @@ const canEdit = async (id: DefaultFields["id"]) => {
   return res.data;
 };
 
-const updateProject = async (id: DefaultFields["id"], data: any) => {
+const updateProject = async (id: DefaultFields["id"], data: FormData) => {
   const res = await api.post(`projects/${id}`, data);
   toast.success(res?.data?.message);
   return res?.data;

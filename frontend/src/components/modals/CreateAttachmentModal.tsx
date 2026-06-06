@@ -13,7 +13,7 @@ import {
 import { useForm } from "react-hook-form";
 import { toggleModal } from "@/redux/modalSlice";
 import TextareaController from "../controllers/TextareaController";
-import type { createFileMessageSchemaType } from "@/zod/messagesSchemas";
+import type { createAttachmentSchemaType } from "@/zod/messagesSchemas";
 import {
   ChevronDown,
   File,
@@ -23,58 +23,116 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { createAttachment } from "@/api/functions/messages";
 
-export default function CreateFileMessageModal() {
+export default function CreateAttachmentModal() {
   const { id } = useParams();
+  const queryClient = useQueryClient();
+  const disp = useAppDispatch();
   const { user } = useAppSelector((state) => state?.auth);
+  const [open, setOpen] = useState<boolean>(false);
+
   const imagesRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [imagePreview, setImagePreview] = useState<any>(null);
-  const [videoPreview, setVideoPreview] = useState<any>(null);
-  const [filePreview, setFilePreview] = useState<any>(undefined);
-  const [open, setOpen] = useState<boolean>(false);
-  const queryClient = useQueryClient();
-  const disp = useAppDispatch();
-  const { isCreateFileMessage } = useAppSelector((state) => state?.modal);
-  const form = useForm<createFileMessageSchemaType>({
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [documentPreview, setDocumentPreview] = useState<File | null>(null);
+
+  const { isAttachmentMessage } = useAppSelector((state) => state?.modal);
+  const form = useForm<createAttachmentSchemaType>({
     defaultValues: {
       message: "",
       file: undefined,
-      type: "file",
       workspace_id: String(id),
     },
   });
 
-  const { mutate: createFileMessage, isPending: isCreateFileMessagePending } =
-    useMutation({
-      mutationFn: (data: createFileMessageSchemaType) => console.log(data),
-      onMutate: (data) => {
-        queryClient.cancelQueries();
-        disp(toggleModal({ name: "isCreateFileMessage" }));
-        const previous = queryClient.getQueryData(["messages", String(id)]);
-        queryClient.setQueryData(
-          ["messages", String(id)],
-          (old: PopulatedMessage[]) => [
-            ...old,
-            { ...data, id: Date.now, user, created_at: Date() },
-          ],
-        );
+  const {
+    mutate: createAttachmentMutation,
+    isPending: isCreateAttachmentPending,
+  } = useMutation({
+    mutationFn: (data: createAttachmentSchemaType) => {
+      const formData = new FormData();
+      formData.append("workspace_id", data?.workspace_id);
+      formData.append("file", data?.file);
+      formData.append("message", data?.message!);
+      return createAttachment(formData);
+    },
+    onMutate: (data) => {
+      queryClient.cancelQueries();
+      disp(toggleModal({ name: "isAttachmentMessage" }));
+      const previous = queryClient.getQueryData(["messages", String(id)]);
+      const mainType = data?.file?.type?.split("/")?.[0];
 
-        return { previous };
-      },
-      onSuccess: () => {
-        // queryClient.invalidateQueries({
-        //   queryKey: ["messages", String(id)],
-        // });
-      },
+      const fileType = ["image", "video"].includes(mainType)
+        ? mainType
+        : "document";
+
+      queryClient.setQueryData(
+        ["messages", String(id)],
+        (old: PopulatedMessage[]) => [
+          ...old,
+          {
+            id: Date.now(),
+            user,
+            message: data?.message,
+            created_at: Date(),
+            attachment: {
+              id: Date.now(),
+              file_path: URL.createObjectURL(data?.file),
+              file_size: data?.file?.size,
+              file_name: data?.file?.name,
+              file_type: fileType,
+            },
+          },
+        ],
+      );
+      return { previous };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["messages", String(id)],
+      });
+    },
+  });
+
+  const clearAllFiles = () => {
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    if (videoPreview) URL.revokeObjectURL(videoPreview);
+
+    setImagePreview(null);
+    setVideoPreview(null);
+    setDocumentPreview(null);
+
+    form.reset({
+      message: "",
+      file: undefined,
+      workspace_id: String(id),
     });
+
+    if (imagesRef.current) imagesRef.current.value = "";
+    if (videoRef.current) videoRef.current.value = "";
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  useEffect(() => {
+    clearAllFiles();
+    setOpen(false);
+
+    return () => {
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
+      if (videoPreview) URL.revokeObjectURL(videoPreview);
+    };
+  }, [isAttachmentMessage]);
+
   return (
     <Dialog
-      open={isCreateFileMessage}
-      onOpenChange={() => disp(toggleModal({ name: "isCreateFileMessage" }))}
+      open={isAttachmentMessage}
+      onOpenChange={() => disp(toggleModal({ name: "isAttachmentMessage" }))}
     >
       <DialogContent
         aria-describedby=""
@@ -93,9 +151,7 @@ export default function CreateFileMessageModal() {
 
             <Button
               variant={"destructive"}
-              onClick={() => {
-                setImagePreview(null);
-              }}
+              onClick={clearAllFiles}
               size={"icon-xs"}
               className="absolute top-1 right-1"
             >
@@ -113,7 +169,7 @@ export default function CreateFileMessageModal() {
             />
             <Button
               variant={"destructive"}
-              onClick={() => setVideoPreview(null)}
+              onClick={clearAllFiles}
               size={"icon-xs"}
               className="absolute top-1 right-1"
             >
@@ -122,18 +178,18 @@ export default function CreateFileMessageModal() {
           </div>
         )}
 
-        {filePreview && (
+        {documentPreview && (
           <div className="aspect-video relative rounded-md overflow-clip flex items-center justify-center gap-6">
             <div className="bg-accent w-1/2 p-4 rounded-lg flex items-center gap-2">
               <File className="w-20 h-20" />
               <div>
-                <h1>{filePreview?.name}</h1>
-                <h1>{filePreview?.size}Kb</h1>
+                <h1>{documentPreview?.name}</h1>
+                <h1>{documentPreview?.size}Kb</h1>
               </div>
             </div>
             <Button
               variant={"destructive"}
-              onClick={() => setFilePreview(null)}
+              onClick={clearAllFiles}
               size={"icon-xs"}
               className="absolute top-1 right-1"
             >
@@ -144,7 +200,7 @@ export default function CreateFileMessageModal() {
 
         <form
           className="flex items-end gap-4"
-          onSubmit={form.handleSubmit((data) => createFileMessage(data))}
+          onSubmit={form.handleSubmit((data) => createAttachmentMutation(data))}
         >
           <div className="relative">
             <div
@@ -156,7 +212,7 @@ export default function CreateFileMessageModal() {
                 type="button"
                 onClick={() => {
                   setOpen(false);
-                  setFilePreview(null);
+                  clearAllFiles();
                   imagesRef.current?.click();
                 }}
               >
@@ -168,8 +224,7 @@ export default function CreateFileMessageModal() {
                 type="button"
                 onClick={() => {
                   setOpen(false);
-                  setFilePreview(null);
-                  setImagePreview(null);
+                  clearAllFiles();
                   videoRef.current?.click();
                 }}
               >
@@ -181,7 +236,7 @@ export default function CreateFileMessageModal() {
                 type="button"
                 onClick={() => {
                   setOpen(false);
-                  setImagePreview(null);
+                  clearAllFiles();
                   fileRef.current?.click();
                 }}
               >
@@ -191,7 +246,7 @@ export default function CreateFileMessageModal() {
             <Button
               type="button"
               variant={"outline"}
-              disabled={isCreateFileMessagePending}
+              disabled={isCreateAttachmentPending}
               onClick={() => setOpen(!open)}
             >
               {open ? <ChevronDown /> : <Paperclip />}
@@ -207,7 +262,7 @@ export default function CreateFileMessageModal() {
               className="min-h-10"
             />
           </div>
-          <Button disabled={isCreateFileMessagePending}>
+          <Button disabled={isCreateAttachmentPending}>
             <Send />
           </Button>
 
@@ -222,7 +277,6 @@ export default function CreateFileMessageModal() {
               if (!image) return toast.error("Something went wrong.");
               setImagePreview(URL.createObjectURL(image));
               form.setValue("file", image);
-              form.setValue("type", "image");
             }}
           />
 
@@ -236,7 +290,6 @@ export default function CreateFileMessageModal() {
               if (!file) return toast.error("Something went wrong.");
               setVideoPreview(URL.createObjectURL(file));
               form.setValue("file", file);
-              form.setValue("type", "video");
             }}
           />
 
@@ -248,10 +301,8 @@ export default function CreateFileMessageModal() {
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return toast.error("Something went wrong.");
-              setFilePreview(file);
-
+              setDocumentPreview(file);
               form.setValue("file", file);
-              form.setValue("type", "file");
             }}
           />
         </form>

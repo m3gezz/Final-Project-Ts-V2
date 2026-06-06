@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->text('message');
+            $table->text('message')->nullable();
             $table->boolean('isDeleted')->default(0);
             $table->boolean('isEdited')->default(0);
             $table->boolean('isPinned')->default(0);

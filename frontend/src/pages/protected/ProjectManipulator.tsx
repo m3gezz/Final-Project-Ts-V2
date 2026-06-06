@@ -254,6 +254,7 @@ export default function ProjectManipulator({
               <input
                 type="file"
                 ref={imagesRef}
+                accept="image/*"
                 className="hidden"
                 onChange={(e) => {
                   const image = e?.currentTarget?.files?.[0];

@@ -1,6 +1,5 @@
 import WsMemberCard from "../cards/WsMemberCard";
-import EmptyCard from "../cards/EmptyCard";
-import { InboxIcon, UsersIcon } from "lucide-react";
+import { UsersIcon } from "lucide-react";
 import WsMemberCardSkeleton from "../skeletons/WsMemberCardSkeleton";
 import type { MembershipType } from "@/assets/types";
 import NoContentCard from "../cards/NoContentCard";

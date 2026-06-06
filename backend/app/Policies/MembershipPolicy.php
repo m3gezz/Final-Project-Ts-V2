@@ -37,7 +37,11 @@ class MembershipPolicy
      */
     public function update(User $user, Membership $membership): bool
     {
-        return $user->id === $membership->workspace->project->user_id;
+        return $user->id === $membership->user_id ||  $membership->workspace()
+            ->whereHas('project', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->exists();
     }
 
     /**
@@ -45,7 +49,11 @@ class MembershipPolicy
      */
     public function delete(User $user, Membership $membership): bool
     {
-        return $user->id === $membership->workspace->project->user_id;
+        return $user->id === $membership->user_id ||  $membership->workspace()
+            ->whereHas('project', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->exists();
     }
 
     /**

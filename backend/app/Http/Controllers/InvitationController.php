@@ -84,6 +84,7 @@ class InvitationController extends Controller
      */
     public function destroy(Invitation $invitation)
     {
+        $this->authorize('delete', $invitation);
         $invitation->delete();
         return response()->json(['message' => 'Invitation deleted successfully.']);
     }

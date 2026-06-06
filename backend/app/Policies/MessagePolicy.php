@@ -37,7 +37,10 @@ class MessagePolicy
      */
     public function update(User $user, Message $message): bool
     {
-        return $user->id === $message->user_id;
+        return $user->id === $message->user_id ||
+            $message->whereHas('workspace.memberships', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->exists();
     }
 
     /**

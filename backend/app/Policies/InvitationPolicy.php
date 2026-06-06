@@ -45,7 +45,14 @@ class InvitationPolicy
      */
     public function delete(User $user, Invitation $invitation): bool
     {
-        return false;
+        return $user->id === $invitation->user_id ||
+            $invitation->whereHas('workspace.memberships', function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->where(function ($subQuery) {
+                        $subQuery->where('role', 'owner')
+                                ->orWhere('role', 'admin');
+                    });
+            })->exists();
     }
 
     /**

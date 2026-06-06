@@ -7,20 +7,17 @@ const createMessageSchema = z.object({
 
 export type createMessageSchemaType = z.infer<typeof createMessageSchema>;
 
-const createFileMessageSchema = z.object({
+const createAttachmentSchema = z.object({
   workspace_id: z.string(),
   message: z
     .string()
     .trim()
     .min(1, "Message content cannot be empty")
     .optional(),
-  type: z.enum(["file", "image", "video", "audio"]),
   file: z.instanceof(File, { message: "A valid file must be provided" }),
 });
 
-export type createFileMessageSchemaType = z.infer<
-  typeof createFileMessageSchema
->;
+export type createAttachmentSchemaType = z.infer<typeof createAttachmentSchema>;
 
 const updateMessageSchema = z.object({
   message: z
@@ -33,4 +30,4 @@ const updateMessageSchema = z.object({
 
 export type updateMessageSchemaType = z.infer<typeof updateMessageSchema>;
 
-export { createMessageSchema, updateMessageSchema };
+export { createMessageSchema, createAttachmentSchema, updateMessageSchema };

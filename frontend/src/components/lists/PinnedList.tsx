@@ -1,8 +1,9 @@
 import type { PopulatedMessage } from "@/assets/types";
 import { Skeleton } from "../ui/skeleton";
 import PinnedSkeleton from "../skeletons/PinnedSkeleton";
-import { Pin, PinOff } from "lucide-react";
+import { File, Pin, PinOff } from "lucide-react";
 import NoContentCard from "../cards/NoContentCard";
+import { getImageUrl } from "@/lib/utils";
 
 export default function PinnedList({
   messages,
@@ -24,7 +25,7 @@ export default function PinnedList({
     <section className="p-4">
       <h1 className="text-lg font-bold mb-4 flex items-center gap-1">
         <Pin className="h-6 w-6" />
-        Pinned messages
+        Recent Pinned messages
       </h1>
       <ul>
         {messages?.length ? (
@@ -37,12 +38,44 @@ export default function PinnedList({
                     .getElementById(`message-${m?.id}`)
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-                className="cursor-pointer"
+                className="cursor-pointer bg-muted p-2 rounded-md"
               >
                 <h2>{m?.user?.full_name}</h2>
-                <p className="italic text-xs border rounded-2xl w-full px-4 py-2 mt-2">
-                  {m?.message}
-                </p>
+                {!!m?.message?.length && (
+                  <p className="italic text-xs">{m?.message}</p>
+                )}
+                {!!m?.attachment && (
+                  <>
+                    <div className="aspect-video relative rounded-md overflow-hidden h-20">
+                      {m?.attachment?.file_type === "image" && (
+                        <img
+                          src={getImageUrl(m?.attachment?.file_path)}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+
+                      {m?.attachment?.file_type === "video" && (
+                        <video
+                          src={getImageUrl(m?.attachment?.file_path)}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                      {m?.attachment?.file_type === "document" && (
+                        <div className="bg-muted w-full h-full rounded-lg flex flex-col items-center gap-4 p-2">
+                          <File className="w-6 h-6" />
+                          <div>
+                            <h1>size: {m?.attachment?.file_size}Kb</h1>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {m?.attachment?.file_name && (
+                      <p className="italic text-xs truncate mt-1 text-accent">
+                        {m?.attachment?.file_name}
+                      </p>
+                    )}
+                  </>
+                )}
               </div>
             </li>
           ))

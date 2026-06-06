@@ -21,7 +21,10 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return !$project->private || $user->id === $project->user_id;
+        return !$project->private || 
+            $project->workspace()->whereHas('memberships' , function ($q) use($user) {
+                $q->where('user_id', $user->id);
+            })->exists();
     }
 
     /**

@@ -1,7 +1,6 @@
 import type { DefaultFields } from "@/assets/types";
 import { api } from "../axios";
 import type {
-  createFileMessageSchemaType,
   createMessageSchemaType,
   updateMessageSchemaType,
 } from "@/zod/messagesSchemas";
@@ -12,10 +11,14 @@ const getMessages = async (id: DefaultFields["id"]) => {
   return res?.data;
 };
 
-const createMessage = async (
-  data: createMessageSchemaType | createFileMessageSchemaType,
-) => {
+const createMessage = async (data: createMessageSchemaType) => {
   const res = await api.post(`messages`, data);
+  return res;
+};
+
+const createAttachment = async (data: FormData) => {
+  const res = await api.post(`attachments`, data);
+  toast.success(res?.data?.message);
   return res;
 };
 
@@ -34,4 +37,10 @@ const destroyMessage = async (id: DefaultFields["id"]) => {
   return res;
 };
 
-export { getMessages, createMessage, updateMessage, destroyMessage };
+export {
+  getMessages,
+  createMessage,
+  createAttachment,
+  updateMessage,
+  destroyMessage,
+};

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttachmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -57,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('invitations', InvitationController::class)->except(['show']);
     Route::apiResource('memberships', MembershipController::class)->only(['index','destroy','update']);
     Route::apiResource('messages', MessageController::class)->except(['show']);
+    Route::apiResource('attachments', AttachmentController::class)->only(['store']);
     Route::apiResource('tasks', TaskController::class)->except(['index', 'show']);
     
     Route::apiResource('comments', CommentController::class);
@@ -65,4 +67,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/userDashboard', [UserController::class, 'userDashboard']);
     Route::get('/adminDashboard', [UserController::class, 'adminDashboard']);
     Route::get('/can-edit/{project}', [ProjectController::class, 'canEdit']);
+
+});
+Route::get('/download/{attachment}', function ($attachment) {
+    $path = storage_path("app/public/attachments/$attachment");
+    return response()->download($path);
 });

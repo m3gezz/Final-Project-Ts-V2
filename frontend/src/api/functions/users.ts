@@ -26,7 +26,7 @@ const getUser = async (id: DefaultFields["id"]) => {
   return res?.data;
 };
 
-const updateUser = async (id: DefaultFields["id"], data: any) => {
+const updateUser = async (id: DefaultFields["id"], data: FormData) => {
   const res = await api.post(`users/${id}`, data);
   toast.success(res?.data?.message);
   return res;

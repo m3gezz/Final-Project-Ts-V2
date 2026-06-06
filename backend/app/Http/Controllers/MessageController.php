@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Workspace;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller
 {
@@ -18,7 +19,7 @@ class MessageController extends Controller
     public function index(Request $request)
     {
         $workspace = Workspace::findOrFail($request->workspace_id);
-        $messages = $workspace->messages()->with('user')->get();
+        $messages = $workspace->messages()->with(['user', 'attachment'])->get();
         return response()->json($messages);
     }
 
@@ -57,14 +58,17 @@ class MessageController extends Controller
             [
                 'message' => ['sometimes', 'string', 'min:1'],
                 'isPinned' => ['sometimes', 'boolean'],
+                'isStared' => ['sometimes', 'boolean'],
             ]
         );
 
         if ($message->isDeleted) return response()->json(['message' => 'Message was deleted already.']);
 
-        $message->update([
-            ...$fields, 'isEdited' => 1
-        ]);
+        $message->update($fields);
+
+        if (isset($fields['message'])) {
+            $message->update(['isEdited' => 1]);
+        }
 
         broadcast(new EventsMessage('updated', $message->workspace_id));
         return response()->json(['message' => 'Message updated successfully.']);
@@ -76,6 +80,12 @@ class MessageController extends Controller
     public function destroy(Message $message)
     {
         $this->authorize('delete',$message);
+        
+        if ($message->attachment) {
+            Storage::disk('public')->delete($message->attachment->file_path);
+            $message->attachment()->delete();
+        }
+
         $message->update(['message' => 'This message has been deleted.', 'isDeleted' => 1]);
         broadcast(new EventsMessage('deleted', $message->workspace_id));
         return response()->json(['message' => 'Message deleted successfully']);
