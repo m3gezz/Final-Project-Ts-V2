@@ -55,7 +55,7 @@ export default function Populate() {
       <Header
         icon={Sparkles}
         title="Populate"
-        description="Seed and manage the global vocabulary used across Collab — skills, badges and project categories."
+        description="Seed and manage the global vocabulary used across Colab — skills, badges and project categories."
       />
 
       <Tabs defaultValue="skills" className="flex flex-col">

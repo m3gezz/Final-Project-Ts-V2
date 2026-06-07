@@ -66,7 +66,7 @@ export default function Terms() {
                   1. Acceptance of Terms
                 </h2>
                 <p>
-                  By accessing or using Collab ("the Platform"), you agree to be
+                  By accessing or using Colab ("the Platform"), you agree to be
                   bound by these Terms & Conditions ("Terms"). If you do not
                   agree to these Terms, please do not use the Platform.
                 </p>
@@ -93,7 +93,7 @@ export default function Terms() {
                 <p>
                   You are responsible for maintaining the confidentiality of
                   your account credentials. You agree to notify us immediately
-                  of any unauthorized access or use of your account. Collab is
+                  of any unauthorized access or use of your account. Colab is
                   not liable for any loss or damage arising from your failure to
                   secure your account.
                 </p>
@@ -106,7 +106,7 @@ export default function Terms() {
                 </h2>
                 <p>
                   You retain ownership of any content you post on the Platform.
-                  By posting content, you grant Collab a non-exclusive,
+                  By posting content, you grant Colab a non-exclusive,
                   worldwide, royalty-free license to use, display, and
                   distribute that content solely for the purpose of operating
                   the Platform.
@@ -122,12 +122,12 @@ export default function Terms() {
               <section>
                 <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-foreground">
                   <FileText className="h-5 w-5 text-primary" />
-                  5. Workspaces & Collaboration
+                  5. Workspaces & Colaboration
                 </h2>
                 <p>
-                  Workspaces on Collab are created by users and may be public or
+                  Workspaces on Colab are created by users and may be public or
                   private. Workspace owners set their own rules for
-                  participation. Collab does not mediate disputes between
+                  participation. Colab does not mediate disputes between
                   collaborators but may intervene in cases of abuse or Terms
                   violations.
                 </p>
@@ -140,7 +140,7 @@ export default function Terms() {
                 </h2>
                 <p>
                   The Platform and its original content, features, and
-                  functionality are owned by Collab and are protected by
+                  functionality are owned by Colab and are protected by
                   international copyright, trademark, and other intellectual
                   property laws. You may not copy, modify, distribute, or create
                   derivative works based on the Platform without our express
@@ -167,8 +167,8 @@ export default function Terms() {
                   8. Limitation of Liability
                 </h2>
                 <p>
-                  Collab is provided "as is" without warranties of any kind. In
-                  no event shall Collab be liable for any indirect, incidental,
+                  Colab is provided "as is" without warranties of any kind. In
+                  no event shall Colab be liable for any indirect, incidental,
                   special, consequential, or punitive damages arising out of or
                   related to your use of the Platform.
                 </p>
@@ -211,7 +211,7 @@ export default function Terms() {
 
       <footer className="border-t">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
-          <span>© {new Date().getFullYear()} Collab. Built for makers.</span>
+          <span>© {new Date().getFullYear()} Colab. Built for makers.</span>
           <div className="flex items-center gap-4">
             <Link to="/terms" className="hover:text-foreground">
               Terms

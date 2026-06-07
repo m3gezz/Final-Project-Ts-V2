@@ -66,7 +66,7 @@ export default function Policy() {
                   1. Introduction
                 </h2>
                 <p>
-                  Collab ("we", "us", "our") is committed to protecting your
+                  Colab ("we", "us", "our") is committed to protecting your
                   privacy. This Privacy Policy explains how we collect, use,
                   store, and protect your personal information when you use our
                   Platform.
@@ -280,7 +280,7 @@ export default function Policy() {
 
       <footer className="border-t">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
-          <span>© {new Date().getFullYear()} Collab. Built for makers.</span>
+          <span>© {new Date().getFullYear()} Colab. Built for makers.</span>
           <div className="flex items-center gap-4">
             <Link to="/terms" className="hover:text-foreground">
               Terms
