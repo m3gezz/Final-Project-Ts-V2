@@ -2,6 +2,7 @@ import { Controller, type FieldValues } from "react-hook-form";
 import { Checkbox } from "../ui/checkbox";
 import { Field, FieldError } from "../ui/field";
 import type { ControllerType } from "@/assets/types";
+import { Link } from "react-router-dom";
 
 export default function CheckBoxController<T extends FieldValues>({
   control,
@@ -22,13 +23,16 @@ export default function CheckBoxController<T extends FieldValues>({
             />
             <span>
               I agree to the{" "}
-              <a className="text-primary hover:underline" href="#">
+              <Link to={"/terms"} className="text-primary hover:underline">
                 Terms
-              </a>{" "}
+              </Link>{" "}
               and{" "}
-              <a className="text-primary hover:underline" href="#">
+              <Link
+                to={"/privacy-policy"}
+                className="text-primary hover:underline"
+              >
                 Privacy Policy
-              </a>
+              </Link>
               .
             </span>
           </label>

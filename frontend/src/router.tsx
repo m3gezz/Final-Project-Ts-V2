@@ -29,6 +29,8 @@ import WorkspaceTasks from "./pages/protected/WorkspaceTasks";
 import WorkspaceLayout from "./layouts/WorkspaceLayout";
 import Populate from "./pages/admin/Populate";
 import ProjectManipulator from "./pages/protected/ProjectManipulator";
+import Terms from "./pages/Terms";
+import Policy from "./pages/Policy";
 
 const routes = [
   {
@@ -73,6 +75,14 @@ const routes = [
       {
         path: "/contact",
         element: <Contact />,
+      },
+      {
+        path: "/terms",
+        element: <Terms />,
+      },
+      {
+        path: "/privacy-policy",
+        element: <Policy />,
       },
     ],
   },

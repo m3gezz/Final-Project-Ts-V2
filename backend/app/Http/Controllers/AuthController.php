@@ -40,7 +40,7 @@ class AuthController extends Controller
         $data = [
             'user' => $user->load(['skills']),
             'token' => $access_token,
-            'message' => 'Signed up successfully.'
+            'message' => 'We sent you a code, Verify your email.'
         ];
 
         return response()->json($data)->cookie('refresh_token', $refresh_token, 60*24*7,null,null,true,true);
